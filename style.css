@@ -133,6 +133,12 @@ h3 {
   transform: rotate(45deg);
 }
 
+.logo-svg {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

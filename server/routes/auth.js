@@ -9,9 +9,9 @@ const prisma = new PrismaClient();
 // SIGNUP
 router.post('/signup', async (req, res) => {
     try {
-        const { pan, name, email, dob } = req.body;
+        const { pan, name, email, phone, dob } = req.body;
 
-        if (!pan || !name || !email || !dob) {
+        if (!pan || !name || !email || !phone || !dob) {
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
@@ -38,6 +38,7 @@ router.post('/signup', async (req, res) => {
                 pan,
                 name,
                 email,
+                phone,
                 dob,
                 passwordHash: hashedPassword
             }
@@ -59,6 +60,27 @@ router.post('/login', async (req, res) => {
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required.' });
         }
+
+        // ── TEMPORARY DEMO LOGIN ──────────────────────────────────────────────
+        // Remove this block once real investor accounts are set up
+        if (username === 'asdf123' && password === 'asdf123') {
+            const demoToken = jwt.sign(
+                { userId: 'demo-user' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+            res.cookie('auth_token', demoToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 3600000
+            });
+            return res.json({
+                message: 'Login successful',
+                user: { name: 'Demo Investor', email: 'demo@liveinvestments.in', pan: 'DEMO0000X' }
+            });
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         // Find user by PAN or Email
         const user = await prisma.user.findFirst({
@@ -110,6 +132,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
+
 // LOGOUT
 router.post('/logout', (req, res) => {
     res.clearCookie('auth_token');
@@ -125,9 +148,15 @@ router.get('/me', async (req, res) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Demo user bypass
+        if (decoded.userId === 'demo-user') {
+            return res.json({ user: { name: 'Demo Investor', email: 'demo@liveinvestments.in', pan: 'DEMO0000X' } });
+        }
+
         const user = await prisma.user.findUnique({
             where: { id: decoded.userId },
-            select: { name: true, email: true, pan: true } // Don't send password hash
+            select: { name: true, email: true, pan: true }
         });
 
         if (!user) {
@@ -139,5 +168,6 @@ router.get('/me', async (req, res) => {
         res.status(401).json({ error: 'Invalid token' });
     }
 });
+
 
 export default router;

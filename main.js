@@ -282,13 +282,14 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const name = document.getElementById('signup-name').value.trim();
         const email = document.getElementById('signup-email').value.trim();
+        const phone = document.getElementById('signup-phone').value.trim();
         const pan = document.getElementById('signup-pan').value.trim().toUpperCase();
         const dob = document.getElementById('signup-dob').value; // format: YYYY-MM-DD
 
         signupError.textContent = '';
         signupSuccess.textContent = '';
 
-        if (!name || !email || !pan || !dob) {
+        if (!name || !email || !phone || !pan || !dob) {
             signupError.textContent = 'Please fill in all fields.';
             return;
         }
@@ -309,7 +310,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, pan, dob })
+                body: JSON.stringify({ name, email, phone, pan, dob })
             });
 
             const data = await response.json();
