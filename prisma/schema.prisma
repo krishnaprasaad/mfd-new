@@ -12,6 +12,7 @@ model User {
   pan          String       @unique
   name         String
   email        String
+  phone        String?
   dob          String
   passwordHash String
   createdAt    DateTime     @default(now())
