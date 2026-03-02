@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import portfolioRoutes from './routes/portfolio.js';
@@ -38,11 +39,22 @@ app.use('/api/portfolio', portfolioRoutes);
 
 // --- Serve Frontend in Production ---
 const distPath = path.join(__dirname, '../dist');
+
+if (!fs.existsSync(distPath)) {
+    console.warn(`⚠️  dist/ folder not found at ${distPath}. Run: npm run build`);
+} else {
+    console.log(`✅ Serving frontend from: ${distPath}`);
+}
+
 app.use(express.static(distPath));
 
 // Fallback: send index.html for any non-API route (client-side routing)
 app.get('/{*path}', (req, res) => {
-    res.sendFile(path.join(distPath, 'index.html'));
+    const indexPath = path.join(distPath, 'index.html');
+    if (!fs.existsSync(indexPath)) {
+        return res.status(503).send('Frontend not built. Run: npm run build');
+    }
+    res.sendFile(indexPath);
 });
 
 app.listen(PORT, () => {
