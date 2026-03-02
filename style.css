@@ -539,3 +539,196 @@ main {
     padding: 2rem 0;
   }
 }
+
+/* --- Footer --- */
+.site-footer {
+  margin-top: 6rem;
+  border-top: 1px solid var(--colorBorder);
+  padding: 4rem 1.5rem 2rem;
+  background-color: var(--colorSurface);
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+}
+
+.footer-brand p {
+  color: var(--colorTextMuted);
+  margin-top: 1rem;
+  max-width: 300px;
+}
+
+.footer-links h4, .footer-contact h4 {
+  margin-bottom: 1.5rem;
+  font-family: var(--fontSans);
+  font-size: 1rem;
+}
+
+.footer-links a {
+  display: block;
+  color: var(--colorTextMuted);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+  transition: var(--transition);
+}
+
+.footer-links a:hover {
+  color: var(--colorAccent);
+}
+
+.footer-contact p {
+  color: var(--colorTextMuted);
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid var(--colorBorder);
+  padding-top: 2rem;
+  text-align: center;
+  color: var(--colorTextMuted);
+  font-size: 0.875rem;
+}
+
+/* --- Dashboard Tabs --- */
+.dashboard-tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--colorBorder);
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 1rem 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--colorTextMuted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover {
+  color: var(--colorPrimary);
+}
+
+.tab-btn.active {
+  color: var(--colorAccent);
+  border-bottom-color: var(--colorAccent);
+}
+
+/* Tab Content Visibility */
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Explore Funds Grid --- */
+.funds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  padding: 2rem 0;
+}
+
+.fund-card {
+  background: var(--colorSurface);
+  border-radius: var(--radiusLg);
+  border: 1px solid var(--colorBorder);
+  padding: 1.5rem;
+  box-shadow: var(--shadowSm);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.fund-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadowXl);
+  border-color: rgba(16, 185, 129, 0.3); /* Accent subtle border */
+}
+
+.fund-header {
+  margin-bottom: 1rem;
+}
+
+.fund-title {
+  font-family: var(--fontDisplay);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--colorPrimary);
+  margin-bottom: 0.5rem;
+}
+
+.fund-badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--colorBg);
+  color: var(--colorTextMuted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge.risk-low { background: var(--colorSuccessBg); color: var(--colorSuccess); }
+.badge.risk-moderate { background: #fef3c7; color: #d97706; } /* Amber */
+.badge.risk-high { background: var(--colorDangerBg); color: var(--colorDanger); }
+
+.fund-description {
+  color: var(--colorTextMuted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
+}
+
+.fund-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--colorBorder);
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+.stat-box {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--colorTextMuted);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-weight: 700;
+  color: var(--colorPrimary);
+}
+
+.stat-value.highlight {
+  color: var(--colorSuccess);
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+}

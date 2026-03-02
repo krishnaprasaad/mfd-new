@@ -1,4 +1,4 @@
-import { mockDatabase } from './data.js';
+import { mockDatabase, mockFundsList } from './data.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const navLoginBtn = document.getElementById('nav-login-btn');
     const navLogoutBtn = document.getElementById('nav-logout-btn');
-    const heroLoginBtn = document.getElementById('hero-login-btn');
     const modalCloseBtn = document.getElementById('modal-close-btn');
 
     const loginForm = document.getElementById('login-form');
@@ -23,6 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalReturnsEl = document.getElementById('total-returns');
     const returnsPercentageEl = document.getElementById('returns-percentage');
     const investmentsTbody = document.getElementById('investments-tbody');
+
+    // Dashboard Tabs Elements
+    const tabPortfolio = document.getElementById('tab-portfolio');
+    const tabExplore = document.getElementById('tab-explore');
+    const portfolioSection = document.getElementById('portfolio-section');
+    const exploreSection = document.getElementById('explore-funds-section');
+    const exploreFundsGrid = document.getElementById('explore-funds-grid');
 
     // --- State ---
     let currentUser = null;
@@ -124,6 +130,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // --- Explore Funds Rendering ---
+    const renderExploreFunds = () => {
+        exploreFundsGrid.innerHTML = '';
+
+        mockFundsList.forEach(fund => {
+            const riskClass = fund.risk.toLowerCase();
+
+            const card = document.createElement('div');
+            card.classList.add('fund-card');
+            card.innerHTML = `
+                <div class="fund-header">
+                    <div class="fund-title">${fund.name}</div>
+                    <div class="fund-badges">
+                        <span class="badge badge-category">${fund.category}</span>
+                        <span class="badge risk-${riskClass}">${fund.risk} Risk</span>
+                    </div>
+                </div>
+                <div class="fund-description">${fund.description}</div>
+                <div class="fund-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">Min SIP</div>
+                        <div class="stat-value">₹${fund.minSip}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">1Y Return</div>
+                        <div class="stat-value highlight">${fund.return1Yr}%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">3Y Return</div>
+                        <div class="stat-value highlight">${fund.return3Yr}%</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary full-width" onclick="alert('Proceeding to invest in ${fund.name} (Simulated)')">Invest Now</button>
+            `;
+            exploreFundsGrid.appendChild(card);
+        });
+    };
+
+    // --- Tab Management ---
+    const switchTab = (tabName) => {
+        if (tabName === 'portfolio') {
+            tabPortfolio.classList.add('active');
+            tabExplore.classList.remove('active');
+            portfolioSection.classList.add('active');
+            portfolioSection.classList.remove('hidden');
+            exploreSection.classList.remove('active');
+            exploreSection.classList.add('hidden');
+        } else if (tabName === 'explore') {
+            tabExplore.classList.add('active');
+            tabPortfolio.classList.remove('active');
+            exploreSection.classList.add('active');
+            exploreSection.classList.remove('hidden');
+            portfolioSection.classList.remove('active');
+            portfolioSection.classList.add('hidden');
+
+            // Render funds if empty
+            if (true) {
+                renderExploreFunds();
+            }
+        }
+    };
+
     // --- Authentication Actions ---
     const handleLogin = (e) => {
         e.preventDefault();
@@ -161,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Event Listeners ---
     navLoginBtn.addEventListener('click', showLoginModal);
-    heroLoginBtn.addEventListener('click', showLoginModal);
     modalCloseBtn.addEventListener('click', hideLoginModal);
 
     // Close modal when clicking outside
@@ -171,6 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', handleLogin);
     navLogoutBtn.addEventListener('click', handleLogout);
+
+    tabPortfolio.addEventListener('click', () => switchTab('portfolio'));
+    tabExplore.addEventListener('click', () => switchTab('explore'));
 
     // Initialize view
     showLanding();

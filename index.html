@@ -1,76 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aurora Wealth | Mutual Fund Distributor</title>
-    <link rel="stylesheet" href="./style.css" />
-    <!-- Google Fonts: Inter & Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-      <div class="nav-container">
-        <a href="#" class="logo">
-          <div class="logo-icon"></div>
-          Aurora Wealth
-        </a>
-        <div class="nav-links">
-          <button id="nav-login-btn" class="btn btn-secondary">Sign In</button>
-          <button id="nav-logout-btn" class="btn btn-secondary hidden">Sign Out</button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurora Wealth | Mutual Fund Distributor</title>
+  <link rel="stylesheet" href="./style.css" />
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon"></div>
+        Aurora Wealth
+      </a>
+      <div class="nav-links">
+        <button id="nav-login-btn" class="btn btn-secondary">Investor Portal</button>
+        <button id="nav-logout-btn" class="btn btn-secondary hidden">Sign Out</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Landing View -->
+  <main id="landing-view" class="view active">
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Securing Your Financial Future</h1>
+        <p>Expert mutual fund distribution and portfolio management. Access your investments anytime, anywhere with our
+          secure investor portal.</p>
+      </div>
+      <div class="hero-graphic">
+        <div class="glass-card decorative-card card-1">
+          <div class="card-title">Portfolio Growth</div>
+          <div class="card-value up">+14.2%</div>
+        </div>
+        <div class="glass-card decorative-card card-2">
+          <div class="card-title">Assets Managed</div>
+          <div class="card-value">₹24.5M</div>
         </div>
       </div>
-    </nav>
+    </section>
 
-    <!-- Landing View -->
-    <main id="landing-view" class="view active">
-      <section class="hero">
-        <div class="hero-content">
-          <h1>Securing Your Financial Future</h1>
-          <p>Expert mutual fund distribution and portfolio management. Access your investments anytime, anywhere with our secure investor portal.</p>
-          <button id="hero-login-btn" class="btn btn-primary">Access Investor Portal</button>
-        </div>
-        <div class="hero-graphic">
-          <div class="glass-card decorative-card card-1">
-            <div class="card-title">Portfolio Growth</div>
-            <div class="card-value up">+14.2%</div>
-          </div>
-          <div class="glass-card decorative-card card-2">
-            <div class="card-title">Assets Managed</div>
-            <div class="card-value">₹24.5M</div>
-          </div>
-        </div>
-      </section>
-      
-      <section class="features">
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Real-time Tracking</h3>
-          <p>Monitor your invested amount and current holdings with live updates.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">🛡️</div>
-          <h3>Secure Access</h3>
-          <p>Enterprise-grade security ensuring your financial data is always protected.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">📈</div>
-          <h3>Curated Funds</h3>
-          <p>Access our expertly selected top-performing mutual funds across categories.</p>
-        </div>
-      </section>
-    </main>
-
-    <!-- Investor Dashboard View -->
-    <main id="dashboard-view" class="view hidden">
-      <div class="dashboard-header">
-        <h2>Welcome back, <span id="user-name-display">Investor</span></h2>
-        <p>Here is your portfolio overview as of today.</p>
+    <section class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Real-time Tracking</h3>
+        <p>Monitor your invested amount and current holdings with live updates.</p>
       </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Secure Access</h3>
+        <p>Enterprise-grade security ensuring your financial data is always protected.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Curated Funds</h3>
+        <p>Access our expertly selected top-performing mutual funds across categories.</p>
+      </div>
+    </section>
 
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon"></div>
+            Aurora Wealth
+          </a>
+          <p>Your trusted partner in mutual fund investments and long-term portfolio growth.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Disclosures</a>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact Us</h4>
+          <p>Email: support@aurorawealth.com</p>
+          <p>Phone: +1 (800) 123-4567</p>
+          <p>Address: 123 Financial District, Suite 500<br>New York, NY 10004</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Aurora Wealth Management. All rights reserved.</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Investor Dashboard View -->
+  <main id="dashboard-view" class="view hidden">
+    <div class="dashboard-header">
+      <h2>Welcome back, <span id="user-name-display">Investor</span></h2>
+      <p>Here is your portfolio overview as of today.</p>
+      <p>Here is your portfolio overview as of today.</p>
+    </div>
+
+    <!-- Dashboard Tabs -->
+    <div class="dashboard-tabs">
+      <button id="tab-portfolio" class="tab-btn active">My Portfolio</button>
+      <button id="tab-explore" class="tab-btn">Explore Funds</button>
+    </div>
+
+    <!-- Portfolio Section -->
+    <div id="portfolio-section" class="tab-content active">
       <div class="summary-cards">
         <div class="summary-card">
           <div class="card-label">Total Invested Amount</div>
@@ -108,34 +149,47 @@
           </table>
         </div>
       </div>
-    </main>
+    </div> <!-- End portfolio-section -->
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal-overlay hidden">
-      <div class="modal">
-        <button class="modal-close" id="modal-close-btn">&times;</button>
-        <div class="modal-header">
-          <h2>Investor Portal</h2>
-          <p>Please log in to view your portfolio.</p>
-        </div>
-        <form id="login-form">
-          <div class="form-group">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" required placeholder="investor@example.com" value="investor@example.com">
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" required placeholder="password" value="password123">
-          </div>
-          <div class="form-error" id="login-error"></div>
-          <button type="submit" class="btn btn-primary full-width">Sign In</button>
-        </form>
-        <div class="demo-hints">
-          <small><strong>Demo Login:</strong> investor@example.com / password123</small>
-        </div>
+    <!-- Explore Funds Section -->
+    <div id="explore-funds-section" class="tab-content hidden">
+      <div class="section-title">
+        <h3>Discover New Investment Opportunities</h3>
+        <p>Browse our expertly curated selection of high-performing mutual funds.</p>
+      </div>
+      <div class="funds-grid" id="explore-funds-grid">
+        <!-- Dynamically populated via JS -->
       </div>
     </div>
+  </main>
 
-    <script type="module" src="./main.js"></script>
-  </body>
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div class="modal-header">
+        <h2>Investor Portal</h2>
+        <p>Please log in to view your portfolio.</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" required placeholder="investor@example.com" value="investor@example.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required placeholder="password" value="password123">
+        </div>
+        <div class="form-error" id="login-error"></div>
+        <button type="submit" class="btn btn-primary full-width">Sign In</button>
+      </form>
+      <div class="demo-hints">
+        <small><strong>Demo Login:</strong> investor@example.com / password123</small>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+
 </html>
