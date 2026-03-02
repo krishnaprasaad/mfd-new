@@ -4,11 +4,24 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev:frontend": "vite",
+    "dev:backend": "nodemon server/index.js",
+    "dev": "npm run dev:backend & npm run dev:frontend",
     "build": "vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prisma": "^6.19.2",
     "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.2",
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3"
   }
 }

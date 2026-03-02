@@ -1,4 +1,4 @@
-import { mockDatabase, mockFundsList } from './data.js';
+// Removed mock database import
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
@@ -11,9 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCloseBtn = document.getElementById('modal-close-btn');
 
     const loginForm = document.getElementById('login-form');
-    const emailInput = document.getElementById('email');
+    const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
     const loginError = document.getElementById('login-error');
+
+    const signupForm = document.getElementById('signup-form');
+    const signupError = document.getElementById('signup-error');
+    const signupSuccess = document.getElementById('signup-success');
 
     // Dashboard Elements
     const userNameDisplay = document.getElementById('user-name-display');
@@ -50,10 +54,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const showLoginModal = () => {
         loginModal.classList.remove('hidden');
         loginError.textContent = '';
+        loginForm.classList.remove('hidden');
+        signupForm.classList.add('hidden');
+        document.getElementById('modal-title').textContent = 'Investor Portal';
+        document.getElementById('modal-subtitle').textContent = 'Please log in to view your portfolio.';
+        document.getElementById('show-signup').classList.remove('hidden');
+        document.getElementById('show-login').classList.add('hidden');
     };
 
     const hideLoginModal = () => {
         loginModal.classList.add('hidden');
+    };
+
+    const showSignupForm = () => {
+        loginForm.classList.add('hidden');
+        signupForm.classList.remove('hidden');
+        signupError.textContent = '';
+        signupSuccess.textContent = '';
+        document.getElementById('modal-title').textContent = 'Create Account';
+        document.getElementById('modal-subtitle').textContent = 'Sign up to start investing.';
+        document.getElementById('show-signup').classList.add('hidden');
+        document.getElementById('show-login').classList.remove('hidden');
     };
 
     const showDashboard = () => {
@@ -131,10 +152,21 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Explore Funds Rendering ---
-    const renderExploreFunds = () => {
+    const fetchExploreFunds = async () => {
+        try {
+            const res = await fetch('/api/portfolio/explore');
+            const data = await res.json();
+            renderExploreFundsGrid(data);
+        } catch (error) {
+            console.error('Error fetching explore funds:', error);
+            exploreFundsGrid.innerHTML = '<div class="error-msg">Failed to load funds.</div>';
+        }
+    };
+
+    const renderExploreFundsGrid = (fundsList) => {
         exploreFundsGrid.innerHTML = '';
 
-        mockFundsList.forEach(fund => {
+        fundsList.forEach(fund => {
             const riskClass = fund.risk.toLowerCase();
 
             const card = document.createElement('div');
@@ -186,43 +218,127 @@ document.addEventListener('DOMContentLoaded', () => {
             portfolioSection.classList.add('hidden');
 
             // Render funds if empty
-            if (true) {
-                renderExploreFunds();
+            if (exploreFundsGrid.children.length === 0) {
+                fetchExploreFunds();
             }
         }
     };
 
     // --- Authentication Actions ---
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        const email = emailInput.value.trim();
+        const username = usernameInput.value.trim();
         const password = passwordInput.value;
 
-        const userRecord = mockDatabase[email];
-
-        // Artificial delay for loading effect
         const submitBtn = loginForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Authenticating...';
         submitBtn.disabled = true;
 
-        setTimeout(() => {
-            if (userRecord && userRecord.password === password) {
-                // Success
-                currentUser = userRecord;
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                currentUser = data.user;
                 hideLoginModal();
-                renderDashboard(currentUser);
-                showDashboard();
+                fetchAndRenderDashboard();
             } else {
-                // Failure
-                loginError.textContent = 'Invalid email or password.';
+                loginError.textContent = data.error || 'Invalid credentials.';
             }
+        } catch (error) {
+            console.error('Login error:', error);
+            loginError.textContent = 'A network error occurred. Please try again.';
+        } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 600); // 600ms fake delay
+        }
     };
 
-    const handleLogout = () => {
+    const fetchAndRenderDashboard = async () => {
+        try {
+            const res = await fetch('/api/portfolio');
+            if (!res.ok) {
+                if (res.status === 401) handleLogout();
+                throw new Error('Failed to fetch portfolio data');
+            }
+            const data = await res.json();
+            currentUser = data.profile;
+            renderDashboard(data);
+            showDashboard();
+        } catch (error) {
+            console.error('Dashboard error:', error);
+            totalInvestedEl.textContent = 'Error';
+            currentValueEl.textContent = 'Error';
+        }
+    };
+
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const pan = document.getElementById('signup-pan').value.trim().toUpperCase();
+        const dob = document.getElementById('signup-dob').value; // format: YYYY-MM-DD
+
+        signupError.textContent = '';
+        signupSuccess.textContent = '';
+
+        if (!name || !email || !pan || !dob) {
+            signupError.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        // Date validation check is moved to backend
+        const dobParts = dob.split('-'); // [YYYY, MM, DD]
+        if (dobParts.length !== 3) {
+            signupError.textContent = 'Invalid Date of Birth format.';
+            return;
+        }
+
+        const submitBtn = signupForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Creating Account...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, pan, dob })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                signupSuccess.textContent = 'Account application received! Please wait 1-2 working days for your credentials to be sent to your email.';
+                signupForm.reset();
+                setTimeout(() => {
+                    showLoginModal();
+                    signupSuccess.textContent = ''; // Clear for next time
+                }, 5000);
+            } else {
+                signupError.textContent = data.error || 'Failed to create account.';
+            }
+        } catch (error) {
+            console.error('Signup error:', error);
+            signupError.textContent = 'A network error occurred. Please try again.';
+        } finally {
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (e) {
+            console.error('Failed to call logout API', e);
+        }
         currentUser = null;
         showLanding();
     };
@@ -231,17 +347,39 @@ document.addEventListener('DOMContentLoaded', () => {
     navLoginBtn.addEventListener('click', showLoginModal);
     modalCloseBtn.addEventListener('click', hideLoginModal);
 
+    const showSignupBtn = document.getElementById('show-signup');
+    const showLoginBtn = document.getElementById('show-login');
+
+    if (showSignupBtn) showSignupBtn.addEventListener('click', (e) => { e.preventDefault(); showSignupForm(); });
+    if (showLoginBtn) showLoginBtn.addEventListener('click', (e) => { e.preventDefault(); showLoginModal(); });
+
     // Close modal when clicking outside
     loginModal.addEventListener('click', (e) => {
         if (e.target === loginModal) hideLoginModal();
     });
 
     loginForm.addEventListener('submit', handleLogin);
+    signupForm.addEventListener('submit', handleSignup);
     navLogoutBtn.addEventListener('click', handleLogout);
 
     tabPortfolio.addEventListener('click', () => switchTab('portfolio'));
     tabExplore.addEventListener('click', () => switchTab('explore'));
 
+    // --- On Load Check Session ---
+    const checkSession = async () => {
+        try {
+            const res = await fetch('/api/auth/me');
+            if (res.ok) {
+                // If token is valid, automatically log them in
+                fetchAndRenderDashboard();
+            } else {
+                showLanding();
+            }
+        } catch (error) {
+            showLanding();
+        }
+    };
+
     // Initialize view
-    showLanding();
+    checkSession();
 });
