@@ -65,7 +65,7 @@ router.get('/explore', async (req, res) => {
     const mockFundsList = [
         {
             id: "f-001",
-            name: "Aurora Future Tech Fund",
+            name: "Live Wealth Future Tech Fund",
             category: "Thematic - Tech",
             risk: "High",
             minSip: 1000,
@@ -75,7 +75,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-002",
-            name: "Aurora Core Equity Advantage",
+            name: "Live Wealth Core Equity Advantage",
             category: "Large Cap",
             risk: "Moderate",
             minSip: 500,
@@ -85,7 +85,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-003",
-            name: "Aurora Green Energy Focus",
+            name: "Live Wealth Green Energy Focus",
             category: "Sectoral - ESG",
             risk: "High",
             minSip: 1000,
@@ -95,7 +95,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-004",
-            name: "Aurora Dynamic Bond Fund",
+            name: "Live Wealth Dynamic Bond Fund",
             category: "Debt - Dynamic",
             risk: "Low",
             minSip: 5000,
@@ -105,7 +105,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-005",
-            name: "Aurora Midcap Outperform",
+            name: "Live Wealth Midcap Outperform",
             category: "Mid Cap",
             risk: "High",
             minSip: 1000,
@@ -115,7 +115,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-006",
-            name: "Aurora Balanced Advantage",
+            name: "Live Wealth Balanced Advantage",
             category: "Hybrid",
             risk: "Moderate",
             minSip: 1000,
