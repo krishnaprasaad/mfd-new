@@ -19,7 +19,7 @@ app.use(cookieParser());
 
 // Basic health check route
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Aurora Wealth API is running' });
+    res.json({ status: 'ok', message: 'Live Wealth API is running' });
 });
 
 app.use('/api/auth', authRoutes);
