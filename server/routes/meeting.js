@@ -8,19 +8,19 @@ const router = express.Router();
 router.post('/', async (req, res) => {
     try {
         await connectDB();
-        const { name, email, phone, preferredTime } = req.body;
+        const { serviceType, name, email, phone, preferredTime } = req.body;
 
-        if (!name || !email || !phone) {
-            return res.status(400).json({ error: 'Name, email and phone number are required.' });
+        if (!serviceType || !name || !email || !phone) {
+            return res.status(400).json({ error: 'Service type, name, email and phone are required.' });
         }
 
-        const meeting = new Meeting({ name, email, phone, preferredTime });
+        const meeting = new Meeting({ serviceType, name, email, phone, preferredTime });
         await meeting.save();
 
-        res.status(201).json({ message: 'Thank you! Our VP will contact you shortly to confirm your meeting.' });
+        res.status(201).json({ message: 'Appointment booked! Our team will contact you shortly to confirm.' });
     } catch (error) {
-        console.error('Meeting booking error:', error);
-        res.status(500).json({ error: 'Failed to book meeting. Please try again.' });
+        console.error('Appointment booking error:', error);
+        res.status(500).json({ error: 'Failed to book appointment. Please try again.' });
     }
 });
 

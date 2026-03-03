@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 
 const meetingSchema = new mongoose.Schema({
+    serviceType: { type: String, required: true, trim: true },
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true },
     phone: { type: String, required: true, trim: true },
-    preferredTime: { type: String, trim: true }, // optional preferred time/date
-    status: { type: String, default: 'pending' }, // pending / confirmed / done
+    preferredTime: { type: String, trim: true },
+    status: { type: String, default: 'pending' },
 }, { timestamps: true });
 
 const Meeting = mongoose.models.Meeting || mongoose.model('Meeting', meetingSchema);
