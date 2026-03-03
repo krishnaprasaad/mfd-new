@@ -1,14 +1,15 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
+import { connectDB } from '../db.js';
+import User from '../models/User.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // SIGNUP
 router.post('/signup', async (req, res) => {
     try {
+        await connectDB();
         const { pan, name, email, phone, dob } = req.body;
 
         if (!pan || !name || !email || !phone || !dob) {
@@ -16,12 +17,12 @@ router.post('/signup', async (req, res) => {
         }
 
         // Check if user exists
-        const existingUser = await prisma.user.findUnique({ where: { pan } });
+        const existingUser = await User.findOne({ pan: pan.toUpperCase() });
         if (existingUser) {
             return res.status(400).json({ error: 'An account with this PAN already exists.' });
         }
 
-        // Generate password from DOB
+        // Generate password from DOB (format: DDMMYYYY)
         const dobParts = dob.split('-'); // [YYYY, MM, DD]
         if (dobParts.length !== 3) {
             return res.status(400).json({ error: 'Invalid Date of Birth format.' });
@@ -32,17 +33,16 @@ router.post('/signup', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(generatedPassword, salt);
 
-        // Save user
-        const newUser = await prisma.user.create({
-            data: {
-                pan,
-                name,
-                email,
-                phone,
-                dob,
-                passwordHash: hashedPassword
-            }
+        // Save user to MongoDB
+        const newUser = new User({
+            pan: pan.toUpperCase(),
+            name,
+            email,
+            phone,
+            dob,
+            passwordHash: hashedPassword,
         });
+        await newUser.save();
 
         res.status(201).json({ message: 'Account application received successfully.' });
 
@@ -55,6 +55,7 @@ router.post('/signup', async (req, res) => {
 // LOGIN
 router.post('/login', async (req, res) => {
     try {
+        await connectDB();
         const { username, password } = req.body;
 
         if (!username || !password) {
@@ -62,7 +63,6 @@ router.post('/login', async (req, res) => {
         }
 
         // ── TEMPORARY DEMO LOGIN ──────────────────────────────────────────────
-        // Remove this block once real investor accounts are set up
         if (username === 'asdf123' && password === 'asdf123') {
             const demoToken = jwt.sign(
                 { userId: 'demo-user' },
@@ -83,13 +83,11 @@ router.post('/login', async (req, res) => {
         // ─────────────────────────────────────────────────────────────────────
 
         // Find user by PAN or Email
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { pan: username },
-                    { email: username }
-                ]
-            }
+        const user = await User.findOne({
+            $or: [
+                { pan: username.toUpperCase() },
+                { email: username }
+            ]
         });
 
         if (!user) {
@@ -104,7 +102,7 @@ router.post('/login', async (req, res) => {
 
         // Generate JWT
         const token = jwt.sign(
-            { userId: user.id },
+            { userId: user._id.toString() },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -114,7 +112,7 @@ router.post('/login', async (req, res) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
-            maxAge: 3600000 // 1 hour
+            maxAge: 3600000
         });
 
         res.json({
@@ -131,7 +129,6 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error.' });
     }
 });
-
 
 // LOGOUT
 router.post('/logout', (req, res) => {
@@ -154,10 +151,8 @@ router.get('/me', async (req, res) => {
             return res.json({ user: { name: 'Demo Investor', email: 'demo@liveinvestments.in', pan: 'DEMO0000X' } });
         }
 
-        const user = await prisma.user.findUnique({
-            where: { id: decoded.userId },
-            select: { name: true, email: true, pan: true }
-        });
+        await connectDB();
+        const user = await User.findById(decoded.userId).select('name email pan');
 
         if (!user) {
             return res.status(401).json({ error: 'User not found' });
@@ -168,6 +163,5 @@ router.get('/me', async (req, res) => {
         res.status(401).json({ error: 'Invalid token' });
     }
 });
-
 
 export default router;

@@ -1,32 +1,35 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
 import { authMiddleware } from '../middleware/authMiddleware.js';
+import { connectDB } from '../db.js';
+import User from '../models/User.js';
+import Investment from '../models/Investment.js';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // GET /api/portfolio
-// Fetch portfolio summary and investments for the logged-in user
 router.get('/', authMiddleware, async (req, res) => {
     try {
+        await connectDB();
         const userId = req.userId;
 
-        const user = await prisma.user.findUnique({
-            where: { id: userId },
-            include: {
-                investments: true
-            }
-        });
+        // Demo user bypass
+        if (userId === 'demo-user') {
+            return res.json({
+                profile: { name: 'Demo Investor', email: 'demo@liveinvestments.in', pan: 'DEMO0000X' },
+                portfolio: { totalInvested: 0, currentValue: 0, investments: [] }
+            });
+        }
 
+        const user = await User.findById(userId).select('name email pan');
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Calculate totals
+        const investments = await Investment.find({ userId });
+
         let totalInvested = 0;
         let currentValue = 0;
-
-        user.investments.forEach(inv => {
+        investments.forEach(inv => {
             totalInvested += inv.investedAmount;
             currentValue += inv.currentValue;
         });
@@ -40,8 +43,8 @@ router.get('/', authMiddleware, async (req, res) => {
             portfolio: {
                 totalInvested,
                 currentValue,
-                investments: user.investments.map(inv => ({
-                    id: inv.id,
+                investments: investments.map(inv => ({
+                    id: inv._id.toString(),
                     fundId: inv.fundId,
                     name: inv.fundName,
                     category: inv.category,
@@ -59,9 +62,7 @@ router.get('/', authMiddleware, async (req, res) => {
 });
 
 // GET /api/portfolio/explore
-// Mock endpoint to fetch explore funds (in a real app this would query a master funds table)
 router.get('/explore', async (req, res) => {
-    // Reusing the static list for simplicity as these aren't user-specific
     const mockFundsList = [
         {
             id: "f-001",
