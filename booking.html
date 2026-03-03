@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book an Appointment — Live Wealth</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><rect width='36' height='36' rx='10' fill='%230f172a'/><ellipse cx='18' cy='28' rx='9' ry='3.5' fill='%2310b981' opacity='0.7'/><line x1='18' y1='27' x2='18' y2='13' stroke='%2310b981' stroke-width='2' stroke-linecap='round'/><path d='M18 18 Q12 14 13 8 Q17 10 18 16' fill='%2310b981' opacity='0.85'/><path d='M18 15 Q24 11 23 5 Q19 7 18 13' fill='%2310b981'/></svg>">
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ===== Booking Page Specific Styles ===== */
+        .booking-page {
+            min-height: 100vh;
+            background: var(--colorBackground);
+            padding-bottom: 4rem;
+        }
+
+        .booking-hero {
+            background: linear-gradient(135deg, var(--colorSurface) 0%, rgba(16, 185, 129, 0.06) 100%);
+            border-bottom: 1px solid var(--colorBorder);
+            padding: 2rem 2rem 3rem;
+            text-align: center;
+        }
+
+        .booking-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--colorPrimary), var(--colorAccent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0.5rem 0;
+        }
+
+        .booking-hero p {
+            color: var(--colorTextMuted);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .booking-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .step-pill {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 99px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--colorSurfaceAlt);
+            color: var(--colorTextMuted);
+            border: 1px solid var(--colorBorder);
+            transition: all 0.3s;
+        }
+
+        .step-pill.active {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--colorAccent);
+            border-color: rgba(16, 185, 129, 0.35);
+        }
+
+        .step-pill .step-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--colorBorder);
+            color: var(--colorTextMuted);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step-pill.active .step-num {
+            background: var(--colorAccent);
+            color: #fff;
+        }
+
+        .step-pill.done .step-num::after {
+            content: '✓';
+        }
+
+        .step-pill.done {
+            opacity: 0.5;
+        }
+
+        .step-connector {
+            width: 2rem;
+            height: 2px;
+            background: var(--colorBorder);
+        }
+
+        /* Step 1 — Service Selection */
+        .booking-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem 0;
+        }
+
+        .step-section {
+            display: none;
+        }
+
+        .step-section.active {
+            display: block;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .service-card {
+            background: var(--colorSurface);
+            border: 2px solid var(--colorBorder);
+            border-radius: 1rem;
+            padding: 1.5rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--colorAccent), var(--colorPrimary));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .service-card:hover {
+            border-color: var(--colorAccent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card.selected {
+            border-color: var(--colorAccent);
+            background: rgba(16, 185, 129, 0.07);
+        }
+
+        .service-card.selected::before {
+            transform: scaleX(1);
+        }
+
+        .service-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--colorPrimary);
+            margin-bottom: 0.35rem;
+            line-height: 1.3;
+        }
+
+        .service-duration {
+            font-size: 0.78rem;
+            color: var(--colorAccent);
+            font-weight: 600;
+        }
+
+        .service-selected-check {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--colorAccent);
+            color: white;
+            font-size: 0.75rem;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-card.selected .service-selected-check {
+            display: flex;
+        }
+
+        /* Step 2 — Personal Details */
+        .booking-form-card {
+            max-width: 560px;
+            margin: 1.5rem auto 0;
+            background: var(--colorSurface);
+            border: 1px solid var(--colorBorder);
+            border-radius: 1.25rem;
+            padding: 2.5rem;
+        }
+
+        .selected-service-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.75rem;
+            font-size: 0.9rem;
+            color: var(--colorText);
+        }
+
+        .selected-service-badge .badge-icon {
+            font-size: 1.4rem;
+        }
+
+        .change-service-btn {
+            background: none;
+            border: none;
+            color: var(--colorAccent);
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: auto;
+            font-weight: 600;
+            padding: 0;
+        }
+
+        .change-service-btn:hover {
+            text-decoration: underline;
+        }
+
+        .success-screen {
+            text-align: center;
+            padding: 3rem 1rem;
+            display: none;
+        }
+
+        .success-screen.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounceIn 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            60% {
+                transform: scale(1.15);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-screen h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            color: var(--colorPrimary);
+            margin-bottom: 0.75rem;
+        }
+
+        .success-screen p {
+            color: var(--colorTextMuted);
+            line-height: 1.7;
+        }
+
+        .success-screen .back-btn {
+            margin-top: 2rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            .services-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .booking-form-card {
+                padding: 1.5rem;
+            }
+
+            .booking-hero h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="booking-page">
+
+    <!-- Nav -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="logo">
+                <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="36" height="36" rx="10" fill="#0f172a" />
+                    <ellipse cx="18" cy="28" rx="9" ry="3.5" fill="#10b981" opacity="0.4" />
+                    <ellipse cx="18" cy="27" rx="9" ry="3.5" fill="#10b981" opacity="0.7" />
+                    <line x1="18" y1="27" x2="18" y2="13" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+                    <path d="M18 18 Q12 14 13 8 Q17 10 18 16" fill="#10b981" opacity="0.85" />
+                    <path d="M18 15 Q24 11 23 5 Q19 7 18 13" fill="#10b981" />
+                </svg>
+                Live Wealth
+            </a>
+            <div class="nav-links">
+                <a href="/" class="btn btn-secondary" style="text-decoration:none;">← Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="booking-hero">
+        <p style="color: var(--colorAccent); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.05em;">LIVE WEALTH
+            · APPOINTMENT BOOKING</p>
+        <h1>📅 Book an Appointment</h1>
+        <p>Choose a service and schedule a 30-minute session with our expert advisors.</p>
+
+        <div class="booking-steps">
+            <div class="step-pill active" id="step-pill-1">
+                <span class="step-num">1</span> Select Service
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-pill" id="step-pill-2">
+                <span class="step-num">2</span> Your Details
+            </div>
+        </div>
+    </div>
+
+    <div class="booking-container">
+
+        <!-- Step 1: Service Selection -->
+        <div class="step-section active" id="step-1">
+            <h2 style="font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:700; margin-bottom:0.25rem;">What
+                can we help you with?</h2>
+            <p style="color:var(--colorTextMuted); font-size:0.9rem;">Select the service for your 30-minute appointment.
+            </p>
+
+            <div class="services-grid" id="services-grid">
+                <!-- Populated by JS -->
+            </div>
+
+            <div style="text-align:center; margin-top:2rem;">
+                <button class="btn btn-primary" id="next-btn" disabled style="padding: 0.9rem 3rem; font-size:1rem;">
+                    Continue →
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Personal Details -->
+        <div class="step-section" id="step-2">
+            <div class="booking-form-card">
+                <div class="selected-service-badge" id="selected-service-badge">
+                    <span class="badge-icon" id="badge-icon">📋</span>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;" id="badge-service-name">Service</div>
+                        <div style="font-size:0.78rem; color:var(--colorAccent);">30 mins</div>
+                    </div>
+                    <button class="change-service-btn" id="change-service-btn">Change</button>
+                </div>
+
+                <h3 style="font-family:'Outfit',sans-serif; font-size:1.15rem; font-weight:700; margin-bottom:1.25rem;">
+                    Your Details</h3>
+
+                <form id="booking-details-form">
+                    <div class="form-group">
+                        <label for="book-name">Full Name</label>
+                        <input type="text" id="book-name" required placeholder="Your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-email">Email Address</label>
+                        <input type="email" id="book-email" required placeholder="you@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-phone">Phone Number</label>
+                        <input type="tel" id="book-phone" required placeholder="+91 98765 43210" maxlength="15">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-time">Preferred Date & Time <span
+                                style="font-weight:400; color:var(--colorTextMuted);">(optional)</span></label>
+                        <input type="text" id="book-time" placeholder="e.g. Weekdays after 4 PM, 12 Mar">
+                    </div>
+                    <div class="form-error" id="book-error"></div>
+                    <button type="submit" class="btn btn-primary full-width" id="book-submit-btn"
+                        style="margin-top:0.5rem;">
+                        ✅ Confirm Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Screen -->
+        <div class="success-screen" id="success-screen">
+            <div class="success-icon">🎉</div>
+            <h2>Appointment Booked!</h2>
+            <p>Thank you! Our team will reach out to you shortly to confirm your <strong
+                    id="success-service-name"></strong> appointment.</p>
+            <p style="margin-top:0.5rem;">We look forward to speaking with you.</p>
+            <a href="/" class="btn btn-primary back-btn">← Back to Live Wealth</a>
+        </div>
+
+    </div>
+
+    <script type="module" src="./booking.js"></script>
+</body>
+
+</html>
