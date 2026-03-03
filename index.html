@@ -52,7 +52,8 @@
           management. Access your investments anytime, anywhere with our
           secure investor portal.</p>
         <button class="btn btn-primary" style="margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem 2rem;"
-          onclick="document.getElementById('nav-login-btn').click();">Start Your Journey Today</button>
+          onclick="document.getElementById('meeting-modal').classList.remove('hidden')">Start Your Journey
+          Today</button>
       </div>
       <div class="hero-graphic">
         <div class="glass-card decorative-card card-1">
@@ -358,6 +359,42 @@
           account? Log in</a>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Meeting Booking Modal -->
+  <div id="meeting-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <button class="modal-close" id="meeting-modal-close">&times;</button>
+      <div class="modal-header">
+        <div class="meeting-modal-icon">📅</div>
+        <h2>Book a Free 1-on-1 Meeting</h2>
+        <p>Speak directly with our <strong>Vice President</strong> to plan your investment journey. Fill in your details
+          and we'll get back to you to confirm the time.</p>
+      </div>
+      <form id="meeting-form">
+        <div class="form-group">
+          <label for="meeting-name">Full Name</label>
+          <input type="text" id="meeting-name" required placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="meeting-email">Email Address</label>
+          <input type="email" id="meeting-email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="meeting-phone">Phone Number</label>
+          <input type="tel" id="meeting-phone" required placeholder="+91 98765 43210" maxlength="15">
+        </div>
+        <div class="form-group">
+          <label for="meeting-time">Preferred Date &amp; Time <span
+              style="font-weight:400; color: var(--colorTextMuted);">(optional)</span></label>
+          <input type="text" id="meeting-time" placeholder="e.g. Weekday mornings, 10 Mar after 3 PM">
+        </div>
+        <div class="form-error" id="meeting-error"></div>
+        <div class="form-success" id="meeting-success"
+          style="color: var(--colorAccent); font-size: 0.875rem; margin-bottom: 1rem;"></div>
+        <button type="submit" class="btn btn-primary full-width" id="meeting-submit-btn">📅 Schedule My Meeting</button>
+      </form>
     </div>
   </div>
 
