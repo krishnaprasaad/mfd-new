@@ -366,6 +366,48 @@ document.addEventListener('DOMContentLoaded', () => {
     tabPortfolio.addEventListener('click', () => switchTab('portfolio'));
     tabExplore.addEventListener('click', () => switchTab('explore'));
 
+    // --- Contact Form ---
+    const contactForm = document.getElementById('contact-form');
+    const contactError = document.getElementById('contact-error');
+    const contactSuccess = document.getElementById('contact-success');
+
+    const handleContactSubmit = async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('contact-name').value.trim();
+        const email = document.getElementById('contact-email').value.trim();
+        const phone = document.getElementById('contact-phone').value.trim();
+        const message = document.getElementById('contact-message').value.trim();
+
+        contactError.textContent = '';
+        contactSuccess.textContent = '';
+
+        const submitBtn = document.getElementById('contact-submit-btn');
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, message })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                contactSuccess.textContent = '✅ ' + data.message;
+                contactForm.reset();
+            } else {
+                contactError.textContent = data.error || 'Submission failed. Please try again.';
+            }
+        } catch (err) {
+            contactError.textContent = 'Network error. Please try again.';
+        } finally {
+            submitBtn.textContent = 'Send Message';
+            submitBtn.disabled = false;
+        }
+    };
+
+    if (contactForm) contactForm.addEventListener('submit', handleContactSubmit);
+
     // --- On Load Check Session ---
     const checkSession = async () => {
         try {

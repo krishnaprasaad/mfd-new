@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import portfolioRoutes from './routes/portfolio.js';
+import contactRoutes from './routes/contact.js';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.get('/api/health', (req, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/contact', contactRoutes);
 
 // --- Local dev server only ---
 if (process.env.NODE_ENV !== 'production') {
