@@ -428,6 +428,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Meeting Booking Modal ---
+    const meetingModal = document.getElementById('meeting-modal');
+    const meetingForm = document.getElementById('meeting-form');
+    const meetingError = document.getElementById('meeting-error');
+    const meetingSuccess = document.getElementById('meeting-success');
+
+    document.getElementById('meeting-modal-close')?.addEventListener('click', () => {
+        meetingModal.classList.add('hidden');
+    });
+    meetingModal?.addEventListener('click', (e) => {
+        if (e.target === meetingModal) meetingModal.classList.add('hidden');
+    });
+
+    meetingForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('meeting-name').value.trim();
+        const email = document.getElementById('meeting-email').value.trim();
+        const phone = document.getElementById('meeting-phone').value.trim();
+        const preferredTime = document.getElementById('meeting-time').value.trim();
+
+        meetingError.textContent = '';
+        meetingSuccess.textContent = '';
+
+        const submitBtn = document.getElementById('meeting-submit-btn');
+        submitBtn.textContent = 'Booking...';
+        submitBtn.disabled = true;
+
+        try {
+            const response = await fetch('/api/meeting', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, phone, preferredTime })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                meetingSuccess.textContent = '✅ ' + data.message;
+                meetingForm.reset();
+                setTimeout(() => meetingModal.classList.add('hidden'), 4000);
+            } else {
+                meetingError.textContent = data.error || 'Booking failed. Please try again.';
+            }
+        } catch (err) {
+            meetingError.textContent = 'Network error. Please try again.';
+        } finally {
+            submitBtn.textContent = '📅 Schedule My Meeting';
+            submitBtn.disabled = false;
+        }
+    });
+
     // --- On Load Check Session ---
     const checkSession = async () => {
         try {
