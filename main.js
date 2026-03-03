@@ -408,6 +408,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (contactForm) contactForm.addEventListener('submit', handleContactSubmit);
 
+    // --- Privacy Policy Modal ---
+    const privacyModal = document.getElementById('privacy-modal');
+    const privacyLink = document.getElementById('privacy-policy-link');
+    const privacyClose = document.getElementById('privacy-modal-close');
+
+    if (privacyLink) {
+        privacyLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            privacyModal.classList.remove('hidden');
+        });
+    }
+    if (privacyClose) {
+        privacyClose.addEventListener('click', () => privacyModal.classList.add('hidden'));
+    }
+    if (privacyModal) {
+        privacyModal.addEventListener('click', (e) => {
+            if (e.target === privacyModal) privacyModal.classList.add('hidden');
+        });
+    }
+
     // --- On Load Check Session ---
     const checkSession = async () => {
         try {
