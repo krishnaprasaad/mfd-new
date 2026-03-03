@@ -81,20 +81,14 @@ document.getElementById('booking-details-form').addEventListener('submit', async
     submitBtn.disabled = true;
 
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-
         const response = await fetch('/api/meeting', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 serviceType: selectedService.name,
                 name, email, phone, preferredTime
-            }),
-            signal: controller.signal
+            })
         });
-
-        clearTimeout(timeoutId);
 
         const data = await response.json();
 
@@ -108,11 +102,7 @@ document.getElementById('booking-details-form').addEventListener('submit', async
             bookError.textContent = data.error || 'Booking failed. Please try again.';
         }
     } catch (err) {
-        if (err.name === 'AbortError') {
-            bookError.textContent = 'Request timed out. The server may be unavailable — please try again in a moment.';
-        } else {
-            bookError.textContent = 'Network error. Please check your connection and try again.';
-        }
+        bookError.textContent = 'Network error. Please try again.';
     } finally {
         submitBtn.textContent = '✅ Confirm Appointment';
         submitBtn.disabled = false;
