@@ -9,7 +9,7 @@
     "dev": "npm run dev:backend & npm run dev:frontend",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "npm run build && node server/index.js"
+    "start": "npm run build && node server/start.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
