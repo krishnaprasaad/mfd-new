@@ -10,13 +10,14 @@ if (!cached) {
 export async function connectDB() {
     if (cached.conn) return cached.conn;
 
-    if (!process.env.MONGODB_URI) {
-        throw new Error('MONGODB_URI environment variable is not set!');
+    const uri = process.env.MONGODB_URI || process.env.mongodb_vercel_MONGODB_URI;
+    if (!uri) {
+        throw new Error('MONGODB_URI or mongodb_vercel_MONGODB_URI environment variable is not set!');
     }
 
     if (!cached.promise) {
         console.log('🔌 Connecting to MongoDB...');
-        cached.promise = mongoose.connect(process.env.MONGODB_URI, {
+        cached.promise = mongoose.connect(uri, {
             bufferCommands: false,
             serverSelectionTimeoutMS: 10000,
         }).then(mongooseInstance => {
