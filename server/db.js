@@ -9,12 +9,24 @@ if (!cached) {
 export async function connectDB() {
     if (cached.conn) return cached.conn;
 
+    if (!process.env.MONGODB_URI) {
+        throw new Error('MONGODB_URI environment variable is not set!');
+    }
+
     if (!cached.promise) {
+        console.log('🔌 Connecting to MongoDB...');
         cached.promise = mongoose.connect(process.env.MONGODB_URI, {
             bufferCommands: false,
+            serverSelectionTimeoutMS: 10000,
+        }).catch((err) => {
+            // Clear the cached promise on failure so the next request retries
+            cached.promise = null;
+            console.error('❌ MongoDB connection failed:', err.message);
+            throw err;
         });
     }
 
     cached.conn = await cached.promise;
+    console.log('✅ MongoDB connected');
     return cached.conn;
 }
