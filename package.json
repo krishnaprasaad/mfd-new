@@ -8,6 +8,7 @@
     "dev:backend": "nodemon server/index.js",
     "dev": "npm run dev:backend & npm run dev:frontend",
     "build": "vite build",
+    "build:frontend": "vite build",
     "preview": "vite preview",
     "start": "npm run build && node server/start.js"
   },
