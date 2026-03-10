@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { attachDatabasePool } from '@vercel/functions';
 
 let cached = global.mongoose;
 
@@ -18,6 +19,15 @@ export async function connectDB() {
         cached.promise = mongoose.connect(process.env.MONGODB_URI, {
             bufferCommands: false,
             serverSelectionTimeoutMS: 10000,
+        }).then(mongooseInstance => {
+            try {
+                const client = mongooseInstance.connection.getClient();
+                attachDatabasePool(client);
+                console.log('✅ Attached database pool to Vercel Functions middleware');
+            } catch (poolErr) {
+                console.warn('⚠️ Could not attach database pool (local environment?):', poolErr.message);
+            }
+            return mongooseInstance;
         }).catch((err) => {
             // Clear the cached promise on failure so the next request retries
             cached.promise = null;

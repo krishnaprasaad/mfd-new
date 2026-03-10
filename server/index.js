@@ -8,13 +8,18 @@ import contactRoutes from './routes/contact.js';
 import meetingRoutes from './routes/meeting.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { connectDB } from './db.js';
 
 dotenv.config();
 
 export const app = express();
 
 // CORS configuration
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:8888'];
+const allowedOrigins = [
+    'http://localhost:5173', 
+    'http://localhost:8888',
+    'https://liveinvestments.club'
+];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
@@ -28,6 +33,20 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
+// Connect to MongoDB before handling API requests (specifically for Vercel serverless)
+app.use(async (req, res, next) => {
+    // Only try to connect for API routes to save execution time on static files if any
+    if (req.path.startsWith('/api')) {
+        try {
+            await connectDB();
+        } catch (err) {
+            console.error('❌ Database connection failed in middleware:', err);
+            return res.status(500).json({ error: 'Database connection failed' });
+        }
+    }
+    next();
+});
 
 // API routes
 app.get('/api/health', (req, res) => {
