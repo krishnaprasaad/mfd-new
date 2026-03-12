@@ -15,6 +15,7 @@ export default defineConfig({
             input: {
                 main: resolve(__dirname, 'index.html'),
                 booking: resolve(__dirname, 'booking.html'),
+                signup: resolve(__dirname, 'signup.html'),
             }
         }
     }
