@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.textContent = '';
         loginForm.classList.remove('hidden');
         signupForm.classList.add('hidden');
-        document.getElementById('modal-title').textContent = 'Investor Portal';
+        document.getElementById('modal-title').textContent = 'Login';
         document.getElementById('modal-subtitle').textContent = 'Please log in to view your portfolio.';
         document.getElementById('show-signup').classList.remove('hidden');
         document.getElementById('show-login').classList.add('hidden');
@@ -494,4 +494,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize view
     checkSession();
+
+    // Check query params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('login') === 'true') {
+        showLoginModal();
+    }
 });

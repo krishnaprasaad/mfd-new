@@ -1,13 +1,12 @@
 const SERVICES = [
-    { icon: '🛡️', name: 'Insurance Claims', duration: '30 mins' },
-    { icon: '👤', name: 'Individual Insurance Planning', duration: '30 mins' },
-    { icon: '🏢', name: 'Corporate Insurance Planning', duration: '30 mins' },
-    { icon: '🤝', name: 'Business Associate', duration: '30 mins' },
     { icon: '📊', name: 'Financial Planning', duration: '30 mins' },
     { icon: '💹', name: 'Mutual Fund Investment Planning', duration: '30 mins' },
     { icon: '📜', name: 'Transmission of Shares & Mutual Funds / Demat', duration: '30 mins' },
     { icon: '🏦', name: 'Bonds / FD / NCD (Fixed Income)', duration: '30 mins' },
     { icon: '🏛️', name: 'National Pension Scheme (NPS)', duration: '30 mins' },
+    { icon: '🛡️', name: 'Insurance Claims', duration: '30 mins' },
+    { icon: '👤', name: 'Individual Insurance Planning', duration: '30 mins' },
+    { icon: '🏢', name: 'Corporate Insurance Planning', duration: '30 mins' },
 ];
 
 let selectedService = null;
