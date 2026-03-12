@@ -83,6 +83,42 @@
             font-size: 3.5rem;
             margin-bottom: 1rem;
         }
+
+        /* --- Multi-step styles --- */
+        .step-section {
+            display: none;
+        }
+
+        .step-section.active {
+            display: block;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--colorBorder);
+            transition: background 0.3s;
+        }
+
+        .dot.active {
+            background: var(--colorAccent);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .step-btns {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
     </style>
 </head>
 
@@ -111,35 +147,64 @@
             <div id="signup-form-content">
                 <div class="signup-header">
                     <h1>Start Your Journey</h1>
-                    <p>Complete your application to open an account with Live Wealth.</p>
+                    <p id="step-helper-text">Step 1 of 2: Basic Information</p>
+                </div>
+
+                <div class="step-indicator">
+                    <div class="dot active" id="dot-1"></div>
+                    <div class="dot" id="dot-2"></div>
                 </div>
 
                 <form id="signup-page-form">
-                    <div class="form-group">
-                        <label for="reg-name">Full Name</label>
-                        <input type="text" id="reg-name" required placeholder="As per PAN card">
+                    <!-- Step 1: Personal Details -->
+                    <div class="step-section active" id="step-1">
+                        <div class="form-group">
+                            <label for="reg-name">Full Name</label>
+                            <input type="text" id="reg-name" required placeholder="As per PAN card">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-email">Email Address</label>
+                            <input type="email" id="reg-email" required placeholder="you@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-phone">Mobile Number</label>
+                            <input type="tel" id="reg-phone" required placeholder="+91 98765 43210" maxlength="15">
+                        </div>
+                        <div class="step-btns">
+                            <button type="button" class="btn btn-primary full-width" id="next-step-btn">
+                                Next Step →
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-email">Email Address</label>
-                        <input type="email" id="reg-email" required placeholder="you@example.com">
+
+                    <!-- Step 2: KYC Details -->
+                    <div class="step-section" id="step-2">
+                        <div class="form-group">
+                            <label for="reg-pan">PAN Card Number</label>
+                            <input type="text" id="reg-pan" required placeholder="ABCDE1234F"
+                                style="text-transform: uppercase;" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-dob">Date of Birth</label>
+                            <input type="date" id="reg-dob" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-pan-copy">PAN Card Copy (Image or PDF)</label>
+                            <input type="file" id="reg-pan-copy" accept="image/*,.pdf" required>
+                            <p style="font-size: 0.75rem; color: var(--colorTextMuted); margin-top: 0.25rem;">Max size: 5MB</p>
+                        </div>
+                        <div class="step-btns">
+                            <button type="button" class="btn btn-secondary" id="prev-step-btn" style="flex: 1;">
+                                ← Back
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="reg-submit-btn" style="flex: 2;">
+                                Create Account
+                            </button>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="reg-phone">Mobile Number</label>
-                        <input type="tel" id="reg-phone" required placeholder="+91 98765 43210" maxlength="15">
-                    </div>
-                    <div class="form-group">
-                        <label for="reg-pan">PAN Card Number</label>
-                        <input type="text" id="reg-pan" required placeholder="ABCDE1234F"
-                            style="text-transform: uppercase;" maxlength="10">
-                    </div>
-                    <div class="form-group">
-                        <label for="reg-dob">Date of Birth</label>
-                        <input type="date" id="reg-dob" required>
-                    </div>
+
                     <div class="form-error" id="reg-error"></div>
-                    <button type="submit" class="btn btn-primary full-width" id="reg-submit-btn" style="margin-top:1rem;">
-                        Create Account
-                    </button>
+
                     <p style="text-align:center; font-size:0.85rem; color:var(--colorTextMuted); margin-top:1.5rem;">
                         Already have an account? <a href="/?login=true" style="color:var(--colorAccent); text-decoration:none; font-weight:600;">Log in</a>
                     </p>

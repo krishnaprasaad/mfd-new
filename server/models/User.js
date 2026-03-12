@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     phone: { type: String },
     dob: { type: String, required: true },
     passwordHash: { type: String, required: true },
+    panCopy: { type: String }, // Path to the uploaded PAN card copy
 }, { timestamps: true });
 
 // Avoid model recompilation in serverless environments

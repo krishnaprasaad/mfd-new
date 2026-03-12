@@ -3,14 +3,32 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { connectDB } from '../db.js';
 import User from '../models/User.js';
+import multer from 'multer';
+import path from 'path';
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'server/uploads');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+});
 
 const router = express.Router();
 
 // SIGNUP
-router.post('/signup', async (req, res) => {
+router.post('/signup', upload.single('panCopy'), async (req, res) => {
     try {
         await connectDB();
         const { pan, name, email, phone, dob } = req.body;
+        const panCopy = req.file ? req.file.path : null;
 
         if (!pan || !name || !email || !phone || !dob) {
             return res.status(400).json({ error: 'All fields are required.' });
@@ -41,6 +59,7 @@ router.post('/signup', async (req, res) => {
             phone,
             dob,
             passwordHash: hashedPassword,
+            panCopy,
         });
         await newUser.save();
 
