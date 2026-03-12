@@ -1,4 +1,5 @@
 const SERVICES = [
+    { icon: '📈', name: 'Equity Investments', duration: '30 mins' },
     { icon: '📊', name: 'Financial Planning', duration: '30 mins' },
     { icon: '💹', name: 'Mutual Fund Investment Planning', duration: '30 mins' },
     { icon: '📜', name: 'Transmission of Shares & Mutual Funds / Demat', duration: '30 mins' },
