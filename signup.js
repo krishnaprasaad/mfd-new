@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const dot2 = document.getElementById('dot-2');
     const helperText = document.getElementById('step-helper-text');
 
+    // --- Helper Functions ---
+    const validateEmail = (email) => {
+        return String(email)
+            .toLowerCase()
+            .match(
+                /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+    };
+
     // --- Step Navigation ---
     nextBtn.addEventListener('click', () => {
         // Simple client-side validation for Step 1
@@ -23,6 +32,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!name || !email || !phone) {
             signupError.textContent = 'Please fill in all details in Step 1.';
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            signupError.textContent = 'Please enter a valid email address.';
             return;
         }
 
@@ -55,6 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!panCopyFile) {
             signupError.textContent = 'Please upload a copy of your PAN card.';
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            signupError.textContent = 'Please enter a valid email address.';
             return;
         }
 
