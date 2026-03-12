@@ -51,6 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const phone = document.getElementById('reg-phone').value.trim();
         const pan = document.getElementById('reg-pan').value.trim().toUpperCase();
         const dob = document.getElementById('reg-dob').value;
+        const panCopyFile = document.getElementById('reg-pan-copy').files[0];
+
+        if (!panCopyFile) {
+            signupError.textContent = 'Please upload a copy of your PAN card.';
+            return;
+        }
 
         signupError.textContent = '';
 
@@ -59,10 +65,18 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         try {
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('email', email);
+            formData.append('phone', phone);
+            formData.append('pan', pan);
+            formData.append('dob', dob);
+            formData.append('panCopy', panCopyFile);
+
             const response = await fetch('/api/auth/signup', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, phone, pan, dob })
+                // Note: fetch automatically sets multipart/form-data boundary with FormData
+                body: formData
             });
 
             const data = await response.json();
