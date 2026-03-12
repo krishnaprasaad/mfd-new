@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 connectDB()
     .then(() => {
         app.listen(PORT, '0.0.0.0', () => {
-            console.log(`✅ Live Wealth server running on port ${PORT}`);
+            console.log(`✅ Live Investments server running on port ${PORT}`);
         });
     })
     .catch((err) => {

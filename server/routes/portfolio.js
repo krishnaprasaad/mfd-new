@@ -66,7 +66,7 @@ router.get('/explore', async (req, res) => {
     const mockFundsList = [
         {
             id: "f-001",
-            name: "Live Wealth Future Tech Fund",
+            name: "Live Investments Future Tech Fund",
             category: "Thematic - Tech",
             risk: "High",
             minSip: 1000,
@@ -76,7 +76,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-002",
-            name: "Live Wealth Core Equity Advantage",
+            name: "Live Investments Core Equity Advantage",
             category: "Large Cap",
             risk: "Moderate",
             minSip: 500,
@@ -86,7 +86,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-003",
-            name: "Live Wealth Green Energy Focus",
+            name: "Live Investments Green Energy Focus",
             category: "Sectoral - ESG",
             risk: "High",
             minSip: 1000,
@@ -96,7 +96,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-004",
-            name: "Live Wealth Dynamic Bond Fund",
+            name: "Live Investments Dynamic Bond Fund",
             category: "Debt - Dynamic",
             risk: "Low",
             minSip: 5000,
@@ -106,7 +106,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-005",
-            name: "Live Wealth Midcap Outperform",
+            name: "Live Investments Midcap Outperform",
             category: "Mid Cap",
             risk: "High",
             minSip: 1000,
@@ -116,7 +116,7 @@ router.get('/explore', async (req, res) => {
         },
         {
             id: "f-006",
-            name: "Live Wealth Balanced Advantage",
+            name: "Live Investments Balanced Advantage",
             category: "Hybrid",
             risk: "Moderate",
             minSip: 1000,

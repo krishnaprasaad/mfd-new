@@ -50,7 +50,7 @@ app.use(async (req, res, next) => {
 
 // API routes
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', message: 'Live Wealth API is running' });
+    res.json({ status: 'ok', message: 'Live Investments API is running' });
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
@@ -77,6 +77,6 @@ if (process.env.NODE_ENV === 'production') {
 if (process.env.NODE_ENV !== 'production') {
     const PORT = process.env.PORT || 3000;
     app.listen(PORT, () => {
-        console.log(`Live Wealth server running on http://localhost:${PORT}`);
+        console.log(`Live Investments server running on http://localhost:${PORT}`);
     });
 }
