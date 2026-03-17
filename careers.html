@@ -30,9 +30,9 @@
     rel="stylesheet">
 </head>
 
-<body>
+<body style="background-color: var(--colorBg);">
   <!-- Navigation -->
-  <nav class="navbar">
+  <nav class="navbar" style="border-bottom: 1px solid var(--colorBorder); background: #fff;">
     <div class="nav-container">
       <a href="/" class="logo">
         <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,134 +51,134 @@
     </div>
   </nav>
 
-  <main style="padding-top: 80px;">
+  <main style="padding: 0; min-height: 100vh;">
+    
     <!-- Hero Section -->
-    <section class="hero" style="min-height: 40vh; align-items: center;">
-      <div class="hero-content" style="text-align: center; max-width: 800px; margin: 0 auto; padding-top: 2rem;">
-        <h1 style="font-size: clamp(2.5rem, 5vw, 4rem);">Join Our Team</h1>
-        <p style="font-size: 1.25rem; color: var(--colorTextMuted); margin-top: 1rem;">Help us build the future of goal-based investing. We are looking for driven, ethical, and passionate professionals.</p>
+    <header class="careers-hero-standard">
+      <h1>Grow With Us</h1>
+      <p>Join a dynamic team dedicated to empowering clients with transparent and strategic mutual fund distribution.</p>
+    </header>
+
+    <div class="careers-container-standard">
+      
+      <div class="section-label-standard">Open Roles</div>
+      
+      <!-- Job Listings -->
+      <div class="card-standard">
+        <div class="job-header-standard">
+          <h2 class="job-title-standard">Presales Associate</h2>
+        </div>
+        <div class="job-meta-standard">
+          <span>Erode, TN</span>
+          <span>Full-time</span>
+          <span>On-site</span>
+        </div>
+        <p class="job-desc-standard">
+          Provide crucial support to our advisory team by conducting market research, organizing client proposal data, and streamlining the front-end sales pipeline to ensure a premium investor experience.
+        </p>
+        <div class="job-reqs-standard">
+          <strong>Requirements:</strong> Graduate Degree &bull; 0-2 Years Experience
+        </div>
       </div>
-    </section>
 
-
-
-    <!-- Open Positions & Form -->
-    <section class="contact-section" style="padding-top: 0; padding-bottom: 6rem;">
-      <div class="contact-container" style="align-items: flex-start;">
+      <div class="section-label-standard" style="margin-top: 4rem;">Submit Application</div>
+      
+      <!-- Application Form -->
+      <div class="card-standard">
+        <h2 class="form-title-standard">Apply Now</h2>
+        <p class="form-subtitle-standard">Fill out the form below. Our HR team typically responds within 48 hours.</p>
         
-        <!-- Openings List -->
-        <div class="contact-info">
-          <h2>Open Positions</h2>
-          <p style="margin-bottom: 2rem;">Discover the perfect role to accelerate your career.</p>
+        <form id="careers-form">
           
-          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <!-- Presales Associate -->
-            <div class="glass-card" style="padding: 1.5rem;">
-              <h3 style="color: var(--colorAccent); margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif;">Presales Associate</h3>
-              <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin: 0 0 1rem 0;">Erode, Tamil Nadu • Full-time • On-site</p>
-              <p style="font-size: 0.95rem; line-height: 1.5;">This is a full-time, on-site Presales Associate role. You will be responsible for supporting the sales team by conducting thorough market research, preparing client proposals, and understanding client requirements.</p>
-              <ul style="margin-top: 1rem; padding-left: 1.5rem; font-size: 0.95rem;">
-                <li><strong>Qualification:</strong> Graduate</li>
-                <li><strong>Experience:</strong> 0-2 Years</li>
-              </ul>
+          <div class="form-group-standard">
+            <label class="label-standard" for="position">Position</label>
+            <select class="input-standard" id="position" name="position" required style="cursor: pointer; appearance: none; background: url('data:image/svg+xml;utf8,<svg fill=%22none%22 stroke=%22currentColor%22 viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22></path></svg>') no-repeat right 1rem center / 1.2rem; background-color: #fff;">
+              <option value="" disabled selected>Select Role...</option>
+              <option value="Presales Associate">Presales Associate (Erode)</option>
+            </select>
+          </div>
+
+          <div class="form-row-standard">
+            <div class="form-group-standard">
+              <label class="label-standard" for="fullName">Full Name</label>
+              <input class="input-standard" type="text" id="fullName" name="fullName" required placeholder="John Doe">
+            </div>
+            <div class="form-group-standard">
+              <label class="label-standard" for="email">Email</label>
+              <input class="input-standard" type="email" id="email" name="email" required placeholder="john@example.com">
             </div>
           </div>
-        </div>
 
-        <!-- Application Form -->
-        <div class="contact-form-card glass-card">
-          <h3>Submit Your Application</h3>
-          <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin-bottom: 1.5rem;">Fill out the form below and our HR team will get back to you.</p>
+          <div class="form-row-standard">
+            <div class="form-group-standard">
+              <label class="label-standard" for="phone">Phone Number</label>
+              <input class="input-standard" type="tel" id="phone" name="phone" required placeholder="+91 98765 43210" maxlength="15">
+            </div>
+            <div class="form-group-standard">
+              <label class="label-standard" for="location">Location (City)</label>
+              <input class="input-standard" type="text" id="location" name="location" required placeholder="E.g., Erode, Tamil Nadu">
+            </div>
+          </div>
+
+          <div class="form-group-standard">
+            <label class="label-standard" for="portfolioLink">LinkedIn / Portfolio URL (Optional)</label>
+            <input class="input-standard" type="text" id="portfolioLink" name="portfolioLink" placeholder="linkedin.com/in/johndoe">
+          </div>
+
+          <div class="form-group-standard">
+            <label class="label-standard" for="message">Cover Letter / Message</label>
+            <textarea class="input-standard" id="message" name="message" required placeholder="Briefly explain why you're a strong fit..." rows="4" style="resize: vertical;"></textarea>
+          </div>
+
+          <div class="form-group-standard">
+            <label class="label-standard" for="resume">Resume / CV</label>
+            <input class="input-standard" style="padding: 1.5rem; text-align: center; border: 2px dashed var(--colorBorder); cursor: pointer;" type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+          </div>
           
-          <form id="careers-form">
-            <div class="form-group">
-              <label for="fullName">Full Name</label>
-              <input type="text" id="fullName" name="fullName" required placeholder="Your full name">
-            </div>
-            
-            <div class="form-row">
-              <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required placeholder="you@example.com">
-              </div>
-              <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required placeholder="+91 98765 43210" maxlength="15">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="location">Location (City)</label>
-              <input type="text" id="location" name="location" required placeholder="Where do you live?">
-            </div>
-
-            <div class="form-group">
-              <label for="position">Position Applying For</label>
-              <select id="position" name="position" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(30, 41, 59, 0.5); color: var(--colorText); font-family: inherit; font-size: 1rem; transition: all 0.3s ease; outline: none; appearance: none;">
-                <option value="" disabled selected>Select a position</option>
-                <option value="Presales Associate">Presales Associate (Erode)</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="portfolioLink">LinkedIn / Portfolio URL <span style="font-weight:400; color: var(--colorTextMuted);">(optional)</span></label>
-              <input type="text" id="portfolioLink" name="portfolioLink" placeholder="linkedin.com/in/yourprofile or yourwebsite.com">
-            </div>
-
-            <div class="form-group">
-              <label for="resume">Upload Resume (PDF/DOCX)</label>
-              <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required style="padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(30, 41, 59, 0.5); color: var(--colorText); width: 100%;">
-            </div>
-
-            <div class="form-group">
-              <label for="message">Cover Letter / Message</label>
-              <textarea id="message" name="message" required placeholder="Tell us why you'd be a great fit for Live Investments..." rows="5"></textarea>
-            </div>
-            
-            <div class="form-error" id="careers-error"></div>
-            <div class="form-success" id="careers-success" style="color: var(--success, #10b981); font-size: 0.875rem; margin-bottom: 1rem;"></div>
-            
-            <button type="submit" class="btn btn-primary full-width" id="careers-submit-btn">Submit Application</button>
-          </form>
-        </div>
+          <div class="form-error" id="careers-error" style="font-weight: 500;"></div>
+          <div class="form-success" id="careers-success" style="color: var(--colorSuccess); font-weight: 500; text-align: center; margin-bottom: 1rem;"></div>
+          
+          <button type="submit" class="btn-standard" id="careers-submit-btn">Submit Application</button>
+        </form>
       </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-      <div class="footer-content">
-        <div class="footer-brand">
-          <a href="/" class="logo">
-             <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="36" height="36" rx="10" fill="#0f172a" />
-              <ellipse cx="18" cy="28" rx="9" ry="3.5" fill="#10b981" opacity="0.4" />
-              <ellipse cx="18" cy="27" rx="9" ry="3.5" fill="#10b981" opacity="0.7" />
-              <line x1="18" y1="27" x2="18" y2="13" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
-              <path d="M18 18 Q12 14 13 8 Q17 10 18 16" fill="#10b981" opacity="0.85" />
-              <path d="M18 15 Q24 11 23 5 Q19 7 18 13" fill="#10b981" />
-            </svg>
-            Live Investments
-          </a>
-          <p>Your trusted partner in mutual fund investments and long-term portfolio growth.</p>
-        </div>
-        <div class="footer-links">
-          <h4>Legal</h4>
-          <a href="/index.html#privacy">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Disclosures</a>
-        </div>
-        <div class="footer-contact">
-          <h4>Contact Us</h4>
-          <p>Email: <a href="mailto:info@liveinvestments.in" style="color: var(--colorAccent); text-decoration: none;">info@liveinvestments.in</a></p>
-          <p>Phone: <a href="tel:+919342642277" style="color: inherit; text-decoration: none;">+91 93426 42277</a></p>
-          <p>Address: 9/1, Palaniappa Street,<br>Erode, 638012</p>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 Live Investments. AMFI Registered Mutual Fund Distributor | ARN-300748</p>
-      </div>
-    </footer>
+      
+    </div>
   </main>
+
+  <!-- Footer -->
+  <footer class="site-footer" style="margin-top: 0; background-color: var(--colorSurface); border-top: 1px solid var(--colorBorder);">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <a href="/" class="logo">
+           <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="36" height="36" rx="10" fill="#0f172a" />
+            <ellipse cx="18" cy="28" rx="9" ry="3.5" fill="#10b981" opacity="0.4" />
+            <ellipse cx="18" cy="27" rx="9" ry="3.5" fill="#10b981" opacity="0.7" />
+            <line x1="18" y1="27" x2="18" y2="13" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+            <path d="M18 18 Q12 14 13 8 Q17 10 18 16" fill="#10b981" opacity="0.85" />
+            <path d="M18 15 Q24 11 23 5 Q19 7 18 13" fill="#10b981" />
+          </svg>
+          Live Investments
+        </a>
+        <p>Your trusted partner in mutual fund investments and long-term portfolio growth.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <a href="/index.html#privacy">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Disclosures</a>
+      </div>
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>Email: <a href="mailto:info@liveinvestments.in" style="color: var(--colorAccent); text-decoration: none;">info@liveinvestments.in</a></p>
+        <p>Phone: <a href="tel:+919342642277" style="color: inherit; text-decoration: none;">+91 93426 42277</a></p>
+        <p>Address: 9/1, Palaniappa Street,<br>Erode, 638012</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Live Investments. AMFI Registered Mutual Fund Distributor | ARN-300748</p>
+    </div>
+  </footer>
 
   <script type="module" src="./careers.js"></script>
 </body>
