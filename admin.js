@@ -82,12 +82,12 @@ async function loadDashboardData() {
         const appTable = document.getElementById('table-applications');
         appTable.innerHTML = data.applications.length ? data.applications.map(app => `
             <tr>
-                <td><strong>\${app.salutation} \${app.fullName}</strong></td>
-                <td>\${app.position}</td>
-                <td>\${app.location}</td>
-                <td><span class="admin-badge">\${app.status}</span></td>
-                <td>\${new Date(app.createdAt).toLocaleDateString()}</td>
-                <td><a href="/\${app.resume}" target="_blank" style="color: var(--colorAccent);">View Resume</a></td>
+                <td><strong>${app.salutation} ${app.fullName}</strong></td>
+                <td>${app.position}</td>
+                <td>${app.location}</td>
+                <td><span class="admin-badge">${app.status}</span></td>
+                <td>${new Date(app.createdAt).toLocaleDateString()}</td>
+                <td><a href="/${app.resume}" target="_blank" style="color: var(--colorAccent);">View Resume</a></td>
             </tr>
         `).join('') : '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No applications found.</td></tr>';
 
@@ -95,11 +95,11 @@ async function loadDashboardData() {
         const meetingTable = document.getElementById('table-meetings');
         meetingTable.innerHTML = data.meetings.length ? data.meetings.map(m => `
             <tr>
-                <td>\${m.name}</td>
-                <td>\${m.email}</td>
-                <td>\${m.phone}</td>
-                <td>\${m.preferredTime || 'Not specified'}</td>
-                <td>\${new Date(m.createdAt).toLocaleDateString()}</td>
+                <td>${m.name}</td>
+                <td>${m.email}</td>
+                <td>${m.phone}</td>
+                <td>${m.preferredTime || 'Not specified'}</td>
+                <td>${new Date(m.createdAt).toLocaleDateString()}</td>
             </tr>
         `).join('') : '<tr><td colspan="5" style="text-align:center; padding: 2rem;">No meetings found.</td></tr>';
 
@@ -107,10 +107,10 @@ async function loadDashboardData() {
         const contactTable = document.getElementById('table-contacts');
         contactTable.innerHTML = data.contacts.length ? data.contacts.map(c => `
             <tr>
-                <td>\${c.name}</td>
-                <td>\${c.email}</td>
-                <td>\${c.message.substring(0, 50)}...</td>
-                <td>\${new Date(c.createdAt).toLocaleDateString()}</td>
+                <td>${c.name}</td>
+                <td>${c.email}</td>
+                <td>${c.message.substring(0, 50)}...</td>
+                <td>${new Date(c.createdAt).toLocaleDateString()}</td>
             </tr>
         `).join('') : '<tr><td colspan="4" style="text-align:center; padding: 2rem;">No inquiries found.</td></tr>';
 
@@ -118,11 +118,11 @@ async function loadDashboardData() {
         const userTable = document.getElementById('table-users');
         userTable.innerHTML = data.users.length ? data.users.map(u => `
             <tr>
-                <td>\${u.name}</td>
-                <td>\${u.email}</td>
-                <td>\${u.pan}</td>
-                <td>\${u.phone}</td>
-                <td>\${new Date(u.createdAt).toLocaleDateString()}</td>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td>${u.pan}</td>
+                <td>${u.phone}</td>
+                <td>${new Date(u.createdAt).toLocaleDateString()}</td>
             </tr>
         `).join('') : '<tr><td colspan="5" style="text-align:center; padding: 2rem;">No registered users found.</td></tr>';
 
