@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import portfolioRoutes from './routes/portfolio.js';
 import contactRoutes from './routes/contact.js';
 import meetingRoutes from './routes/meeting.js';
+import careersRoutes from './routes/careers.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDB } from './db.js';
@@ -56,6 +57,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/meeting', meetingRoutes);
+app.use('/api/careers', careersRoutes);
 
 // Serve static frontend in production
 const __filename = fileURLToPath(import.meta.url);

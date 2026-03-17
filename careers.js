@@ -1,0 +1,79 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const careersForm = document.getElementById('careers-form');
+    const submitBtn = document.getElementById('careers-submit-btn');
+    const errorDiv = document.getElementById('careers-error');
+    const successDiv = document.getElementById('careers-success');
+
+    if (careersForm) {
+        careersForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset messages
+            errorDiv.textContent = '';
+            successDiv.textContent = '';
+            
+            // Get form values
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const position = document.getElementById('position').value;
+            const portfolioLink = document.getElementById('portfolioLink')?.value.trim() || '';
+            const message = document.getElementById('message').value.trim();
+            
+            // Basic frontend validation
+            if (!fullName || !email || !phone || !position || !message) {
+                errorDiv.textContent = 'Please fill out all required fields.';
+                return;
+            }
+
+            try {
+                // Determine API URL based on environment (development vs production)
+                // Use relative path which works for both local dev server and Vercel/Netlify if mounted on same domain
+                const apiUrl = '/api/careers/apply';
+                
+                // Set loading state
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.textContent = 'Submitting...';
+                submitBtn.disabled = true;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fullName,
+                        email,
+                        phone,
+                        position,
+                        portfolioLink,
+                        message
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to submit application');
+                }
+
+                // Success
+                successDiv.textContent = data.message || 'Application submitted successfully! We will be in touch soon.';
+                careersForm.reset();
+                
+                // Clear success message after 5 seconds
+                setTimeout(() => {
+                    successDiv.textContent = '';
+                }, 5000);
+
+            } catch (error) {
+                console.error('Application Error:', error);
+                errorDiv.textContent = error.message;
+            } finally {
+                // Restore button state
+                submitBtn.textContent = 'Submit Application';
+                submitBtn.disabled = false;
+            }
+        });
+    }
+});
