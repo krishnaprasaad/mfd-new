@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Live Investments</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body style="background: var(--colorBg); min-height: 100vh;">
+    <nav class="navbar" style="background: #fff; border-bottom: 1px solid var(--colorBorder);">
+        <div class="nav-container">
+            <div class="logo">
+                <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="36" height="36" rx="10" fill="#0f172a" />
+                    <ellipse cx="18" cy="28" rx="9" ry="3.5" fill="#10b981" opacity="0.4" />
+                    <ellipse cx="18" cy="27" rx="9" ry="3.5" fill="#10b981" opacity="0.7" />
+                    <line x1="18" y1="27" x2="18" y2="13" stroke="#10b981" stroke-width="2" stroke-linecap="round" />
+                    <path d="M18 18 Q12 14 13 8 Q17 10 18 16" fill="#10b981" opacity="0.85" />
+                    <path d="M18 15 Q24 11 23 5 Q19 7 18 13" fill="#10b981" />
+                </svg>
+                Admin Dashboard
+            </div>
+            <div class="nav-links">
+                <span id="admin-user-display" style="font-size: 0.9rem; color: var(--colorTextMuted); font-weight: 600;">Admin</span>
+                <button class="btn btn-secondary" id="admin-logout-btn">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="admin-dashboard-container">
+        <div class="mobile-notice">
+            <strong>Mobile Tip:</strong> Rotate your phone to landscape mode for a better view of the data tables.
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h1 style="font-family: var(--fontOutfit); margin-bottom: 0.5rem;">Database Overview</h1>
+            <p style="color: var(--colorTextMuted);">Manage and review all data stored in <strong>atlas-erin-cloud</strong> cluster.</p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="admin-stats-grid">
+            <div class="admin-stat-card">
+                <div style="color: var(--colorTextMuted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Job Applications</div>
+                <div class="admin-stat-number" id="count-applications">-</div>
+                <a href="#applications-section" style="font-size: 0.8rem; color: var(--colorAccent); text-decoration: none;">View All ↓</a>
+            </div>
+            <div class="admin-stat-card">
+                <div style="color: var(--colorTextMuted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Meeting Requests</div>
+                <div class="admin-stat-number" id="count-meetings">-</div>
+                <a href="#meetings-section" style="font-size: 0.8rem; color: var(--colorAccent); text-decoration: none;">View All ↓</a>
+            </div>
+            <div class="admin-stat-card">
+                <div style="color: var(--colorTextMuted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Contact Messages</div>
+                <div class="admin-stat-number" id="count-contacts">-</div>
+                <a href="#contacts-section" style="font-size: 0.8rem; color: var(--colorAccent); text-decoration: none;">View All ↓</a>
+            </div>
+            <div class="admin-stat-card">
+                <div style="color: var(--colorTextMuted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase;">Registered Users</div>
+                <div class="admin-stat-number" id="count-users">-</div>
+                <a href="#users-section" style="font-size: 0.8rem; color: var(--colorAccent); text-decoration: none;">View All ↓</a>
+            </div>
+        </div>
+
+        <!-- Applications Table -->
+        <div id="applications-section" style="margin-bottom: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Recent Job Applications</h2>
+            <div class="admin-table-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Resume</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-applications">
+                        <tr><td colspan="6" style="text-align:center; padding: 2rem; color: var(--colorTextMuted);">Loading applications...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Meetings Table -->
+        <div id="meetings-section" style="margin-bottom: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Meeting Bookings</h2>
+            <div class="admin-table-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Preferred Time</th>
+                            <th>Request Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-meetings">
+                        <tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--colorTextMuted);">Loading meetings...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Contacts Table -->
+        <div id="contacts-section" style="margin-bottom: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Contact Inquiries</h2>
+            <div class="admin-table-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject/Message</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-contacts">
+                        <tr><td colspan="4" style="text-align:center; padding: 2rem; color: var(--colorTextMuted);">Loading inquiries...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div id="users-section" style="margin-bottom: 4rem;">
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.25rem;">Registered Investors</h2>
+            <div class="admin-table-card">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>PAN</th>
+                            <th>Phone</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-users">
+                        <tr><td colspan="5" style="text-align:center; padding: 2rem; color: var(--colorTextMuted);">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>

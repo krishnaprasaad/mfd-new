@@ -1675,3 +1675,174 @@ textarea:focus {
     gap: 0;
   }
 }
+
+/* ===== Admin Portal Styles ===== */
+.admin-login-body {
+  background: var(--colorBg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.admin-login-card {
+  background: #fff;
+  padding: 3rem;
+  border-radius: var(--radiusLg);
+  box-shadow: var(--shadowLg);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.admin-dashboard-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.admin-stat-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: var(--radiusMd);
+  box-shadow: var(--shadowMd);
+  border-top: 4px solid var(--colorAccent);
+}
+
+.admin-stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--colorPrimary);
+  margin: 0.5rem 0;
+}
+
+.admin-table-card {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: var(--radiusMd);
+  box-shadow: var(--shadowMd);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th, .admin-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+.admin-table th {
+  background: var(--colorBg);
+  font-weight: 700;
+  color: var(--colorPrimary);
+}
+
+.admin-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--colorBg);
+}
+
+.admin-badge.success { background: rgba(16, 185, 129, 0.1); color: var(--colorAccent); }
+
+.mobile-notice {
+  display: none;
+  background: #fff9db;
+  padding: 1rem;
+  border-radius: var(--radiusMd);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+@media (max-width: 768px) {
+  .mobile-notice { display: block; }
+}
+
+/* ===== Global Mobile Responsiveness Polishing ===== */
+@media (max-width: 768px) {
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.75rem; }
+  
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 2rem 0;
+    gap: 2rem;
+  }
+  
+  .hero-content p {
+    margin: 1rem auto;
+  }
+  
+  .hero-graphic {
+    height: 300px;
+  }
+  
+  .features, .goals-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navbar .nav-links {
+    gap: 0.5rem;
+  }
+  
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  /* Careers Card Mobile Fixes */
+  .careers-hero-standard {
+    padding: 3rem 1.5rem;
+  }
+  
+  .careers-container-standard {
+    margin-top: -2rem;
+  }
+  
+  .card-standard {
+    padding: 1.5rem;
+  }
+  
+  .job-header-standard {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .job-meta-standard {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+  
+  .form-row-standard {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Admin Dashboard Mobile Fixes */
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-login-card {
+    padding: 2rem 1.5rem;
+    max-width: 90%;
+  }
+}
