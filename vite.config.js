@@ -16,6 +16,7 @@ export default defineConfig({
                 main: resolve(__dirname, 'index.html'),
                 booking: resolve(__dirname, 'booking.html'),
                 signup: resolve(__dirname, 'signup.html'),
+                careers: resolve(__dirname, 'careers.html'),
             }
         }
     }
