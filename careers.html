@@ -52,17 +52,18 @@
   </nav>
 
   <main style="padding: 0; min-height: 100vh;">
-    
+
     <!-- Hero Section -->
     <header class="careers-hero-standard">
       <h1>Grow With Us</h1>
-      <p>Join a dynamic team dedicated to empowering clients with transparent and strategic mutual fund distribution.</p>
+      <p>Join a dynamic team dedicated to empowering clients with transparent and strategic mutual fund distribution.
+      </p>
     </header>
 
     <div class="careers-container-standard">
-      
+
       <div class="section-label-standard">Open Roles</div>
-      
+
       <!-- Job Listings -->
       <div class="card-standard">
         <div class="job-header-standard">
@@ -74,7 +75,8 @@
           <span>On-site</span>
         </div>
         <p class="job-desc-standard">
-          Provide crucial support to our advisory team by conducting market research, organizing client proposal data, and streamlining the front-end sales pipeline to ensure a premium investor experience.
+          Provide crucial support to our advisory team by conducting market research, organizing client proposal data,
+          and streamlining the front-end sales pipeline to ensure a premium investor experience.
         </p>
         <div class="job-reqs-standard">
           <strong>Requirements:</strong> Graduate Degree &bull; 0-2 Years Experience
@@ -82,17 +84,18 @@
       </div>
 
       <div class="section-label-standard" style="margin-top: 4rem;">Submit Application</div>
-      
+
       <!-- Application Form -->
       <div class="card-standard">
         <h2 class="form-title-standard">Apply Now</h2>
-        <p class="form-subtitle-standard">Fill out the form below. Our HR team typically responds within 48 hours.</p>
-        
+        <p class="form-subtitle-standard">Fill out the form below. Our HR team typically responds within 2-7 days.</p>
+
         <form id="careers-form">
-          
+
           <div class="form-group-standard">
             <label class="label-standard" for="position">Position</label>
-            <select class="input-standard" id="position" name="position" required style="cursor: pointer; appearance: none; background: url('data:image/svg+xml;utf8,<svg fill=%22none%22 stroke=%22currentColor%22 viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22></path></svg>') no-repeat right 1rem center / 1.2rem; background-color: #fff;">
+            <select class="input-standard" id="position" name="position" required
+              style="cursor: pointer; appearance: none; background: url('data:image/svg+xml;utf8,<svg fill=%22none%22 stroke=%22currentColor%22 viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22></path></svg>') no-repeat right 1rem center / 1.2rem; background-color: #fff;">
               <option value="" disabled selected>Select Role...</option>
               <option value="Presales Associate">Presales Associate (Erode)</option>
             </select>
@@ -100,57 +103,93 @@
 
           <div class="form-row-standard">
             <div class="form-group-standard">
+              <label class="label-standard" for="salutation">Salutation</label>
+              <select class="input-standard" id="salutation" name="salutation" required
+                style="cursor: pointer; appearance: none; background: url('data:image/svg+xml;utf8,<svg fill=%22none%22 stroke=%22currentColor%22 viewBox=%220 0 24 24%22 xmlns=%22http://www.w3.org/2000/svg%22><path stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%222%22 d=%22M19 9l-7 7-7-7%22></path></svg>') no-repeat right 1rem center / 1.2rem; background-color: #fff;">
+                <option value="" disabled selected>Select...</option>
+                <option value="Mr.">Mr.</option>
+                <option value="Ms.">Ms.</option>
+                <option value="Mrs.">Mrs.</option>
+                <option value="Dr.">Dr.</option>
+              </select>
+            </div>
+
+            <div class="form-group-standard">
               <label class="label-standard" for="fullName">Full Name</label>
               <input class="input-standard" type="text" id="fullName" name="fullName" required placeholder="John Doe">
             </div>
+
             <div class="form-group-standard">
               <label class="label-standard" for="email">Email</label>
-              <input class="input-standard" type="email" id="email" name="email" required placeholder="john@example.com">
+              <input class="input-standard" type="email" id="email" name="email" required
+                placeholder="john@example.com">
             </div>
           </div>
 
           <div class="form-row-standard">
             <div class="form-group-standard">
               <label class="label-standard" for="phone">Phone Number</label>
-              <input class="input-standard" type="tel" id="phone" name="phone" required placeholder="+91 98765 43210" maxlength="15">
+              <input class="input-standard" type="tel" id="phone" name="phone" required placeholder="+91 98765 43210"
+                maxlength="15">
             </div>
             <div class="form-group-standard">
               <label class="label-standard" for="location">Location (City)</label>
-              <input class="input-standard" type="text" id="location" name="location" required placeholder="E.g., Erode, Tamil Nadu">
+              <input class="input-standard" type="text" id="location" name="location" required
+                placeholder="E.g., Erode, Tamil Nadu">
             </div>
           </div>
 
           <div class="form-group-standard">
             <label class="label-standard" for="portfolioLink">LinkedIn / Portfolio URL (Optional)</label>
-            <input class="input-standard" type="text" id="portfolioLink" name="portfolioLink" placeholder="linkedin.com/in/johndoe">
+            <input class="input-standard" type="text" id="portfolioLink" name="portfolioLink"
+              placeholder="linkedin.com/in/johndoe">
           </div>
 
           <div class="form-group-standard">
             <label class="label-standard" for="message">Cover Letter / Message</label>
-            <textarea class="input-standard" id="message" name="message" required placeholder="Briefly explain why you're a strong fit..." rows="4" style="resize: vertical;"></textarea>
+            <textarea class="input-standard" id="message" name="message" required
+              placeholder="Briefly explain why you're a strong fit..." rows="4" style="resize: vertical;"></textarea>
           </div>
 
           <div class="form-group-standard">
             <label class="label-standard" for="resume">Resume / CV</label>
-            <input class="input-standard" style="padding: 1.5rem; text-align: center; border: 2px dashed var(--colorBorder); cursor: pointer;" type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+            <input class="input-standard"
+              style="padding: 1.5rem; text-align: center; border: 2px dashed var(--colorBorder); cursor: pointer;"
+              type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
           </div>
-          
+
+          <div class="form-group-standard"
+            style="display: flex; gap: 1rem; align-items: flex-start; background: var(--colorBg); padding: 1.5rem; border-radius: var(--radiusMd); border: 1px solid var(--colorBorder);">
+            <input type="checkbox" id="consent" name="consent" required
+              style="margin-top: 0.25rem; transform: scale(1.2); cursor: pointer;">
+            <label for="consent"
+              style="font-size: 0.85rem; color: var(--colorTextMuted); line-height: 1.6; cursor: pointer;">
+              I agree and acknowledge that pursuant to my application for a career opportunity, I am required to provide
+              certain information and documents including personal and/or sensitive personal information such as name,
+              contact details, etc. or such other personal details as may be sought from time to time ("Personal
+              Information"), which is collected by us during the application process for the purpose of evaluating my
+              candidature for employment within the Bank ("Purpose").
+            </label>
+          </div>
+
           <div class="form-error" id="careers-error" style="font-weight: 500;"></div>
-          <div class="form-success" id="careers-success" style="color: var(--colorSuccess); font-weight: 500; text-align: center; margin-bottom: 1rem;"></div>
-          
+          <div class="form-success" id="careers-success"
+            style="color: var(--colorSuccess); font-weight: 500; text-align: center; margin-bottom: 1rem;"></div>
+
           <button type="submit" class="btn-standard" id="careers-submit-btn">Submit Application</button>
         </form>
       </div>
-      
+
     </div>
   </main>
 
   <!-- Footer -->
-  <footer class="site-footer" style="margin-top: 0; background-color: var(--colorSurface); border-top: 1px solid var(--colorBorder);">
+  <footer class="site-footer"
+    style="margin-top: 0; background-color: var(--colorSurface); border-top: 1px solid var(--colorBorder);">
     <div class="footer-content">
       <div class="footer-brand">
         <a href="/" class="logo">
-           <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg class="logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="36" height="36" rx="10" fill="#0f172a" />
             <ellipse cx="18" cy="28" rx="9" ry="3.5" fill="#10b981" opacity="0.4" />
             <ellipse cx="18" cy="27" rx="9" ry="3.5" fill="#10b981" opacity="0.7" />
@@ -170,7 +209,8 @@
       </div>
       <div class="footer-contact">
         <h4>Contact Us</h4>
-        <p>Email: <a href="mailto:info@liveinvestments.in" style="color: var(--colorAccent); text-decoration: none;">info@liveinvestments.in</a></p>
+        <p>Email: <a href="mailto:info@liveinvestments.in"
+            style="color: var(--colorAccent); text-decoration: none;">info@liveinvestments.in</a></p>
         <p>Phone: <a href="tel:+919342642277" style="color: inherit; text-decoration: none;">+91 93426 42277</a></p>
         <p>Address: 9/1, Palaniappa Street,<br>Erode, 638012</p>
       </div>
@@ -182,4 +222,5 @@
 
   <script type="module" src="./careers.js"></script>
 </body>
+
 </html>

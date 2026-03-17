@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const applicationSchema = new mongoose.Schema({
+    salutation: {
+        type: String,
+        required: true,
+        enum: ['Mr.', 'Ms.', 'Mrs.', 'Dr.']
+    },
     fullName: {
         type: String,
         required: true,
@@ -40,6 +45,16 @@ const applicationSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true
+    },
+    consent: {
+        type: Boolean,
+        required: true,
+        validate: {
+            validator: function(v) {
+                return v === true;
+            },
+            message: 'You must provide consent for data collection.'
+        }
     },
     status: {
         type: String,

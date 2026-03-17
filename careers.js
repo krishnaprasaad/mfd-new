@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             successDiv.textContent = '';
             
             // Get form values for validation
+            const salutation = document.getElementById('salutation').value;
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
@@ -20,10 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const location = document.getElementById('location').value.trim();
             const resumeInput = document.getElementById('resume');
             const message = document.getElementById('message').value.trim();
+            const consent = document.getElementById('consent').checked;
             
             // Basic frontend validation
-            if (!fullName || !email || !phone || !position || !location || !message || !resumeInput.files[0]) {
+            if (!salutation || !fullName || !email || !phone || !position || !location || !message || !resumeInput.files[0]) {
                 errorDiv.textContent = 'Please fill out all required fields and upload your resume.';
+                return;
+            }
+
+            if (!consent) {
+                errorDiv.textContent = 'You must agree to the data collection policy to submit your application.';
                 return;
             }
 

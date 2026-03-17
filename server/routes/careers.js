@@ -37,16 +37,22 @@ const router = express.Router();
 // Apply for a job
 router.post('/apply', upload.single('resume'), async (req, res) => {
     try {
-        const { fullName, email, phone, position, location, portfolioLink, message } = req.body;
+        const { salutation, fullName, email, phone, position, location, portfolioLink, message, consent } = req.body;
         const resume = req.file ? req.file.path : null;
 
         // Basic validation
-        if (!fullName || !email || !phone || !position || !location || !message || !resume) {
+        if (!salutation || !fullName || !email || !phone || !position || !location || !message || !resume) {
             return res.status(400).json({ error: 'Please provide all required fields, including your resume.' });
+        }
+        
+        // Consent checking
+        if (consent !== 'on' && consent !== true && consent !== 'true') {
+            return res.status(400).json({ error: 'You must provide consent for data collection.' });
         }
 
         // Create new application
         const application = new Application({
+            salutation,
             fullName,
             email,
             phone,
@@ -54,7 +60,8 @@ router.post('/apply', upload.single('resume'), async (req, res) => {
             location,
             resume,
             portfolioLink,
-            message
+            message,
+            consent: true
         });
 
 
