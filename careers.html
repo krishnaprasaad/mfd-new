@@ -72,25 +72,15 @@
           <p style="margin-bottom: 2rem;">Discover the perfect role to accelerate your career.</p>
           
           <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-            <!-- Job 1 -->
+            <!-- Presales Associate -->
             <div class="glass-card" style="padding: 1.5rem;">
-              <h3 style="color: var(--colorAccent); margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif;">Financial Advisor</h3>
-              <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin: 0 0 1rem 0;">Erode, Tamil Nadu • Full-time</p>
-              <p style="font-size: 0.95rem; line-height: 1.5;">Guide clients through their investment journeys. NISM VA certification required.</p>
-            </div>
-
-            <!-- Job 2 -->
-            <div class="glass-card" style="padding: 1.5rem;">
-              <h3 style="color: var(--colorAccent); margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif;">Client Relationship Manager</h3>
-              <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin: 0 0 1rem 0;">Erode, Tamil Nadu • Full-time</p>
-              <p style="font-size: 0.95rem; line-height: 1.5;">Ensure a seamless onboarding and portfolio monitoring experience for our VIP clients.</p>
-            </div>
-            
-            <!-- General Application -->
-            <div class="glass-card" style="padding: 1.5rem;">
-              <h3 style="color: var(--colorAccent); margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif;">General Application</h3>
-              <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin: 0 0 1rem 0;">Erode / Remote</p>
-              <p style="font-size: 0.95rem; line-height: 1.5;">Don't see a perfect fit? We're always looking for exceptional talent to join our operations and tech teams.</p>
+              <h3 style="color: var(--colorAccent); margin: 0 0 0.5rem 0; font-family: 'Outfit', sans-serif;">Presales Associate</h3>
+              <p style="color: var(--colorTextMuted); font-size: 0.9rem; margin: 0 0 1rem 0;">Erode, Tamil Nadu • Full-time • On-site</p>
+              <p style="font-size: 0.95rem; line-height: 1.5;">This is a full-time, on-site Presales Associate role. You will be responsible for supporting the sales team by conducting thorough market research, preparing client proposals, and understanding client requirements.</p>
+              <ul style="margin-top: 1rem; padding-left: 1.5rem; font-size: 0.95rem;">
+                <li><strong>Qualification:</strong> Graduate</li>
+                <li><strong>Experience:</strong> 0-2 Years</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -118,20 +108,26 @@
             </div>
 
             <div class="form-group">
+              <label for="location">Location (City)</label>
+              <input type="text" id="location" name="location" required placeholder="Where do you live?">
+            </div>
+
+            <div class="form-group">
               <label for="position">Position Applying For</label>
               <select id="position" name="position" required style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(30, 41, 59, 0.5); color: var(--colorText); font-family: inherit; font-size: 1rem; transition: all 0.3s ease; outline: none; appearance: none;">
                 <option value="" disabled selected>Select a position</option>
-                <option value="Financial Advisor">Financial Advisor</option>
-                <option value="Client Relationship Manager">Client Relationship Manager</option>
-                <option value="Operations Associate">Operations Associate</option>
-                <option value="Marketing / Content Creator">Marketing / Content Creator</option>
-                <option value="General Application">General Application</option>
+                <option value="Presales Associate">Presales Associate (Erode)</option>
               </select>
             </div>
 
             <div class="form-group">
               <label for="portfolioLink">LinkedIn / Portfolio URL <span style="font-weight:400; color: var(--colorTextMuted);">(optional)</span></label>
               <input type="url" id="portfolioLink" name="portfolioLink" placeholder="https://linkedin.com/in/yourprofile">
+            </div>
+
+            <div class="form-group">
+              <label for="resume">Upload Resume (PDF/DOCX)</label>
+              <input type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required style="padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); background: rgba(30, 41, 59, 0.5); color: var(--colorText); width: 100%;">
             </div>
 
             <div class="form-group">

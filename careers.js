@@ -12,17 +12,18 @@ document.addEventListener('DOMContentLoaded', () => {
             errorDiv.textContent = '';
             successDiv.textContent = '';
             
-            // Get form values
+            // Get form values for validation
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const position = document.getElementById('position').value;
-            const portfolioLink = document.getElementById('portfolioLink')?.value.trim() || '';
+            const location = document.getElementById('location').value.trim();
+            const resumeInput = document.getElementById('resume');
             const message = document.getElementById('message').value.trim();
             
             // Basic frontend validation
-            if (!fullName || !email || !phone || !position || !message) {
-                errorDiv.textContent = 'Please fill out all required fields.';
+            if (!fullName || !email || !phone || !position || !location || !message || !resumeInput.files[0]) {
+                errorDiv.textContent = 'Please fill out all required fields and upload your resume.';
                 return;
             }
 
@@ -36,19 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitBtn.textContent = 'Submitting...';
                 submitBtn.disabled = true;
 
+                // Create FormData payload
+                const formData = new FormData(careersForm);
+
                 const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        fullName,
-                        email,
-                        phone,
-                        position,
-                        portfolioLink,
-                        message
-                    })
+                    body: formData
                 });
 
                 const data = await response.json();

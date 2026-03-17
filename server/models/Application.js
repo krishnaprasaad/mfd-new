@@ -23,6 +23,15 @@ const applicationSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    location: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    resume: {
+        type: String,
+        required: true
+    },
     portfolioLink: {
         type: String,
         trim: true
