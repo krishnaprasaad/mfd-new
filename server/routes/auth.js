@@ -96,6 +96,33 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Username and password are required.' });
         }
 
+        // Check for secure demo login
+        if (process.env.DEMO_USERNAME && process.env.DEMO_PASSWORD && 
+            username === process.env.DEMO_USERNAME && password === process.env.DEMO_PASSWORD) {
+            
+            const token = jwt.sign(
+                { userId: 'demo-user', role: 'demo' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            res.cookie('auth_token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 3600000
+            });
+
+            return res.json({
+                message: 'Demo login successful',
+                user: {
+                    name: 'Demo Investor',
+                    email: 'demo@liveinvestments.in',
+                    pan: 'DEMOPAN123'
+                }
+            });
+        }
+
         // Find user by PAN or Email
         const user = await User.findOne({
             $or: [
@@ -159,6 +186,17 @@ router.get('/me', async (req, res) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Handle demo user session
+        if (decoded.role === 'demo') {
+            return res.json({
+                user: {
+                    name: 'Demo Investor',
+                    email: 'demo@liveinvestments.in',
+                    pan: 'DEMOPAN123'
+                }
+            });
+        }
 
         await connectDB();
         const user = await User.findById(decoded.userId).select('name email pan');
