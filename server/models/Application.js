@@ -35,7 +35,19 @@ const applicationSchema = new mongoose.Schema({
     },
     resume: {
         type: String,
-        required: true
+        required: false // No longer strictly a path
+    },
+    resumeData: {
+        type: String, // Store as Base64 for simplicity
+        required: false
+    },
+    resumeMimeType: {
+        type: String,
+        required: false
+    },
+    resumeOriginalName: {
+        type: String,
+        required: false
     },
     portfolioLink: {
         type: String,

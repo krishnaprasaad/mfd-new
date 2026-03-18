@@ -95,9 +95,23 @@ router.post('/logout', (req, res) => {
 router.get('/resume/:id', adminAuth, async (req, res) => {
     try {
         const application = await Application.findById(req.params.id);
-        if (!application || !application.resume) {
+        if (!application) {
+            return res.status(404).json({ error: 'Application not found' });
+        }
+
+        // If resume is stored as Base64/Buffer in DB (New method)
+        if (application.resumeData) {
+            const buffer = Buffer.from(application.resumeData, 'base64');
+            res.setHeader('Content-Type', application.resumeMimeType || 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename="${application.resumeOriginalName || 'resume.pdf'}"`);
+            return res.send(buffer);
+        }
+
+        // Fallback for old records using file paths (Legacy method)
+        if (!application.resume) {
             return res.status(404).json({ error: 'Resume not found' });
         }
+
         res.sendFile(application.resume, (err) => {
             if (err) {
                 console.error('Error sending file:', err);

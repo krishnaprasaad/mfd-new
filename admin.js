@@ -82,14 +82,14 @@ async function loadDashboardData() {
         const appTable = document.getElementById('table-applications');
         appTable.innerHTML = data.applications.length ? data.applications.map(app => `
             <tr>
-                <td><strong>${app.salutation} ${app.fullName}</strong></td>
+                <td><strong>${app.salutation ? app.salutation + ' ' : ''}${app.fullName}</strong></td>
                 <td><a href="mailto:${app.email}" style="color: inherit; text-decoration: none;">${app.email}</a></td>
                 <td><a href="tel:${app.phone}" style="color: inherit; text-decoration: none;">${app.phone}</a></td>
                 <td>${app.position}</td>
                 <td>${app.location}</td>
                 <td><span class="admin-badge">${app.status}</span></td>
                 <td>${new Date(app.createdAt).toLocaleDateString()}</td>
-                <td><a href="/api/admin/resume/${app._id}" target="_blank" style="color: var(--colorAccent);">View Resume</a></td>
+                <td><a href="/api/admin/resume/${app._id}" target="_blank" style="color: var(--colorAccent); font-weight: 600;">View Resume</a></td>
             </tr>
         `).join('') : '<tr><td colspan="8" style="text-align:center; padding: 2rem;">No applications found.</td></tr>';
 
@@ -110,8 +110,9 @@ async function loadDashboardData() {
         contactTable.innerHTML = data.contacts.length ? data.contacts.map(c => `
             <tr>
                 <td>${c.name}</td>
-                <td>${c.email}</td>
-                <td>${c.message.substring(0, 50)}...</td>
+                <td><a href="mailto:${c.email}" style="color: inherit; text-decoration: none;">${c.email}</a></td>
+                <td><a href="tel:${c.phone}" style="color: inherit; text-decoration: none;">${c.phone}</a></td>
+                <td>${c.message.substring(0, 50)}${c.message.length > 50 ? '...' : ''}</td>
                 <td>${new Date(c.createdAt).toLocaleDateString()}</td>
             </tr>
         `).join('') : '<tr><td colspan="4" style="text-align:center; padding: 2rem;">No inquiries found.</td></tr>';

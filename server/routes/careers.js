@@ -39,9 +39,25 @@ router.post('/apply', upload.single('resume'), async (req, res) => {
     try {
         const { salutation, fullName, email, phone, position, location, portfolioLink, message, consent } = req.body;
         const resume = req.file ? req.file.path : null;
+        
+        // Read file into Base64 for persistence on stateless Vercel
+        let resumeData = null;
+        let resumeMimeType = null;
+        let resumeOriginalName = null;
+        
+        if (req.file) {
+            try {
+                const buffer = fs.readFileSync(req.file.path);
+                resumeData = buffer.toString('base64');
+                resumeMimeType = req.file.mimetype;
+                resumeOriginalName = req.file.originalname;
+            } catch (fsErr) {
+                console.error('Error reading uploaded file:', fsErr);
+            }
+        }
 
         // Basic validation
-        if (!salutation || !fullName || !email || !phone || !position || !location || !message || !resume) {
+        if (!salutation || !fullName || !email || !phone || !position || !location || !message || !resumeData) {
             return res.status(400).json({ error: 'Please provide all required fields, including your resume.' });
         }
         
@@ -59,6 +75,9 @@ router.post('/apply', upload.single('resume'), async (req, res) => {
             position,
             location,
             resume,
+            resumeData,
+            resumeMimeType,
+            resumeOriginalName,
             portfolioLink,
             message,
             consent: true
