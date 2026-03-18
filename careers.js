@@ -81,25 +81,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Global function to handle "Apply Now" clicks from job cards
 window.scrollToJob = (jobTitle) => {
-    const formSection = document.getElementById('careers-form');
+    const applySection = document.getElementById('apply-section');
     const positionSelect = document.getElementById('position');
     
-    if (formSection && positionSelect) {
-        // Find the option that matches the job title (roughly)
+    if (applySection && positionSelect) {
+        // Find the option that matches the job title
         for (let i = 0; i < positionSelect.options.length; i++) {
-            if (positionSelect.options[i].value.includes(jobTitle)) {
+            if (positionSelect.options[i].value.toLowerCase().includes(jobTitle.toLowerCase())) {
                 positionSelect.selectedIndex = i;
                 break;
             }
         }
         
-        // Smooth scroll to form
-        formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Smooth scroll to the top of the apply section with offset
+        const yOffset = -80; // Padding from top
+        const y = applySection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
         
         // Visual feedback on the select element
-        positionSelect.parentElement.style.animation = 'pulse 1s ease';
         setTimeout(() => {
-            positionSelect.parentElement.style.animation = '';
+            positionSelect.style.borderColor = 'var(--colorAccent)';
+            positionSelect.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.2)';
+            setTimeout(() => {
+                positionSelect.style.borderColor = '';
+                positionSelect.style.boxShadow = '';
+            }, 2000);
         }, 1000);
     }
 };
