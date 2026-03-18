@@ -2067,4 +2067,57 @@ textarea:focus {
     padding: 2rem 1.5rem;
     max-width: 90%;
   }
+
+  /* Investor Dashboard Mobile Fixes */
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .funds-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    padding: 0 1.5rem;
+  }
+
+  .investments-table {
+    min-width: 600px; /* force scrolling */
+  }
+
+  .dashboard-tabs {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tab-btn {
+    flex: 1 1 100%;
+    text-align: center;
+    padding: 0.75rem;
+  }
+
+  /* Modal Form Layouts */
+  .modal-content {
+    width: 95%;
+    padding: 2rem 1.5rem;
+    margin: 2rem auto;
+  }
+
+  /* Magic Section adjustments */
+  .magic-content-left h2 {
+    font-size: 2rem;
+  }
+
+  .magic-content-right {
+    min-width: 100%;
+  }
+
+  /* Fix overall main container padding on mobile */
+  main {
+    padding: 1.5rem 1rem 3rem;
+  }
 }
