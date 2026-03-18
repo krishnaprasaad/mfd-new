@@ -83,13 +83,15 @@ async function loadDashboardData() {
         appTable.innerHTML = data.applications.length ? data.applications.map(app => `
             <tr>
                 <td><strong>${app.salutation} ${app.fullName}</strong></td>
+                <td><a href="mailto:${app.email}" style="color: inherit; text-decoration: none;">${app.email}</a></td>
+                <td><a href="tel:${app.phone}" style="color: inherit; text-decoration: none;">${app.phone}</a></td>
                 <td>${app.position}</td>
                 <td>${app.location}</td>
                 <td><span class="admin-badge">${app.status}</span></td>
                 <td>${new Date(app.createdAt).toLocaleDateString()}</td>
-                <td><a href="/${app.resume}" target="_blank" style="color: var(--colorAccent);">View Resume</a></td>
+                <td><a href="/api/admin/resume/${app._id}" target="_blank" style="color: var(--colorAccent);">View Resume</a></td>
             </tr>
-        `).join('') : '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No applications found.</td></tr>';
+        `).join('') : '<tr><td colspan="8" style="text-align:center; padding: 2rem;">No applications found.</td></tr>';
 
         // Populate Meetings Table
         const meetingTable = document.getElementById('table-meetings');

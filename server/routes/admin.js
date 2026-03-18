@@ -91,4 +91,25 @@ router.post('/logout', (req, res) => {
     res.json({ message: 'Logged out successfully' });
 });
 
+// GET Resume by Application ID
+router.get('/resume/:id', adminAuth, async (req, res) => {
+    try {
+        const application = await Application.findById(req.params.id);
+        if (!application || !application.resume) {
+            return res.status(404).json({ error: 'Resume not found' });
+        }
+        res.sendFile(application.resume, (err) => {
+            if (err) {
+                console.error('Error sending file:', err);
+                if (!res.headersSent) {
+                    res.status(404).json({ error: 'File not found on server' });
+                }
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching resume:', err);
+        res.status(500).json({ error: 'Failed to fetch resume' });
+    }
+});
+
 export default router;
