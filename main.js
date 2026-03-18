@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const landingView = document.getElementById('landing-view');
     const dashboardView = document.getElementById('dashboard-view');
+    const orderView = document.getElementById('order-view');
+    const paymentView = document.getElementById('payment-view');
     const loginModal = document.getElementById('login-modal');
 
     const navLoginBtn = document.getElementById('nav-login-btn');
@@ -194,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="stat-value highlight">${fund.return3Yr}%</div>
                     </div>
                 </div>
-                <button class="btn btn-primary full-width" onclick="alert('Proceeding to invest in ${fund.name} (Simulated)')">Invest Now</button>
+                <button class="btn btn-primary full-width" onclick="proceedToInvest('${fund.id}', '${fund.name}', '${fund.category}', '${fund.risk}', ${fund.minSip})">Invest Now</button>
             `;
             exploreFundsGrid.appendChild(card);
         });
@@ -500,4 +502,100 @@ document.addEventListener('DOMContentLoaded', () => {
     if (urlParams.get('login') === 'true') {
         showLoginModal();
     }
+
+    // --- Checkout Flow Logic ---
+    let currentCheckoutFund = null;
+
+    window.proceedToInvest = (id, name, category, risk, minSip) => {
+        currentCheckoutFund = { id, name, category, risk, minSip };
+        
+        // Populate order view
+        document.getElementById('order-fund-name').textContent = name;
+        document.getElementById('order-fund-category').textContent = `${category} • ${risk} Risk`;
+        
+        const amountInput = document.getElementById('invest-amount');
+        amountInput.min = minSip;
+        amountInput.placeholder = `Min ₹${minSip}`;
+        document.getElementById('min-amount-hint').textContent = `Minimum investment: ₹${minSip}`;
+        
+        // Hide dashboard, show order view
+        dashboardView.classList.add('hidden');
+        dashboardView.classList.remove('active');
+        orderView.classList.remove('hidden');
+        orderView.classList.add('active');
+        window.scrollTo(0, 0);
+    };
+
+    const  orderBackBtn = document.getElementById('order-back-btn');
+    if (orderBackBtn) {
+        orderBackBtn.addEventListener('click', () => {
+            orderView.classList.add('hidden');
+            orderView.classList.remove('active');
+            dashboardView.classList.remove('hidden');
+            dashboardView.classList.add('active');
+        });
+    }
+
+    const orderForm = document.getElementById('order-form');
+    if (orderForm) {
+        orderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = document.getElementById('invest-amount').value;
+            
+            // Populate payment view
+            document.getElementById('payment-amount-display').textContent = `₹${parseInt(amount).toLocaleString('en-IN')}`;
+            
+            // Transition to payment view
+            orderView.classList.add('hidden');
+            orderView.classList.remove('active');
+            paymentView.classList.remove('hidden');
+            paymentView.classList.add('active');
+            window.scrollTo(0, 0);
+        });
+    }
+
+    const payBackBtn = document.getElementById('pay-back-btn');
+    if (payBackBtn) {
+        payBackBtn.addEventListener('click', () => {
+            paymentView.classList.add('hidden');
+            paymentView.classList.remove('active');
+            orderView.classList.remove('hidden');
+            orderView.classList.add('active');
+        });
+    }
+
+    const payConfirmBtn = document.getElementById('pay-confirm-btn');
+    if (payConfirmBtn) {
+        payConfirmBtn.addEventListener('click', () => {
+            const btnText = document.getElementById('pay-btn-text');
+            const spinner = document.getElementById('pay-spinner');
+            const method = document.querySelector('input[name="payMethod"]:checked').value;
+            
+            btnText.classList.add('hidden');
+            spinner.classList.remove('hidden');
+            payConfirmBtn.disabled = true;
+            payBackBtn.disabled = true;
+
+            // Simulate payment processing delay
+            setTimeout(() => {
+                alert(`Payment Successful! Simulated order for ${currentCheckoutFund.name} placed via ${method}.`);
+                
+                // Reset UI & State
+                btnText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                payConfirmBtn.disabled = false;
+                payBackBtn.disabled = false;
+                orderForm.reset();
+                currentCheckoutFund = null;
+                
+                // Return to Dashboard (Portfolio tab)
+                paymentView.classList.add('hidden');
+                paymentView.classList.remove('active');
+                dashboardView.classList.remove('hidden');
+                dashboardView.classList.add('active');
+                switchTab('portfolio');
+            }, 2500);
+        });
+    }
+
 });

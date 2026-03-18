@@ -58,63 +58,23 @@ router.get('/explore', async (req, res) => {
     const mockFundsList = [
         {
             id: "f-001",
-            name: "Live Investments Future Tech Fund",
-            category: "Thematic - Tech",
+            name: "Parag Parikh Flexi Cap Fund",
+            category: "Flexi Cap",
             risk: "High",
             minSip: 1000,
-            return1Yr: 42.5,
-            return3Yr: 28.4,
-            description: "Invests in high-growth technology companies focused on AI, robotics, and cloud computing globally."
+            return1Yr: 38.5,
+            return3Yr: 24.2,
+            description: "Invests across large, mid, and small cap stocks dynamically, with added exposure to international equities for better diversification."
         },
         {
             id: "f-002",
-            name: "Live Investments Core Equity Advantage",
-            category: "Large Cap",
-            risk: "Moderate",
+            name: "HDFC Flexi Cap Fund",
+            category: "Flexi Cap",
+            risk: "High",
             minSip: 500,
-            return1Yr: 21.2,
-            return3Yr: 15.8,
-            description: "A stable foundation for your portfolio, investing in top 100 blue-chip companies with proven track records."
-        },
-        {
-            id: "f-003",
-            name: "Live Investments Green Energy Focus",
-            category: "Sectoral - ESG",
-            risk: "High",
-            minSip: 1000,
-            return1Yr: 35.8,
-            return3Yr: 22.1,
-            description: "Capitalizes on the global transition to renewable energy and sustainable business practices."
-        },
-        {
-            id: "f-004",
-            name: "Live Investments Dynamic Bond Fund",
-            category: "Debt - Dynamic",
-            risk: "Low",
-            minSip: 5000,
-            return1Yr: 8.5,
-            return3Yr: 7.2,
-            description: "Actively managed debt portfolio adjusting duration based on interest rate outlook for consistent returns."
-        },
-        {
-            id: "f-005",
-            name: "Live Investments Midcap Outperform",
-            category: "Mid Cap",
-            risk: "High",
-            minSip: 1000,
-            return1Yr: 48.3,
-            return3Yr: 26.5,
-            description: "Targets tomorrow's leaders by investing in fast-growing mid-sized companies with strong scalability."
-        },
-        {
-            id: "f-006",
-            name: "Live Investments Balanced Advantage",
-            category: "Hybrid",
-            risk: "Moderate",
-            minSip: 1000,
-            return1Yr: 18.5,
-            return3Yr: 14.1,
-            description: "Automatically balances between equity and debt based on market valuations to optimize risk-adjusted returns."
+            return1Yr: 41.2,
+            return3Yr: 26.8,
+            description: "A well-diversified equity fund that invests across market capitalizations to optimize risk-adjusted returns over the long term."
         }
     ];
 

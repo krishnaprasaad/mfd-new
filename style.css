@@ -1758,6 +1758,146 @@ textarea:focus {
   }
 }
 
+/* ===== Checkout Flow Styles ===== */
+.checkout-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.checkout-card {
+  padding: 2.5rem;
+}
+
+@media (max-width: 600px) {
+  .checkout-card {
+    padding: 1.5rem;
+  }
+}
+
+.fund-summary {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+.fund-summary h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  color: var(--colorPrimary);
+  margin-bottom: 0.5rem;
+}
+
+.custom-radio-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.custom-radio {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.custom-radio span {
+  display: block;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid var(--colorBorder);
+  border-radius: var(--radiusMd);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.custom-radio input:checked + span {
+  border-color: var(--colorAccent);
+  background: rgba(16, 185, 129, 0.05);
+  color: var(--colorAccent);
+  font-weight: 600;
+}
+
+.payment-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: var(--radiusMd);
+  border: 1px solid var(--colorBorder);
+}
+
+@media (max-width: 600px) {
+  .payment-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+}
+
+.payment-method-box {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.2rem;
+  border: 2px solid var(--colorBorder);
+  border-radius: var(--radiusMd);
+  margin-bottom: 1rem;
+  cursor: pointer;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.payment-method-box:hover {
+  border-color: #cbd5e1;
+}
+
+.payment-method-box input {
+  margin-top: 5px;
+  margin-right: 15px;
+  accent-color: var(--colorAccent);
+  transform: scale(1.2);
+}
+
+.method-details strong {
+  display: block;
+  font-size: 1.1rem;
+  color: var(--colorPrimary);
+  margin-bottom: 0.25rem;
+}
+
+.method-details small {
+  color: var(--colorTextMuted);
+  font-size: 0.9rem;
+}
+
+.payment-method-box:has(input:checked) {
+  border-color: var(--colorAccent);
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.spinner {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* ===== Admin Portal Styles ===== */
 .admin-login-body {
   background: var(--colorBg);

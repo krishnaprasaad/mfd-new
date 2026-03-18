@@ -373,6 +373,99 @@
     </div>
   </main>
 
+  <!-- Order Placement View -->
+  <main id="order-view" class="view hidden">
+    <div class="dashboard-header">
+      <h2>Place Order</h2>
+      <p>Confirm details to proceed with your investment.</p>
+    </div>
+    
+    <div class="checkout-container">
+      <!-- Order Form -->
+      <div class="checkout-card glass-card">
+        <div class="fund-summary" id="order-fund-summary">
+          <h3 id="order-fund-name">Fund Name</h3>
+          <p id="order-fund-category" style="color: var(--colorTextMuted); font-size: 0.9rem;">Category • Risk</p>
+        </div>
+        
+        <form id="order-form" style="margin-top: 2rem;">
+          <div class="form-group">
+            <label>Investment Type</label>
+            <div class="custom-radio-group">
+              <label class="custom-radio">
+                <input type="radio" name="investType" value="SIP" checked>
+                <span>Monthly SIP</span>
+              </label>
+              <label class="custom-radio">
+                <input type="radio" name="investType" value="LUMPSUM">
+                <span>One-time (Lumpsum)</span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="invest-amount">Investment Amount (₹)</label>
+            <input type="number" id="invest-amount" min="500" step="500" placeholder="e.g., 5000" required>
+            <small style="color: var(--colorTextMuted); display: block; margin-top: 0.5rem;" id="min-amount-hint">Minimum investment: ₹1000</small>
+          </div>
+          
+          <button type="submit" class="btn btn-primary full-width" style="margin-top: 1rem;">Proceed to Payment</button>
+          <button type="button" class="btn btn-secondary full-width" id="order-back-btn" style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to Funds</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Payment View -->
+  <main id="payment-view" class="view hidden">
+    <div class="dashboard-header">
+      <h2>Complete Payment</h2>
+      <p>Select a secure payment method.</p>
+    </div>
+    
+    <div class="checkout-container">
+      <!-- Payment Options -->
+      <div class="checkout-card glass-card">
+        <div class="payment-summary">
+          <div style="font-size: 1.1rem; color: var(--colorTextMuted);">Total Payable</div>
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--colorAccent);" id="payment-amount-display">₹0</div>
+        </div>
+        
+        <div class="payment-methods" style="margin-top: 2rem;">
+          <label class="payment-method-box">
+            <input type="radio" name="payMethod" value="UPI" checked>
+            <div class="method-details">
+              <strong>UPI</strong>
+              <small>Google Pay, PhonePe, Paytm</small>
+            </div>
+          </label>
+          
+          <label class="payment-method-box">
+            <input type="radio" name="payMethod" value="NETBANKING">
+            <div class="method-details">
+              <strong>Net Banking</strong>
+              <small>All major Indian banks</small>
+            </div>
+          </label>
+          
+          <label class="payment-method-box">
+            <input type="radio" name="payMethod" value="MANDATE" id="mandate-option">
+            <div class="method-details">
+              <strong>Setup Auto-Pay (Bank Mandate)</strong>
+              <small>Recommended for SIPs</small>
+            </div>
+          </label>
+        </div>
+        
+        <button type="button" class="btn btn-primary full-width" id="pay-confirm-btn" style="margin-top: 2rem; position: relative;">
+          <span id="pay-btn-text">Pay Now</span>
+          <div id="pay-spinner" class="spinner hidden"></div>
+        </button>
+        <button type="button" class="btn btn-secondary full-width" id="pay-back-btn" style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to Order</button>
+      </div>
+    </div>
+  </main>
+
   <!-- Login Modal -->
   <div id="login-modal" class="modal-overlay hidden">
     <div class="modal">
