@@ -78,3 +78,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Global function to handle "Apply Now" clicks from job cards
+window.scrollToJob = (jobTitle) => {
+    const formSection = document.getElementById('careers-form');
+    const positionSelect = document.getElementById('position');
+    
+    if (formSection && positionSelect) {
+        // Find the option that matches the job title (roughly)
+        for (let i = 0; i < positionSelect.options.length; i++) {
+            if (positionSelect.options[i].value.includes(jobTitle)) {
+                positionSelect.selectedIndex = i;
+                break;
+            }
+        }
+        
+        // Smooth scroll to form
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Visual feedback on the select element
+        positionSelect.parentElement.style.animation = 'pulse 1s ease';
+        setTimeout(() => {
+            positionSelect.parentElement.style.animation = '';
+        }, 1000);
+    }
+};

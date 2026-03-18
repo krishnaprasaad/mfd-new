@@ -1485,120 +1485,202 @@ textarea:focus {
 
 /* ===== Careers Page V4 Modern Card-Based ===== */
 .careers-hero-standard {
-  background-color: var(--colorSurface);
-  border-bottom: 1px solid var(--colorBorder);
-  padding: 5rem 2rem;
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=2000');
+  background-size: cover;
+  background-position: center;
+  border-bottom: none;
+  padding: 8rem 2rem;
   text-align: center;
+  color: white;
+  position: relative;
+}
+
+.careers-hero-standard::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 150px;
+  background: linear-gradient(to top, var(--colorBg), transparent);
 }
 
 .careers-hero-standard h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  color: var(--colorPrimary);
-  margin-bottom: 1rem;
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  color: white;
+  margin-bottom: 1.5rem;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .careers-hero-standard p {
-  color: var(--colorTextMuted);
-  font-size: 1.15rem;
-  max-width: 600px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.25rem;
+  max-width: 700px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
 .careers-container-standard {
-  max-width: 800px;
-  margin: -3rem auto 4rem;
-  padding: 0 1.5rem;
+  max-width: 1000px;
+  margin: -5rem auto 6rem;
+  padding: 0 2rem;
   position: relative;
   z-index: 10;
 }
 
 .section-label-standard {
-  font-size: 0.9rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--colorTextMuted);
-  margin-bottom: 1rem;
-  margin-top: 3rem;
+  letter-spacing: 0.15em;
+  color: var(--colorAccent);
+  margin-bottom: 1.5rem;
+  margin-top: 5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.section-label-standard::after {
+  content: '';
+  height: 1px;
+  background: var(--colorBorder);
+  flex-grow: 1;
 }
 
 .card-standard {
-  background: var(--colorSurface);
-  border: 1px solid var(--colorBorder);
-  border-radius: var(--radiusLg);
-  box-shadow: var(--shadowMd);
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 2rem;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.04);
+  padding: 3rem;
+  margin-bottom: 2.5rem;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-standard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 60%);
+  pointer-events: none;
 }
 
 .card-standard:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadowLg);
+  transform: translateY(-12px) scale(1.01);
+  box-shadow: 0 25px 60px rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
 }
 
 .job-header-standard {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
 
 .job-title-standard {
-  font-size: 1.5rem;
-  color: var(--colorPrimary);
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, var(--colorPrimary), #1e293b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   margin: 0;
 }
 
 .job-meta-standard {
   display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
+  gap: 1.5rem;
+  font-size: 0.95rem;
   color: var(--colorTextMuted);
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  font-weight: 500;
 }
 
 .job-meta-standard span {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-}
-
-.job-meta-standard span::before {
-  content: '•';
-  color: var(--colorBorder);
-}
-
-.job-meta-standard span:first-child::before {
-  content: none;
+  gap: 0.6rem;
+  background: var(--colorBg);
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  border: 1px solid var(--colorBorder);
 }
 
 .job-desc-standard {
   color: var(--colorText);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
 }
 
 .job-reqs-standard {
-  background: var(--colorBg);
-  padding: 1rem 1.5rem;
-  border-radius: var(--radiusMd);
-  font-size: 0.9rem;
-  color: var(--colorText);
-  border: 1px solid var(--colorBorder);
+  background: rgba(16, 185, 129, 0.05);
+  padding: 1.5rem 2rem;
+  border-radius: 1.25rem;
+  font-size: 0.95rem;
+  color: var(--colorPrimary);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.job-reqs-standard strong {
+  color: var(--colorAccent);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+
+.apply-card-btn {
+  background: var(--colorAccent);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 100px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+  border: none;
+  cursor: pointer;
+}
+
+.apply-card-btn:hover {
+  background: #059669;
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
 }
 
 .form-title-standard {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
   color: var(--colorPrimary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  text-align: center;
 }
 
 .form-subtitle-standard {
   color: var(--colorTextMuted);
-  font-size: 0.95rem;
-  margin-bottom: 2rem;
+  font-size: 1.1rem;
+  margin-bottom: 3.5rem;
+  text-align: center;
 }
 
 .input-standard {
