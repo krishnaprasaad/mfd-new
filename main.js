@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             if (response.ok) {
-                contactSuccess.textContent = '✅ ' + data.message;
+                contactSuccess.textContent = data.message;
                 contactForm.reset();
             } else {
                 contactError.textContent = data.error || 'Submission failed. Please try again.';
@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const data = await response.json();
             if (response.ok) {
-                meetingSuccess.textContent = '✅ ' + data.message;
+                meetingSuccess.textContent = data.message;
                 meetingForm.reset();
                 setTimeout(() => meetingModal.classList.add('hidden'), 4000);
             } else {
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             meetingError.textContent = 'Network error. Please try again.';
         } finally {
-            submitBtn.textContent = '📅 Schedule My Meeting';
+            submitBtn.textContent = 'Schedule My Meeting';
             submitBtn.disabled = false;
         }
     });

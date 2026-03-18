@@ -1,13 +1,13 @@
 const SERVICES = [
-    { icon: '📈', name: 'Equity Investments', duration: '30 mins' },
-    { icon: '📊', name: 'Financial Planning', duration: '30 mins' },
-    { icon: '💹', name: 'Mutual Fund Investment Planning', duration: '30 mins' },
-    { icon: '📜', name: 'Transmission of Shares & Mutual Funds / Demat', duration: '30 mins' },
-    { icon: '🏦', name: 'Bonds / FD / NCD (Fixed Income)', duration: '30 mins' },
-    { icon: '🏛️', name: 'National Pension Scheme (NPS)', duration: '30 mins' },
-    { icon: '🛡️', name: 'Insurance Claims', duration: '30 mins' },
-    { icon: '👤', name: 'Individual Insurance Planning', duration: '30 mins' },
-    { icon: '🏢', name: 'Corporate Insurance Planning', duration: '30 mins' },
+    { icon: '', name: 'Equity Investments', duration: '30 mins' },
+    { icon: '', name: 'Financial Planning', duration: '30 mins' },
+    { icon: '', name: 'Wealth Management Planning', duration: '30 mins' },
+    { icon: '', name: 'Transmission of Shares & Investments / Demat', duration: '30 mins' },
+    { icon: '', name: 'Bonds / FD / NCD (Fixed Income)', duration: '30 mins' },
+    { icon: '', name: 'National Pension Scheme (NPS)', duration: '30 mins' },
+    { icon: '', name: 'Insurance Claims', duration: '30 mins' },
+    { icon: '', name: 'Individual Insurance Planning', duration: '30 mins' },
+    { icon: '', name: 'Corporate Insurance Planning', duration: '30 mins' },
 ];
 
 let selectedService = null;
@@ -104,7 +104,7 @@ document.getElementById('booking-details-form').addEventListener('submit', async
     } catch (err) {
         bookError.textContent = 'Network error. Please try again.';
     } finally {
-        submitBtn.textContent = '✅ Confirm Appointment';
+        submitBtn.textContent = 'Confirm Appointment';
         submitBtn.disabled = false;
     }
 });
