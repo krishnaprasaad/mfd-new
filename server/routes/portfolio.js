@@ -12,14 +12,6 @@ router.get('/', authMiddleware, async (req, res) => {
         await connectDB();
         const userId = req.userId;
 
-        // Demo user bypass
-        if (userId === 'demo-user') {
-            return res.json({
-                profile: { name: 'Demo Investor', email: 'demo@liveinvestments.in', pan: 'DEMO0000X' },
-                portfolio: { totalInvested: 0, currentValue: 0, investments: [] }
-            });
-        }
-
         const user = await User.findById(userId).select('name email pan');
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
