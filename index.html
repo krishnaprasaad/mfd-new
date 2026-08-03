@@ -17,9 +17,9 @@
   <!-- Primary SEO -->
   <title>Live Investments</title>
   <meta name="description"
-    content="Live Investments is a Wealth Management Firm (AMFI Registered ARN-300748) based in Erode, Tamil Nadu. Expert goal-based investing, SIP planning, and portfolio management for your financial freedom." />
+    content="Live Investments is a Wealth Management Firm (AMFI Registered ARN-300748 | APMI Registered APRN 09608) based in Erode, Tamil Nadu. Expert goal-based investing, SIP planning, and portfolio management for your financial freedom." />
   <meta name="keywords"
-    content="mutual fund distributor, wealth management, Erode, SIP investment, AMFI registered, goal based investing, portfolio management, Live Investments, ARN-300748, mutual funds Tamil Nadu" />
+    content="mutual fund distributor, PMS distributor, wealth management, Erode, SIP investment, AMFI registered, APMI registered, goal based investing, portfolio management, Live Investments, ARN-300748, APRN 09608, mutual funds Tamil Nadu" />
   <meta name="author" content="Krishna Prasaad B — Live Investments" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.liveinvestments.club/" />
@@ -29,7 +29,7 @@
   <meta property="og:url" content="https://www.liveinvestments.club/" />
   <meta property="og:title" content="Live Wealth — Wealth Management Firm" />
   <meta property="og:description"
-    content="Expert goal-based mutual fund investing for retirement, child education, and dream home planning. AMFI Registered ARN-300748. Based in Erode, Tamil Nadu." />
+    content="Expert goal-based mutual fund & PMS investing for retirement, child education, and dream home planning. AMFI Registered ARN-300748 | APMI Registered APRN 09608. Based in Erode, Tamil Nadu." />
   <meta property="og:site_name" content="Live Wealth" />
   <meta property="og:locale" content="en_IN" />
 
@@ -37,7 +37,7 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Live Wealth — Wealth Management Firm" />
   <meta name="twitter:description"
-    content="Expert goal-based SIP & wealth management. AMFI Registered (ARN-300748). Based in Erode. Invest with purpose." />
+    content="Expert goal-based SIP & wealth management. AMFI Registered (ARN-300748) | APMI Registered (APRN 09608). Based in Erode. Invest with purpose." />
 
   <!-- Geo tags (helps local search) -->
   <meta name="geo.region" content="IN-TN" />
@@ -300,7 +300,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Live Investments. AMFI Registered Mutual Fund Distributor | ARN-300748 | Principal Officer:
+        <p>&copy; 2026 Live Investments. AMFI Registered Mutual Fund Distributor | ARN-300748 | APMI Registered PMS Distributor | APRN 09608 | Principal Officer:
           KRISHNA
           PRASAAD B<br>Date of Initial Registration: 02-Jul-2024 &nbsp;|&nbsp; Valid upto: 27-Jun-2027</p>
       </div>
@@ -379,7 +379,7 @@
       <h2>Place Order</h2>
       <p>Confirm details to proceed with your investment.</p>
     </div>
-    
+
     <div class="checkout-container">
       <!-- Order Form -->
       <div class="checkout-card glass-card">
@@ -387,7 +387,7 @@
           <h3 id="order-fund-name">Fund Name</h3>
           <p id="order-fund-category" style="color: var(--colorTextMuted); font-size: 0.9rem;">Category • Risk</p>
         </div>
-        
+
         <form id="order-form" style="margin-top: 2rem;">
           <div class="form-group">
             <label>Investment Type</label>
@@ -402,15 +402,18 @@
               </label>
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="invest-amount">Investment Amount (₹)</label>
             <input type="number" id="invest-amount" min="500" step="500" placeholder="e.g., 5000" required>
-            <small style="color: var(--colorTextMuted); display: block; margin-top: 0.5rem;" id="min-amount-hint">Minimum investment: ₹1000</small>
+            <small style="color: var(--colorTextMuted); display: block; margin-top: 0.5rem;"
+              id="min-amount-hint">Minimum investment: ₹1000</small>
           </div>
-          
+
           <button type="submit" class="btn btn-primary full-width" style="margin-top: 1rem;">Proceed to Payment</button>
-          <button type="button" class="btn btn-secondary full-width" id="order-back-btn" style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to Funds</button>
+          <button type="button" class="btn btn-secondary full-width" id="order-back-btn"
+            style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to
+            Funds</button>
         </form>
       </div>
     </div>
@@ -422,15 +425,16 @@
       <h2>Complete Payment</h2>
       <p>Select a secure payment method.</p>
     </div>
-    
+
     <div class="checkout-container">
       <!-- Payment Options -->
       <div class="checkout-card glass-card">
         <div class="payment-summary">
           <div style="font-size: 1.1rem; color: var(--colorTextMuted);">Total Payable</div>
-          <div style="font-size: 2.5rem; font-weight: 700; color: var(--colorAccent);" id="payment-amount-display">₹0</div>
+          <div style="font-size: 2.5rem; font-weight: 700; color: var(--colorAccent);" id="payment-amount-display">₹0
+          </div>
         </div>
-        
+
         <div class="payment-methods" style="margin-top: 2rem;">
           <label class="payment-method-box">
             <input type="radio" name="payMethod" value="UPI" checked>
@@ -439,7 +443,7 @@
               <small>Google Pay, PhonePe, Paytm</small>
             </div>
           </label>
-          
+
           <label class="payment-method-box">
             <input type="radio" name="payMethod" value="NETBANKING">
             <div class="method-details">
@@ -447,7 +451,7 @@
               <small>All major Indian banks</small>
             </div>
           </label>
-          
+
           <label class="payment-method-box">
             <input type="radio" name="payMethod" value="MANDATE" id="mandate-option">
             <div class="method-details">
@@ -456,12 +460,15 @@
             </div>
           </label>
         </div>
-        
-        <button type="button" class="btn btn-primary full-width" id="pay-confirm-btn" style="margin-top: 2rem; position: relative;">
+
+        <button type="button" class="btn btn-primary full-width" id="pay-confirm-btn"
+          style="margin-top: 2rem; position: relative;">
           <span id="pay-btn-text">Pay Now</span>
           <div id="pay-spinner" class="spinner hidden"></div>
         </button>
-        <button type="button" class="btn btn-secondary full-width" id="pay-back-btn" style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to Order</button>
+        <button type="button" class="btn btn-secondary full-width" id="pay-back-btn"
+          style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to
+          Order</button>
       </div>
     </div>
   </main>
@@ -573,8 +580,8 @@
         <div class="privacy-badge">
 
           <div>
-            <strong>Live Investments — AMFI Registered Mutual Fund Distributor</strong><br>
-            ARN-300748 &nbsp;|&nbsp; Principal Officer: <strong>KRISHNA PRASAAD B</strong><br>
+            <strong>Live Investments — AMFI Registered Mutual Fund Distributor | APMI Registered PMS Distributor</strong><br>
+            ARN-300748 &nbsp;|&nbsp; APRN 09608 &nbsp;|&nbsp; Principal Officer: <strong>KRISHNA PRASAAD B</strong><br>
             <span style="font-size:0.82rem; opacity:0.8;">Date of Initial Registration: 02-Jul-2024 &nbsp;|&nbsp; ARN
               Valid upto: 27-Jun-2027</span>
           </div>
@@ -587,13 +594,13 @@
             <a href="https://www.liveinvestments.club" target="_blank" rel="noopener">www.liveinvestments.club</a>
             and the <strong>Live Investments mobile application</strong> (collectively referred to as "the Platform").
             The Platform is designed to facilitate investor access to mutual fund research recommendations, scheme
-            information, and distribution services issued under AMFI Registered MFD <strong>ARN-300748</strong>
+            information, and distribution services issued under AMFI Registered MFD <strong>ARN-300748</strong> and APMI Registered PMS Distributor <strong>APRN 09608</strong>
             — <strong>KRISHNA PRASAAD B</strong>.
           </p>
           <p>
             <strong>KRISHNA PRASAAD B</strong> is the sole AMFI (Association of Mutual Funds in India) registered
-            Mutual Fund Distributor and Principal Officer holding <strong>ARN-300748</strong>. The AMFI registration
-            is held exclusively by the Principal Officer and is used to operate the <strong>Live Investments</strong>
+            Mutual Fund Distributor holding <strong>ARN-300748</strong> and APMI (Association of Portfolio Managers in India) registered PMS Distributor holding <strong>APRN 09608</strong>. The AMFI and APMI registrations
+            are held exclusively by the Principal Officer and are used to operate the <strong>Live Investments</strong>
             platform.
           </p>
           <p>
@@ -701,8 +708,8 @@
           <p>Live Investments operates in full compliance with SEBI (Investment Advisers) Regulations, AMFI Code of
             Conduct,
             Prevention of Money Laundering Act (PMLA), and all applicable RBI and IRDAI guidelines. Our ARN registration
-            (<strong>ARN-300748</strong>) is maintained current with AMFI, and our Principal Officer <strong>KRISHNA
-              PRASAAD B</strong> holds all necessary certifications as required by AMFI/NISM.</p>
+            (<strong>ARN-300748</strong>) and APMI registration (<strong>APRN 09608</strong>) are maintained current with AMFI and APMI respectively, and our Principal Officer <strong>KRISHNA
+              PRASAAD B</strong> holds all necessary certifications as required by AMFI/APMI/NISM.</p>
           <p><em>Mutual Fund investments are subject to market risks. Please read all scheme related documents carefully
               before investing.</em></p>
         </div>
@@ -713,7 +720,7 @@
             information, please contact our Principal Officer:</p>
           <div class="grievance-box">
             <p><strong>KRISHNA PRASAAD B</strong></p>
-            <p>Principal Officer — Live Investments (ARN-300748)</p>
+            <p>Principal Officer — Live Investments (ARN-300748 | APRN 09608)</p>
             <p>Email: <a href="mailto:info@liveinvestments.in">info@liveinvestments.in</a></p>
             <p>Phone: <a href="tel:+919342642277">+91 93426 42277</a></p>
             <p>Address: 9/1, Palaniappa Street, Erode — 638012</p>
@@ -734,7 +741,7 @@
         </div>
 
         <div class="privacy-footer-note">
-          <p>© 2026 Live Investments. AMFI Registered Mutual Fund Distributor. ARN-300748.</p>
+          <p>© 2026 Live Investments. AMFI Registered Mutual Fund Distributor. ARN-300748 | APMI Registered PMS Distributor. APRN 09608.</p>
         </div>
       </div>
     </div>
