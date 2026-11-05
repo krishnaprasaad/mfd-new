@@ -15,9 +15,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary SEO -->
-  <title>Live Investments</title>
+  <title>LiveInvestments | Intelligent Wealth. Simplified Investing.</title>
   <meta name="description"
-    content="Live Investments is a Wealth Management Firm (AMFI Registered ARN-300748 | APMI Registered APRN 09608) based in Erode, Tamil Nadu. Expert goal-based investing, SIP planning, and portfolio management for your financial freedom." />
+    content="Discover a smarter way to invest, understand your mutual fund portfolio and manage your financial future with LiveInvestments." />
   <meta name="keywords"
     content="mutual fund distributor, PMS distributor, wealth management, Erode, SIP investment, AMFI registered, APMI registered, goal based investing, portfolio management, Live Investments, ARN-300748, APRN 09608, mutual funds Tamil Nadu" />
   <meta name="author" content="Krishna Prasaad B — Live Investments" />
@@ -27,15 +27,15 @@
   <!-- Open Graph (for social sharing & Google rich previews) -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.liveinvestments.club/" />
-  <meta property="og:title" content="Live Wealth — Wealth Management Firm" />
+  <meta property="og:title" content="LiveInvestments — Intelligent Wealth. Simplified Investing." />
   <meta property="og:description"
     content="Expert goal-based mutual fund & PMS investing for retirement, child education, and dream home planning. AMFI Registered ARN-300748 | APMI Registered APRN 09608. Based in Erode, Tamil Nadu." />
-  <meta property="og:site_name" content="Live Wealth" />
+  <meta property="og:site_name" content="LiveInvestments" />
   <meta property="og:locale" content="en_IN" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Live Wealth — Wealth Management Firm" />
+  <meta name="twitter:title" content="LiveInvestments — Intelligent Wealth. Simplified Investing." />
   <meta name="twitter:description"
     content="Expert goal-based SIP & wealth management. AMFI Registered (ARN-300748) | APMI Registered (APRN 09608). Based in Erode. Invest with purpose." />
 
@@ -49,6 +49,7 @@
   <link rel="icon"
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'><rect width='36' height='36' rx='10' fill='%230f172a'/><ellipse cx='18' cy='28' rx='9' ry='3.5' fill='%2310b981' opacity='0.7'/><line x1='18' y1='27' x2='18' y2='13' stroke='%2310b981' stroke-width='2' stroke-linecap='round'/><path d='M18 18 Q12 14 13 8 Q17 10 18 16' fill='%2310b981' opacity='0.85'/><path d='M18 15 Q24 11 23 5 Q19 7 18 13' fill='%2310b981'/></svg>">
   <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./redesign.css" />
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -100,7 +101,6 @@
         Live Investments
       </a>
       <div class="nav-links">
-        <!-- <a class="landing-nav-link" href="#ai-cfo">AI CFO</a> -->
         <button id="nav-login-btn" class="btn btn-invest-cta">Login</button>
         <button id="nav-get-started-btn" class="btn btn-primary" onclick="window.location.href='/signup'">Get Started</button>
         <button id="nav-logout-btn" class="btn btn-secondary hidden">Sign Out</button>
@@ -112,30 +112,113 @@
   <main id="landing-view" class="view active">
     <section class="hero">
       <div class="hero-content">
-        <h1>Investment decisions backed by data, not emotion.</h1>
-        <p>Goal-based investing mapped to your life's milestones. Expert mutual fund distribution and portfolio
-          management. Access your investments anytime, anywhere with our
-          secure investor portal.</p>
-        <button class="btn btn-primary" style="margin-top: 1.5rem; font-size: 1.1rem; padding: 1rem 2rem;"
-          onclick="window.location.href='/booking'">Book an Appointment</button>
-        <br>
-        <p style="margin-top: 1rem; font-size: 1rem;"><a href="/careers"
-            style="color: var(--colorAccent); text-decoration: none; font-weight: 500;">Looking to join our team? View
-            Careers →</a></p>
-      </div>
-      <div class="hero-graphic">
-        <div class="glass-card decorative-card card-1">
-          <div class="card-title">Portfolio Growth</div>
-          <div class="card-value up">+14.2%</div>
+        <span class="hero-eyebrow"><span aria-hidden="true"></span> MEET YOUR AI MUTUAL FUND CFO</span>
+        <h1>Your Mutual Fund Portfolio <span>Deserves a CFO.</span></h1>
+        <p>Analyse your investments, detect fund overlaps, understand risks and make smarter decisions with AI.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="/?login=true">Explore AI CFO <span aria-hidden="true">↗</span></a>
+          <a class="btn btn-secondary" href="#how-it-works">See how it works</a>
         </div>
-        <div class="glass-card decorative-card card-2">
-          <div class="card-title">Assets Managed</div>
-          <div class="card-value">₹1.2Cr</div>
+        <p class="hero-footnote">Portfolio analysis grounded in your recorded data.</p>
+      </div>
+      <div class="hero-graphic" id="ai-cfo" aria-label="Illustration of connected investing tools">
+        <div class="hero-orbit hero-orbit-one"></div>
+        <div class="hero-orbit hero-orbit-two"></div>
+        <div class="hero-visual-core">
+          <span class="hero-core-mark" aria-hidden="true">L</span>
+          <span>YOUR WEALTH,<br>IN CLEARER VIEW</span>
+        </div>
+        <div class="hero-visual-card hero-visual-card-top">
+          <span class="hero-visual-icon" aria-hidden="true">◒</span>
+          <span><strong>Portfolio clarity</strong><small>See your investments together</small></span>
+        </div>
+        <div class="hero-visual-card hero-visual-card-bottom">
+          <span class="hero-visual-icon" aria-hidden="true">✳</span>
+          <span><strong>Thoughtful guidance</strong><small>Make decisions with context</small></span>
         </div>
       </div>
     </section>
 
-    <section class="landing-ai-cfo" id="ai-cfo" aria-labelledby="landing-ai-cfo-title">
+    <section class="cfo-feature-strip" id="ai-cfo-features" aria-label="AI CFO capabilities">
+      <article><span>01</span><div><h2>Portfolio Analysis</h2><p>Understand recorded holdings, returns and allocation.</p></div></article>
+      <article><span>02</span><div><h2>Fund Overlap Detection</h2><p>See shared holdings where disclosures are available.</p></div></article>
+      <article><span>03</span><div><h2>AI-Powered Insights</h2><p>Ask questions and explore your portfolio in context.</p></div></article>
+    </section>
+
+    <section class="cfo-how-section" id="how-it-works">
+      <div class="cfo-how-heading"><span class="section-kicker">SIMPLE BY DESIGN</span><h2>A clearer view in three steps.</h2></div>
+      <div class="cfo-how-steps">
+        <article><span>01</span><h3>Sign in securely</h3><p>Your portfolio stays connected to your account.</p></article>
+        <article><span>02</span><h3>Review your holdings</h3><p>Use your recorded portfolio data and available fund disclosures.</p></article>
+        <article><span>03</span><h3>Ask your CFO</h3><p>Explore analysis and insights through a natural conversation.</p></article>
+      </div>
+    </section>
+
+    <section class="distribution-section" id="distribution">
+      <div><span class="section-kicker">ALSO FROM LIVEINVESTMENTS</span><h2>Mutual fund discovery, with human support.</h2></div>
+      <p>Explore mutual fund information and distribution services, or speak with our team about your investing needs.</p>
+      <a class="text-link" href="/booking">Explore distribution services <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="platform-intro legacy-landing-section" id="approach" aria-labelledby="platform-intro-title">
+      <div class="section-kicker">A MORE CONSIDERED WAY TO INVEST</div>
+      <div class="platform-intro-grid">
+        <h2 id="platform-intro-title">A clearer relationship with your wealth starts here.</h2>
+        <p>Bring discovery, portfolio understanding and practical support into one considered experience. LiveInvestments helps you make sense of what you own and explore what comes next—at your pace.</p>
+      </div>
+      <div class="platform-pill-row" aria-label="Platform services">
+        <span>Mutual fund discovery</span><span>Portfolio analysis</span><span>AI-powered insights</span><span>Personal assistance</span>
+      </div>
+    </section>
+
+    <section class="solutions-section legacy-landing-section" aria-labelledby="solutions-title">
+      <div class="section-heading-row">
+        <div><span class="section-kicker">TOOLS FOR THE WHOLE JOURNEY</span><h2 id="solutions-title">Invest with more intention.</h2></div>
+        <p>Useful tools and real support, designed around the way you think about money.</p>
+      </div>
+      <div class="solutions-grid">
+        <article class="solution-card solution-card-primary">
+          <span class="solution-number">01 / DISCOVER</span>
+          <span class="solution-symbol" aria-hidden="true">↗</span>
+          <h3>Explore mutual funds</h3>
+          <p>Search scheme information and compare available public fund data before deciding what deserves a closer look.</p>
+          <a href="/signup">Explore the platform <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="solution-card">
+          <span class="solution-number">02 / UNDERSTAND</span>
+          <span class="solution-symbol" aria-hidden="true">◉</span>
+          <h3>See your portfolio clearly</h3>
+          <p>Bring recorded holdings together, understand allocation and review portfolio data with transparent limitations.</p>
+          <a href="/signup">View your dashboard <span aria-hidden="true">→</span></a>
+        </article>
+        <article class="solution-card">
+          <span class="solution-number">03 / PLAN</span>
+          <span class="solution-symbol" aria-hidden="true">⌁</span>
+          <h3>Get human assistance</h3>
+          <p>Discuss mutual funds, equity investing and financial goals with the LiveInvestments team.</p>
+          <a href="/booking">Book a conversation <span aria-hidden="true">→</span></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="portfolio-story legacy-landing-section" aria-labelledby="portfolio-story-title">
+      <div class="portfolio-story-art" aria-hidden="true">
+        <div class="portfolio-story-grid"></div>
+        <div class="story-line story-line-one"></div>
+        <div class="story-line story-line-two"></div>
+        <div class="story-legend"><span></span> Recorded portfolio data</div>
+        <div class="story-note"><span>◈</span><strong>Know what is known.</strong><small>Clear data, clear limitations.</small></div>
+      </div>
+      <div class="portfolio-story-copy">
+        <span class="section-kicker">INSIGHT, WITHOUT THE NOISE</span>
+        <h2 id="portfolio-story-title">Understand the shape of your portfolio.</h2>
+        <p>See recorded values and holdings in one place. Explore allocation, portfolio risks and overlap where your data supports it—without dressing estimates up as facts.</p>
+        <ul><li>Recorded values, not invented balances</li><li>Deterministic analysis where data allows</li><li>Clear notes when information is missing</li></ul>
+        <a class="text-link" href="/signup">Get a clearer view <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+
+    <section class="landing-ai-cfo legacy-landing-section" id="ai-cfo-legacy" aria-labelledby="landing-ai-cfo-title">
       <div class="landing-ai-cfo-copy">
         <span class="ai-cfo-eyebrow">YOUR PORTFOLIO, MADE CLEARER</span>
         <h2 id="landing-ai-cfo-title">Meet your AI CFO</h2>
@@ -205,7 +288,16 @@
       </div>
     </section>
 
-    <section class="ai-cfo-onboarding" aria-labelledby="ai-cfo-onboarding-title">
+    <section class="why-section legacy-landing-section" aria-labelledby="why-title">
+      <div class="why-heading"><span class="section-kicker">BUILT AROUND YOUR FINANCIAL LIFE</span><h2 id="why-title">Clarity is a better starting point.</h2></div>
+      <div class="why-list">
+        <article><span>01</span><div><h3>One thoughtful workspace</h3><p>Bring portfolio tracking, fund research and financial conversations together.</p></div></article>
+        <article><span>02</span><div><h3>Technology with perspective</h3><p>Use AI to understand recorded data, with transparent boundaries around what it can know.</p></div></article>
+        <article><span>03</span><div><h3>Support when you need it</h3><p>Explore your options independently or connect with our team for assistance.</p></div></article>
+      </div>
+    </section>
+
+    <section class="ai-cfo-onboarding legacy-landing-section" aria-labelledby="ai-cfo-onboarding-title">
       <div class="ai-cfo-onboarding-heading">
         <span class="ai-cfo-eyebrow">GET STARTED IN A FEW STEPS</span>
         <h2 id="ai-cfo-onboarding-title">From sign-up to your first question</h2>
@@ -315,54 +407,37 @@
     </section> -->
 
     <!-- Contact Us Section -->
-    <section class="contact-section" id="contact-section">
-      <div class="contact-container">
-        <div class="contact-info">
-          <h2>Get In Touch</h2>
-          <p>Have questions about investing? Want to know more about our services? We'd love to hear from you.</p>
-          <div class="contact-details">
-            <div class="contact-detail-item">
-
-              <a href="mailto:info@liveinvestments.in">info@liveinvestments.in</a>
-            </div>
-            <div class="contact-detail-item">
-
-              <a href="tel:+919342642277">+91 93426 42277</a>
-            </div>
-            <div class="contact-detail-item">
-
-              <span>9/1, Palaniappa Street,<br>Erode - 638012</span>
-            </div>
+    <section class="landing-final-cta" id="contact-section" aria-labelledby="landing-cta-title">
+      <span class="section-kicker">YOUR PORTFOLIO, IN CONTEXT</span>
+      <h2 id="landing-cta-title">Meet your AI Mutual Fund CFO.</h2>
+      <p>Sign in to explore your recorded portfolio with a little more clarity.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/?login=true">Explore AI CFO <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-secondary" href="/signup">Create an account</a>
+      </div>
+      <details class="landing-contact-details">
+        <summary>Prefer to speak with our team?</summary>
+        <div class="landing-contact-content">
+          <div class="landing-contact-links">
+            <a href="mailto:info@liveinvestments.in">info@liveinvestments.in</a>
+            <a href="tel:+919342642277">+91 93426 42277</a>
+            <a href="/booking">Book a conversation</a>
           </div>
-        </div>
-        <div class="contact-form-card glass-card">
-          <h3>Send Us a Message</h3>
-          <form id="contact-form">
-            <div class="form-group">
-              <label for="contact-name">Full Name</label>
-              <input type="text" id="contact-name" required placeholder="Your full name">
+          <form id="contact-form" class="landing-contact-form">
+            <div class="form-row">
+              <div class="form-group"><label for="contact-name">Full Name</label><input type="text" id="contact-name" required placeholder="Your full name"></div>
+              <div class="form-group"><label for="contact-email">Email Address</label><input type="email" id="contact-email" required placeholder="you@example.com"></div>
             </div>
             <div class="form-row">
-              <div class="form-group">
-                <label for="contact-email">Email Address</label>
-                <input type="email" id="contact-email" required placeholder="you@example.com">
-              </div>
-              <div class="form-group">
-                <label for="contact-phone">Phone Number</label>
-                <input type="tel" id="contact-phone" required placeholder="+91 98765 43210" maxlength="15">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="contact-message">Message</label>
-              <textarea id="contact-message" required placeholder="Tell us how we can help you..." rows="4"></textarea>
+              <div class="form-group"><label for="contact-phone">Phone Number</label><input type="tel" id="contact-phone" required placeholder="+91 98765 43210" maxlength="15"></div>
+              <div class="form-group"><label for="contact-message">How can we help?</label><textarea id="contact-message" rows="2" required placeholder="Your message"></textarea></div>
             </div>
             <div class="form-error" id="contact-error"></div>
-            <div class="form-success" id="contact-success"
-              style="color: var(--colorAccent); font-size: 0.875rem; margin-bottom: 1rem;"></div>
-            <button type="submit" class="btn btn-primary full-width" id="contact-submit-btn">Send Message</button>
+            <div class="form-success" id="contact-success"></div>
+            <button type="submit" class="btn btn-primary" id="contact-submit-btn">Send message</button>
           </form>
         </div>
-      </div>
+      </details>
     </section>
 
     <!-- Footer -->
@@ -380,15 +455,15 @@
             </svg>
             Live Investments
           </a>
-          <p>Your trusted partner in mutual fund investments and long-term portfolio growth.</p>
+          <p>Intelligent Wealth. Simplified Investing.</p>
         </div>
         <div class="footer-links">
-          <h4>Legal</h4>
+          <h4>Explore</h4>
+          <a href="#ai-cfo">AI Mutual Fund CFO</a>
+          <a href="#distribution">Mutual fund distribution</a>
           <a href="#" id="privacy-policy-link">Privacy Policy</a>
           <a href="#">Terms of Service</a>
-          <a href="#">Disclosures</a>
           <a href="/careers">Careers</a>
-          <a href="/admin-login.html" style="opacity: 0.6; font-size: 0.8rem;">Admin Portal</a>
         </div>
         <div class="footer-contact">
           <h4>Contact Us</h4>
@@ -399,7 +474,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 Live Investments.<br>
+        <p>&copy; 2026 LiveInvestments.<br>
           <span style="opacity: 0.9;">AMFI Registered MF Distributor | ARN-300748</span><br>
           <span style="opacity: 0.9;">APMI Registered PMS Distributor |APRN-09608</span><br>
           <span style="opacity: 0.8; font-size: 0.9em;">Principal Officer: KRISHNA PRASAAD B<br>
