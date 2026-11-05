@@ -28,6 +28,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.3",
     "multer": "^2.1.1",
+    "openai": "^7.51.0",
     "serverless-http": "^4.0.0"
   }
 }

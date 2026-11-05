@@ -100,8 +100,9 @@
         Live Investments
       </a>
       <div class="nav-links">
+        <!-- <a class="landing-nav-link" href="#ai-cfo">AI CFO</a> -->
         <button id="nav-login-btn" class="btn btn-invest-cta">Login</button>
-        <button class="btn btn-primary" onclick="window.location.href='/signup'">Get Started</button>
+        <button id="nav-get-started-btn" class="btn btn-primary" onclick="window.location.href='/signup'">Get Started</button>
         <button id="nav-logout-btn" class="btn btn-secondary hidden">Sign Out</button>
       </div>
     </div>
@@ -131,6 +132,104 @@
           <div class="card-title">Assets Managed</div>
           <div class="card-value">₹1.2Cr</div>
         </div>
+      </div>
+    </section>
+
+    <section class="landing-ai-cfo" id="ai-cfo" aria-labelledby="landing-ai-cfo-title">
+      <div class="landing-ai-cfo-copy">
+        <span class="ai-cfo-eyebrow">YOUR PORTFOLIO, MADE CLEARER</span>
+        <h2 id="landing-ai-cfo-title">Meet your AI CFO</h2>
+        <p class="ai-cfo-intro">
+          Get a clearer view of your investments with a conversational assistant that can explain your dashboard
+          and look up mutual fund data when you ask.
+        </p>
+
+        <div class="ai-cfo-capabilities">
+          <article class="ai-cfo-capability">
+            <span class="ai-cfo-capability-icon" aria-hidden="true">◎</span>
+            <div>
+              <h3>Answers about your portfolio</h3>
+              <p>Ask about the holdings and values shown in your investor dashboard.</p>
+            </div>
+          </article>
+          <article class="ai-cfo-capability">
+            <span class="ai-cfo-capability-icon" aria-hidden="true">↗</span>
+            <div>
+              <h3>Fund facts when you need them</h3>
+              <p>Explore fund metrics, returns, NAV, holdings, and comparisons using connected fund data.</p>
+            </div>
+          </article>
+          <article class="ai-cfo-capability">
+            <span class="ai-cfo-capability-icon" aria-hidden="true">✦</span>
+            <div>
+              <h3>A chat that knows your name</h3>
+              <p>Your signed-in experience is personalized with your account name and portfolio context.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="ai-cfo-cta">
+          <a class="btn btn-primary" href="/signup">Create your account</a>
+          <a class="ai-cfo-login-link" href="/?login=true">Already registered? Log in</a>
+        </div>
+        <p class="ai-cfo-disclaimer">
+          AI-generated information is for learning about your portfolio and is not a guarantee of future performance
+          or a substitute for advice from your financial adviser. Mutual fund investments are subject to market risks.
+        </p>
+      </div>
+
+      <div class="ai-cfo-preview-wrap" aria-label="Example AI CFO conversation">
+        <div class="ai-cfo-preview">
+          <div class="ai-cfo-preview-header">
+            <span class="ai-cfo-avatar" aria-hidden="true">✦</span>
+            <div>
+              <strong>AI CFO</strong>
+              <span>Portfolio assistant</span>
+            </div>
+            <span class="ai-cfo-ready"><span></span> Ready</span>
+          </div>
+          <div class="ai-cfo-preview-body">
+            <div class="ai-cfo-chat-bubble user">What can you tell me about my investments?</div>
+            <div class="ai-cfo-chat-bubble assistant">
+              Once you sign in, I can help explain the holdings and values in your dashboard, and look up public
+              fund information when it’s relevant.
+            </div>
+            <div class="ai-cfo-preview-prompt">Try asking about your portfolio, fund returns, or holdings.</div>
+          </div>
+          <div class="ai-cfo-preview-input">
+            <span>Ask your AI CFO a question...</span>
+            <span class="ai-cfo-send-icon" aria-hidden="true">↑</span>
+          </div>
+        </div>
+        <div class="ai-cfo-preview-note">A helpful starting point for understanding your investments.</div>
+      </div>
+    </section>
+
+    <section class="ai-cfo-onboarding" aria-labelledby="ai-cfo-onboarding-title">
+      <div class="ai-cfo-onboarding-heading">
+        <span class="ai-cfo-eyebrow">GET STARTED IN A FEW STEPS</span>
+        <h2 id="ai-cfo-onboarding-title">From sign-up to your first question</h2>
+      </div>
+      <div class="ai-cfo-steps">
+        <article class="ai-cfo-step">
+          <span class="ai-cfo-step-number">01</span>
+          <h3>Create your account</h3>
+          <p>Complete the secure sign-up form to get access to your investor dashboard.</p>
+        </article>
+        <article class="ai-cfo-step">
+          <span class="ai-cfo-step-number">02</span>
+          <h3>Add your investments</h3>
+          <p>Add holdings to your portfolio or import eligible external folios through MF Central.</p>
+        </article>
+        <article class="ai-cfo-step">
+          <span class="ai-cfo-step-number">03</span>
+          <h3>Ask your AI CFO</h3>
+          <p>Open the AI CFO tab to ask questions about your dashboard and explore fund information.</p>
+        </article>
+      </div>
+      <div class="ai-cfo-onboarding-cta">
+        <p>Ready to take a closer look at your portfolio?</p>
+        <a class="btn btn-primary" href="/signup">Get started</a>
       </div>
     </section>
 
@@ -415,6 +514,23 @@
           </button>
         </div>
       </div>
+
+      <section class="cfo-chat-card glass-card" aria-labelledby="cfo-chat-title">
+        <div class="cfo-chat-heading">
+          <div>
+            <h3 id="cfo-chat-title">Chat with your AI CFO</h3>
+            <p>Get quick answers about your portfolio using your dashboard data.</p>
+          </div>
+          <span class="cfo-chat-status">Ready to help</span>
+        </div>
+        <div id="cfo-chat-messages" class="cfo-chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+        <form id="cfo-chat-form" class="cfo-chat-form">
+          <label class="sr-only" for="cfo-chat-input">Ask your AI CFO a question</label>
+          <input id="cfo-chat-input" type="text" maxlength="500" placeholder="Ask about your investments, returns, or holdings..." autocomplete="off" required>
+          <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+        <p class="cfo-chat-disclaimer">Quick portfolio answers only. Review the AI CFO analysis below for detailed recommendations.</p>
+      </section>
 
       <!-- CFO Diagnostics Loading / Empty / Content -->
       <div id="cfo-loading" class="hidden" style="text-align: center; padding: 3rem;">

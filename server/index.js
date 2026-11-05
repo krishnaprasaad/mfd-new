@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import portfolioRoutes from './routes/portfolio.js';
+import cfoRoutes from './routes/cfo.js';
 import contactRoutes from './routes/contact.js';
 import meetingRoutes from './routes/meeting.js';
 import careersRoutes from './routes/careers.js';
@@ -56,6 +57,7 @@ app.get('/api/health', (req, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/cfo', cfoRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/meeting', meetingRoutes);
 app.use('/api/careers', careersRoutes);

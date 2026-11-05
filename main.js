@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginModal = document.getElementById('login-modal');
 
     const navLoginBtn = document.getElementById('nav-login-btn');
+    const navGetStartedBtn = document.getElementById('nav-get-started-btn');
     const navLogoutBtn = document.getElementById('nav-logout-btn');
     const modalCloseBtn = document.getElementById('modal-close-btn');
 
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- State ---
     let currentUser = null;
+    let currentPortfolio = null;
 
     // --- Utility Functions ---
     const formatCurrency = (amount) => {
@@ -53,6 +55,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatPercentage = (percent) => {
         return (percent > 0 ? '+' : '') + percent.toFixed(2) + '%';
     };
+
+    const appendCfoChatMessage = (text, sender) => {
+        const messages = document.getElementById('cfo-chat-messages');
+        if (!messages) return null;
+
+        const message = document.createElement('div');
+        message.className = `cfo-chat-message ${sender}`;
+        message.textContent = text;
+        messages.appendChild(message);
+        messages.scrollTop = messages.scrollHeight;
+        return message;
+    };
+
+    const initializeCfoChat = () => {
+        const messages = document.getElementById('cfo-chat-messages');
+        if (!messages) return;
+
+        cfoChatHistory.length = 0;
+        messages.replaceChildren();
+        const name = currentUser?.name || 'there';
+        appendCfoChatMessage(
+            `Hi ${name}! I'm your AI CFO. Ask me about your invested amount, current portfolio value, returns, or holdings.`,
+            'assistant'
+        );
+    };
+
+    const cfoChatHistory = [];
 
     // --- View Management ---
     const showLoginModal = () => {
@@ -89,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardView.classList.add('active');
 
         navLoginBtn.classList.add('hidden');
+        navGetStartedBtn.classList.add('hidden');
         navLogoutBtn.classList.remove('hidden');
     };
 
@@ -101,10 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navLogoutBtn.classList.add('hidden');
         navLoginBtn.classList.remove('hidden');
+        navGetStartedBtn.classList.remove('hidden');
     };
 
     // --- Dashboard Rendering ---
     const renderDashboard = (user) => {
+        initializeCfoChat();
         userNameDisplay.textContent = user.profile.name;
         const portfolio = user.portfolio;
 
@@ -396,6 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await res.json();
             currentUser = data.profile;
+            currentPortfolio = data.portfolio;
             renderDashboard(data);
             showDashboard();
         } catch (error) {
@@ -478,6 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to call logout API', e);
         }
         currentUser = null;
+        currentPortfolio = null;
         showLanding();
     };
 
@@ -499,6 +533,53 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', handleLogin);
     signupForm.addEventListener('submit', handleSignup);
     navLogoutBtn.addEventListener('click', handleLogout);
+
+    const cfoChatForm = document.getElementById('cfo-chat-form');
+    const cfoChatInput = document.getElementById('cfo-chat-input');
+    if (cfoChatForm && cfoChatInput) {
+        cfoChatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const question = cfoChatInput.value.trim();
+            if (!question || !currentUser || !currentPortfolio) return;
+
+            appendCfoChatMessage(question, 'user');
+            const thinkingMessage = appendCfoChatMessage('Checking your portfolio and fund data...', 'assistant');
+            const sendButton = cfoChatForm.querySelector('button[type="submit"]');
+            cfoChatInput.value = '';
+            cfoChatInput.disabled = true;
+            sendButton.disabled = true;
+
+            try {
+                const response = await fetch('/api/cfo/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: question,
+                        history: cfoChatHistory.slice(-8)
+                    })
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'The AI CFO could not answer right now.');
+                }
+
+                thinkingMessage.textContent = data.reply;
+                cfoChatHistory.push(
+                    { role: 'user', content: question },
+                    { role: 'assistant', content: data.reply }
+                );
+                cfoChatHistory.splice(0, Math.max(0, cfoChatHistory.length - 8));
+            } catch (error) {
+                console.error('AI CFO chat request failed:', error);
+                thinkingMessage.textContent = error.message || 'The AI CFO could not answer right now. Please try again.';
+                thinkingMessage.classList.add('error');
+            } finally {
+                cfoChatInput.disabled = false;
+                sendButton.disabled = false;
+                cfoChatInput.focus();
+            }
+        });
+    }
 
     tabPortfolio.addEventListener('click', () => switchTab('portfolio'));
     tabExplore.addEventListener('click', () => switchTab('explore'));
