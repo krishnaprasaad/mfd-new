@@ -103,6 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 signupContent.style.display = 'none';
                 successView.classList.add('active');
+
+                // Populate generated credentials
+                const createdUsernameEl = document.getElementById('created-username');
+                const createdPasswordEl = document.getElementById('created-password');
+                const proceedBtn = document.getElementById('proceed-login-btn');
+
+                if (createdUsernameEl) createdUsernameEl.textContent = data.username || email;
+                if (createdPasswordEl) createdPasswordEl.textContent = data.password || 'DDMMYYYY (Your DOB)';
+                if (proceedBtn) {
+                    proceedBtn.href = `/?login=true&user=${encodeURIComponent(data.username || email)}`;
+                }
             } else {
                 signupError.textContent = data.error || 'Failed to create account.';
             }

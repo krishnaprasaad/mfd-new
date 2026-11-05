@@ -212,12 +212,26 @@
             </div>
 
             <div id="signup-success-view" class="form-success-container">
-                <div class="success-icon"></div>
-                <h2 style="font-family:'Outfit',sans-serif; margin-bottom:1rem;">Application Received!</h2>
-                <p style="color:var(--colorTextMuted); line-height:1.6; margin-bottom:2rem;">
-                    Thank you for choosing Live Investments. Our team will verify your details and send your login credentials to your email within 1-2 working days.
+                <div class="success-icon">🎉</div>
+                <h2 style="font-family:'Outfit',sans-serif; margin-bottom:0.75rem;">Account Created Successfully!</h2>
+                <p style="color:var(--colorTextMuted); line-height:1.6; margin-bottom:1.5rem;">
+                    Welcome to Live Investments! Your investor portal account is now active.
                 </p>
-                <a href="/" class="btn btn-primary">Return to Home</a>
+                <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 1rem; padding: 1.25rem; text-align: left; margin-bottom: 2rem;">
+                    <h4 style="margin: 0 0 0.75rem 0; color: var(--colorAccent);">Your Login Credentials:</h4>
+                    <p style="margin: 0.35rem 0; font-size: 0.95rem;">
+                        <strong>Username:</strong> <span id="created-username" style="color: var(--colorPrimary); font-family: monospace;"></span>
+                    </p>
+                    <p style="margin: 0.35rem 0; font-size: 0.95rem;">
+                        <strong>Password:</strong> <span id="created-password" style="color: var(--colorPrimary); font-family: monospace;"></span>
+                    </p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.8rem; color: var(--colorTextMuted);">
+                        (Password format is DDMMYYYY matching your Date of Birth)
+                    </p>
+                </div>
+                <a id="proceed-login-btn" href="/?login=true" class="btn btn-primary full-width" style="display: block; text-decoration: none; padding: 0.9rem;">
+                    Proceed to Login →
+                </a>
             </div>
         </div>
     </div>

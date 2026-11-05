@@ -320,6 +320,7 @@
     <!-- Dashboard Tabs -->
     <div class="dashboard-tabs">
       <button id="tab-portfolio" class="tab-btn active">My Portfolio</button>
+      <button id="tab-cfo" class="tab-btn">✨ AI CFO Review</button>
       <button id="tab-explore" class="tab-btn">Explore Funds</button>
     </div>
 
@@ -341,9 +342,34 @@
         </div>
       </div>
 
+      <!-- MF Central Import & AI CFO Action Card -->
+      <div class="sync-banner glass-card" style="margin: 1.5rem 0; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-left: 4px solid var(--colorAccent); border-radius: 12px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span style="font-weight: 700; font-size: 1.05rem;">Import External Mutual Funds via MF Central</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--colorAccent); font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">CAMS & KFintech</span>
+          </div>
+          <p style="margin: 0; color: var(--colorTextMuted); font-size: 0.9rem;">
+            Consolidate all your external mutual funds. Our AI CFO will diagnose your holdings for overlap, pros & cons, and recommendations.
+          </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <button id="btn-open-mfcentral-modal" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem;">
+            🔗 Import via MF Central
+          </button>
+          <button id="btn-run-cfo-analysis" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; border: 1px solid var(--colorAccent); color: var(--colorAccent);">
+            ✨ AI CFO Analysis
+          </button>
+        </div>
+      </div>
+
       <div class="investments-section">
-        <div class="section-title">
-          <h3>Your Investment Holdings</h3>
+        <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <h3 style="margin: 0;">Your Investment Holdings</h3>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="btn-sync-mfc-header" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">🔗 Sync MF Central</button>
+            <button id="add-investment-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">+ New Investment</button>
+          </div>
         </div>
         <div class="table-container">
           <table class="investments-table">
@@ -351,6 +377,7 @@
               <tr>
                 <th>Fund Name</th>
                 <th>Category</th>
+                <th>Source</th>
                 <th>Invested (₹)</th>
                 <th>Current Value (₹)</th>
                 <th>Returns</th>
@@ -363,6 +390,115 @@
         </div>
       </div>
     </div> <!-- End portfolio-section -->
+
+    <!-- AI CFO Review Section -->
+    <div id="cfo-section" class="tab-content hidden">
+      <!-- CFO Header Card -->
+      <div class="glass-card" style="padding: 1.75rem; border-radius: 1.25rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98)); color: #fff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #10b981, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);">
+              🤖
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <h3 style="margin: 0; color: #fff; font-size: 1.4rem;">AI Chief Financial Officer (CFO)</h3>
+                <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.4);">LIVE DIAGNOSTICS</span>
+              </div>
+              <p style="margin: 0.25rem 0 0 0; color: #94a3b8; font-size: 0.9rem;">
+                Comprehensive analytical review of direct and MF Central imported mutual fund folios.
+              </p>
+            </div>
+          </div>
+          <button id="btn-refresh-cfo" class="btn btn-primary" style="background: #10b981; border: none; padding: 0.6rem 1.2rem; font-size: 0.85rem;">
+            🔄 Refresh Analysis
+          </button>
+        </div>
+      </div>
+
+      <!-- CFO Diagnostics Loading / Empty / Content -->
+      <div id="cfo-loading" class="hidden" style="text-align: center; padding: 3rem;">
+        <div class="spinner" style="margin: 0 auto 1rem auto; width: 40px; height: 40px; border: 3px solid rgba(16, 185, 129, 0.2); border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="color: var(--colorTextMuted);">Analyzing portfolio holdings, stock overlap, and risk-adjusted metrics...</p>
+      </div>
+
+      <div id="cfo-empty-state" class="hidden" style="text-align: center; padding: 3rem; background: var(--colorSurface); border-radius: 1rem; border: 1px dashed var(--colorBorder);">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
+        <h3 style="margin-bottom: 0.5rem;">No Investment Folios Detected</h3>
+        <p style="color: var(--colorTextMuted); max-width: 450px; margin: 0 auto 1.5rem auto;">
+          Invest in mutual funds or import your external holdings via MF Central to let our AI CFO diagnose your portfolio.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 0.75rem;">
+          <button class="btn btn-primary" id="cfo-explore-btn">Explore Funds</button>
+          <button class="btn btn-secondary" id="cfo-empty-mfc-btn">Import via MF Central</button>
+        </div>
+      </div>
+
+      <div id="cfo-results" class="hidden">
+        <!-- Top Metrics & Health Score Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
+          <!-- Health Score Card -->
+          <div class="glass-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; border-left: 4px solid var(--colorAccent); border-radius: 12px;">
+            <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 3px solid var(--colorAccent); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
+              <span id="cfo-health-score" style="font-size: 1.6rem; font-weight: 800; color: var(--colorAccent); line-height: 1;">--</span>
+              <span style="font-size: 0.65rem; color: var(--colorTextMuted); text-transform: uppercase;">Score</span>
+            </div>
+            <div>
+              <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Portfolio Health</div>
+              <div id="cfo-health-rating" style="font-size: 1.2rem; font-weight: 700; color: var(--colorPrimary);">-</div>
+              <div style="font-size: 0.75rem; color: var(--colorTextMuted);">Evaluated across asset mix & risk</div>
+            </div>
+          </div>
+
+          <!-- Total Valuation Card -->
+          <div class="glass-card" style="padding: 1.5rem; border-radius: 12px;">
+            <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Total Analyzed Corpus</div>
+            <div id="cfo-total-corpus" style="font-size: 1.6rem; font-weight: 800; color: var(--colorPrimary); margin: 0.25rem 0;">₹0</div>
+            <div style="font-size: 0.8rem; color: var(--colorSuccess);" id="cfo-total-gain">+₹0 (0.00%)</div>
+          </div>
+
+          <!-- Folios Breakdown Card -->
+          <div class="glass-card" style="padding: 1.5rem; border-radius: 12px;">
+            <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Folio Composition</div>
+            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem;">
+              <div>
+                <div id="cfo-internal-count" style="font-size: 1.5rem; font-weight: 700; color: var(--colorPrimary);">0</div>
+                <div style="font-size: 0.75rem; color: var(--colorTextMuted);">Direct Funds</div>
+              </div>
+              <div>
+                <div id="cfo-external-count" style="font-size: 1.5rem; font-weight: 700; color: var(--colorAccent);">0</div>
+                <div style="font-size: 0.75rem; color: var(--colorTextMuted);">MF Central Synced</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Recommendations from CFO -->
+        <div class="glass-card" style="padding: 1.75rem; margin-bottom: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;">
+            <span style="font-size: 1.25rem;">💡</span>
+            <h3 style="margin: 0; font-size: 1.2rem;">AI CFO's Personal Recommendations</h3>
+          </div>
+          <div id="cfo-recommendations-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Fund by Fund Pros and Cons -->
+        <div class="glass-card" style="padding: 1.75rem; border-radius: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.25rem;">🔍</span>
+              <h3 style="margin: 0; font-size: 1.2rem;">Scheme-by-Scheme Review (Pros & Cons)</h3>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--colorTextMuted);">Includes both internal holdings and external MF Central folios</span>
+          </div>
+          <div id="cfo-funds-review-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div> <!-- End cfo-section -->
 
     <!-- Explore Funds Section -->
     <div id="explore-funds-section" class="tab-content hidden">
@@ -486,12 +622,12 @@
       </div>
       <form id="login-form">
         <div class="form-group">
-          <label for="username">Username / Email (or PAN)</label>
-          <input type="text" id="username" required placeholder="Enter username">
+          <label for="username">Username (Email or PAN)</label>
+          <input type="text" id="username" required placeholder="you@example.com or ABCDE1234F">
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" required placeholder="password">
+          <label for="password">Password (DOB: DDMMYYYY)</label>
+          <input type="password" id="password" required placeholder="e.g. 23062003">
         </div>
         <div class="form-error" id="login-error"></div>
         <button type="submit" class="btn btn-primary full-width">Sign In</button>
@@ -754,6 +890,104 @@
           </p>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MF Central External Mutual Funds Import Modal -->
+  <div id="mfcentral-modal" class="modal-overlay hidden">
+    <div class="modal" style="max-width: 580px; width: 95%;">
+      <button class="modal-close" id="mfcentral-modal-close">&times;</button>
+      <div class="modal-header" style="text-align: left; margin-bottom: 1.25rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+          <span style="font-size: 1.5rem;">🏦</span>
+          <h2 style="font-size: 1.35rem; margin: 0;">Import via MF Central</h2>
+        </div>
+        <p style="color: var(--colorTextMuted); font-size: 0.88rem; margin-top: 0.25rem;">
+          Consolidate your external mutual fund folios from CAMS & KFintech into your Live Investments portfolio.
+        </p>
+      </div>
+
+      <!-- User Credentials to use on MF Central -->
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px; padding: 1.15rem; margin-bottom: 1.25rem;">
+        <div style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--colorPrimary); display: flex; align-items: center; justify-content: space-between;">
+          <span>📋 Your Registered Credentials for MF Central</span>
+          <span style="font-size: 0.7rem; background: var(--colorSurface); color: var(--colorAccent); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">VERIFIED PROFILE</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--colorTextMuted); margin-bottom: 0.9rem;">
+          When logging in or generating your CAS on MF Central, enter your registered PAN and mobile:
+        </p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 8px; padding: 0.65rem 0.9rem;">
+            <div style="font-size: 0.7rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 700;">PAN Card Number</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.2rem;">
+              <span id="mfc-pan-display" style="font-family: monospace; font-size: 1rem; font-weight: 700; color: var(--colorPrimary);">-</span>
+              <button type="button" class="btn-copy-mfc" data-target="mfc-pan-display" style="background: none; border: 1px solid var(--colorBorder); border-radius: 4px; padding: 0.15rem 0.45rem; font-size: 0.7rem; cursor: pointer;">Copy</button>
+            </div>
+          </div>
+
+          <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 8px; padding: 0.65rem 0.9rem;">
+            <div style="font-size: 0.7rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 700;">Registered Mobile</div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.2rem;">
+              <span id="mfc-mobile-display" style="font-family: monospace; font-size: 1rem; font-weight: 700; color: var(--colorPrimary);">-</span>
+              <button type="button" class="btn-copy-mfc" data-target="mfc-mobile-display" style="background: none; border: 1px solid var(--colorBorder); border-radius: 4px; padding: 0.15rem 0.45rem; font-size: 0.7rem; cursor: pointer;">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Redirection Button -->
+      <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
+        <a href="https://app.mfcentral.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary full-width" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem; font-size: 0.95rem;">
+          <span>Go to MF Central Portal (CAMS & KFintech)</span>
+          <span>↗</span>
+        </a>
+        <p style="text-align: center; font-size: 0.78rem; color: var(--colorTextMuted); margin: 0;">
+          Opens official portal at https://app.mfcentral.com in a new tab.
+        </p>
+      </div>
+
+      <!-- Quick Sync or Add Custom -->
+      <div style="border-top: 1px solid var(--colorBorder); padding-top: 1.1rem;">
+        <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.5rem; color: var(--colorPrimary);">Sync Folios to Live Investments:</div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button type="button" id="btn-quick-import-mfc" class="btn btn-secondary" style="flex: 1.2; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--colorAccent); color: var(--colorAccent); padding: 0.6rem;">
+            <span>⚡ Quick-Sync CAS Folios</span>
+          </button>
+          <button type="button" id="btn-toggle-manual-mfc" class="btn btn-secondary" style="flex: 1; min-width: 150px; padding: 0.6rem;">
+            <span>➕ Add External Scheme</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Manual External Entry -->
+      <form id="mfc-manual-form" class="hidden" style="margin-top: 1rem; background: var(--colorBg); padding: 1rem; border-radius: 8px; border: 1px solid var(--colorBorder);">
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">Add External Mutual Fund Scheme</h4>
+        <div class="form-group" style="margin-bottom: 0.65rem;">
+          <label style="font-size: 0.78rem;">Fund Name</label>
+          <input type="text" id="mfc-fund-name" placeholder="e.g., Axis Bluechip Fund" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; margin-bottom: 0.75rem;">
+          <div class="form-group" style="margin: 0;">
+            <label style="font-size: 0.78rem;">Category</label>
+            <select id="mfc-fund-category" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+              <option value="Large Cap">Large Cap</option>
+              <option value="Flexi Cap">Flexi Cap</option>
+              <option value="Mid Cap">Mid Cap</option>
+              <option value="Small Cap">Small Cap</option>
+              <option value="Balanced Advantage">Balanced Advantage / Hybrid</option>
+              <option value="Sectoral / Tech">Sectoral / Thematic</option>
+              <option value="Debt / Liquid">Debt / Liquid</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label style="font-size: 0.78rem;">Invested Amount (₹)</label>
+            <input type="number" id="mfc-fund-amount" placeholder="e.g., 25000" min="500" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary full-width" style="padding: 0.55rem; font-size: 0.88rem;">Save External Fund</button>
+      </form>
+      <div id="mfc-status-msg" style="margin-top: 0.65rem; font-size: 0.82rem; text-align: center;"></div>
     </div>
   </div>
 

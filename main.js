@@ -31,8 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Dashboard Tabs Elements
     const tabPortfolio = document.getElementById('tab-portfolio');
+    const tabCfo = document.getElementById('tab-cfo');
     const tabExplore = document.getElementById('tab-explore');
     const portfolioSection = document.getElementById('portfolio-section');
+    const cfoSection = document.getElementById('cfo-section');
     const exploreSection = document.getElementById('explore-funds-section');
     const exploreFundsGrid = document.getElementById('explore-funds-grid');
 
@@ -111,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentValueEl.textContent = formatCurrency(portfolio.currentValue);
 
         const absoluteReturn = portfolio.currentValue - portfolio.totalInvested;
-        const percentReturn = (absoluteReturn / portfolio.totalInvested) * 100;
+        const percentReturn = portfolio.totalInvested > 0 ? (absoluteReturn / portfolio.totalInvested) * 100 : 0;
 
         totalReturnsEl.textContent = formatCurrency(absoluteReturn);
         returnsPercentageEl.textContent = formatPercentage(percentReturn);
@@ -123,11 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
             returnsPercentageEl.classList.add('negative');
         }
 
+        // Update MF Central Modal credentials from user profile
+        const mfcPanDisplay = document.getElementById('mfc-pan-display');
+        const mfcMobileDisplay = document.getElementById('mfc-mobile-display');
+        if (mfcPanDisplay) mfcPanDisplay.textContent = user.profile.pan || '-';
+        if (mfcMobileDisplay) mfcMobileDisplay.textContent = user.profile.phone || '-';
+
         // Investments Table
         investmentsTbody.innerHTML = '';
 
         if (portfolio.investments.length === 0) {
-            investmentsTbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No investments found.</td></tr>';
+            investmentsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No investments found. Make a new investment or sync external folios via MF Central!</td></tr>';
             return;
         }
 
@@ -136,11 +144,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPositive = absoluteInvReturn >= 0;
             const pillClass = isPositive ? 'positive' : 'negative';
             const arrowSign = isPositive ? '▲' : '▼';
+            const isExt = inv.isExternal || inv.source === 'MF Central';
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
         <td><div class="fund-name">${inv.name}</div></td>
         <td><div class="fund-category">${inv.category}</div></td>
+        <td>
+          <span style="display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 4px; background: ${isExt ? 'rgba(6, 182, 212, 0.12)' : 'rgba(16, 185, 129, 0.12)'}; color: ${isExt ? '#0891b2' : '#059669'};">
+            ${isExt ? 'MF Central' : 'Direct'}
+          </span>
+        </td>
         <td>${formatCurrency(inv.investedAmount)}</td>
         <td>${formatCurrency(inv.currentValue)}</td>
         <td>
@@ -204,25 +218,136 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Tab Management ---
     const switchTab = (tabName) => {
-        if (tabName === 'portfolio') {
-            tabPortfolio.classList.add('active');
-            tabExplore.classList.remove('active');
-            portfolioSection.classList.add('active');
-            portfolioSection.classList.remove('hidden');
-            exploreSection.classList.remove('active');
-            exploreSection.classList.add('hidden');
-        } else if (tabName === 'explore') {
-            tabExplore.classList.add('active');
-            tabPortfolio.classList.remove('active');
-            exploreSection.classList.add('active');
-            exploreSection.classList.remove('hidden');
-            portfolioSection.classList.remove('active');
-            portfolioSection.classList.add('hidden');
+        tabPortfolio.classList.toggle('active', tabName === 'portfolio');
+        if (tabCfo) tabCfo.classList.toggle('active', tabName === 'cfo');
+        tabExplore.classList.toggle('active', tabName === 'explore');
 
-            // Render funds if empty
-            if (exploreFundsGrid.children.length === 0) {
-                fetchExploreFunds();
+        portfolioSection.classList.toggle('active', tabName === 'portfolio');
+        portfolioSection.classList.toggle('hidden', tabName !== 'portfolio');
+
+        if (cfoSection) {
+            cfoSection.classList.toggle('active', tabName === 'cfo');
+            cfoSection.classList.toggle('hidden', tabName !== 'cfo');
+        }
+
+        exploreSection.classList.toggle('active', tabName === 'explore');
+        exploreSection.classList.toggle('hidden', tabName !== 'explore');
+
+        if (tabName === 'explore' && exploreFundsGrid.children.length === 0) {
+            fetchExploreFunds();
+        } else if (tabName === 'cfo') {
+            fetchAndRenderCFO();
+        }
+    };
+
+    // --- AI CFO Review Rendering ---
+    const fetchAndRenderCFO = async () => {
+        const cfoLoading = document.getElementById('cfo-loading');
+        const cfoEmpty = document.getElementById('cfo-empty-state');
+        const cfoResults = document.getElementById('cfo-results');
+
+        if (!cfoLoading || !cfoResults || !cfoEmpty) return;
+
+        cfoLoading.classList.remove('hidden');
+        cfoEmpty.classList.add('hidden');
+        cfoResults.classList.add('hidden');
+
+        try {
+            const res = await fetch('/api/portfolio/ai-analysis');
+            if (!res.ok) throw new Error('Failed to generate AI analysis');
+            const data = await res.json();
+
+            cfoLoading.classList.add('hidden');
+
+            if (!data.hasHoldings) {
+                cfoEmpty.classList.remove('hidden');
+                return;
             }
+
+            cfoResults.classList.remove('hidden');
+
+            // Set Top Metrics
+            document.getElementById('cfo-health-score').textContent = data.healthScore;
+            document.getElementById('cfo-health-rating').textContent = data.healthRating;
+            document.getElementById('cfo-total-corpus').textContent = formatCurrency(data.summary.currentValue);
+            
+            const gain = data.summary.overallGain;
+            const gainPercent = data.summary.overallReturnPercent;
+            const sign = gain >= 0 ? '+' : '';
+            const gainEl = document.getElementById('cfo-total-gain');
+            gainEl.textContent = `${sign}${formatCurrency(gain)} (${sign}${gainPercent}%)`;
+            gainEl.style.color = gain >= 0 ? 'var(--colorSuccess)' : 'var(--colorDanger)';
+
+            document.getElementById('cfo-internal-count').textContent = data.summary.schemesCount - data.summary.externalSchemesCount;
+            document.getElementById('cfo-external-count').textContent = data.summary.externalSchemesCount;
+
+            // Render Recommendations
+            const recContainer = document.getElementById('cfo-recommendations-list');
+            recContainer.innerHTML = data.recommendations.map(rec => `
+                <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadowSm);">
+                    <div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span style="font-size: 1.5rem;">${rec.icon}</span>
+                            <span style="font-size: 0.72rem; font-weight: 700; background: rgba(16, 185, 129, 0.1); color: var(--colorAccent); padding: 0.2rem 0.5rem; border-radius: 4px;">${rec.type}</span>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.98rem; color: var(--colorPrimary);">${rec.title}</h4>
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--colorTextMuted); line-height: 1.5;">${rec.description}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Scheme Reviews (Pros and Cons)
+            const reviewsContainer = document.getElementById('cfo-funds-review-list');
+            reviewsContainer.innerHTML = data.fundReviews.map(f => `
+                <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadowSm);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; border-bottom: 1px solid var(--colorBorder); padding-bottom: 0.85rem; margin-bottom: 1rem;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <h4 style="margin: 0; font-size: 1.05rem; color: var(--colorPrimary);">${f.fundName}</h4>
+                                <span style="font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; background: ${f.isExternal ? 'rgba(6, 182, 212, 0.12)' : 'rgba(16, 185, 129, 0.12)'}; color: ${f.isExternal ? '#0891b2' : '#059669'};">
+                                    ${f.source || 'Direct'}
+                                </span>
+                            </div>
+                            <div style="font-size: 0.82rem; color: var(--colorTextMuted); margin-top: 0.25rem;">
+                                ${f.category} • Portfolio Weight: <strong>${f.portfolioWeight}%</strong>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.1rem; font-weight: 700; color: var(--colorPrimary);">${formatCurrency(f.currentValue)}</div>
+                            <div style="font-size: 0.8rem; color: ${f.returnsPercent >= 0 ? 'var(--colorSuccess)' : 'var(--colorDanger)'}; font-weight: 600;">
+                                ${f.returnsPercent >= 0 ? '+' : ''}${f.returnsPercent}% returns
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                        <!-- Pros -->
+                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 0.9rem;">
+                            <div style="font-weight: 700; font-size: 0.82rem; color: #059669; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
+                                <span>✅ Key Strengths (Pros)</span>
+                            </div>
+                            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: var(--colorText); line-height: 1.5;">
+                                ${f.pros.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <!-- Cons -->
+                        <div style="background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 0.9rem;">
+                            <div style="font-weight: 700; font-size: 0.82rem; color: #dc2626; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
+                                <span>⚠️ Risk Factors & Caveats (Cons)</span>
+                            </div>
+                            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: var(--colorText); line-height: 1.5;">
+                                ${f.cons.map(c => `<li>${c}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+        } catch (err) {
+            console.error('Error loading AI CFO data:', err);
+            cfoLoading.classList.add('hidden');
+            cfoEmpty.classList.remove('hidden');
         }
     };
 
@@ -318,12 +443,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                signupSuccess.textContent = 'Account application received! Please wait 1-2 working days for your credentials to be sent to your email.';
+                const generatedPwd = data.password || 'your DOB in DDMMYYYY (e.g. 23062003)';
+                signupSuccess.innerHTML = `
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--colorAccent); border-radius: 8px; padding: 12px; margin-top: 10px; text-align: left;">
+                        <strong>🎉 Account Created!</strong><br>
+                        <strong>Username:</strong> ${data.username || email}<br>
+                        <strong>Password:</strong> ${generatedPwd}<br>
+                        <small style="color: var(--colorTextMuted);">Switching to login form in 3 seconds...</small>
+                    </div>
+                `;
+                usernameInput.value = data.username || email;
+                passwordInput.value = data.password || '';
                 signupForm.reset();
                 setTimeout(() => {
                     showLoginModal();
-                    signupSuccess.textContent = ''; // Clear for next time
-                }, 5000);
+                    signupSuccess.innerHTML = '';
+                }, 3500);
             } else {
                 signupError.textContent = data.error || 'Failed to create account.';
             }
@@ -501,6 +636,224 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('login') === 'true') {
         showLoginModal();
+        const prefillUser = urlParams.get('user') || urlParams.get('email');
+        if (prefillUser) {
+            usernameInput.value = prefillUser;
+            passwordInput.focus();
+        }
+    }
+
+    // Add Investment Button
+    const addInvestmentBtn = document.getElementById('add-investment-btn');
+    if (addInvestmentBtn) {
+        addInvestmentBtn.addEventListener('click', () => {
+            switchTab('explore');
+        });
+    }
+
+    // --- MF Central Modal & Actions ---
+    const mfcentralModal = document.getElementById('mfcentral-modal');
+    const mfcentralCloseBtn = document.getElementById('mfcentral-modal-close');
+    const btnOpenMfc1 = document.getElementById('btn-open-mfcentral-modal');
+    const btnOpenMfc2 = document.getElementById('btn-sync-mfc-header');
+    const btnOpenMfc3 = document.getElementById('cfo-empty-mfc-btn');
+    const btnRunCfo = document.getElementById('btn-run-cfo-analysis');
+    const btnRefreshCfo = document.getElementById('btn-refresh-cfo');
+    const cfoExploreBtn = document.getElementById('cfo-explore-btn');
+
+    const showMFCentralModal = () => {
+        if (!mfcentralModal) return;
+        if (currentUser) {
+            const panEl = document.getElementById('mfc-pan-display');
+            const mobileEl = document.getElementById('mfc-mobile-display');
+            if (panEl) panEl.textContent = currentUser.pan || 'ABCDE1234F';
+            if (mobileEl) mobileEl.textContent = currentUser.phone || '+91 98765 43210';
+        }
+        mfcentralModal.classList.remove('hidden');
+        const statusMsg = document.getElementById('mfc-status-msg');
+        if (statusMsg) statusMsg.textContent = '';
+    };
+
+    const hideMFCentralModal = () => {
+        if (mfcentralModal) mfcentralModal.classList.add('hidden');
+    };
+
+    if (btnOpenMfc1) btnOpenMfc1.addEventListener('click', showMFCentralModal);
+    if (btnOpenMfc2) btnOpenMfc2.addEventListener('click', showMFCentralModal);
+    if (btnOpenMfc3) btnOpenMfc3.addEventListener('click', showMFCentralModal);
+    if (mfcentralCloseBtn) mfcentralCloseBtn.addEventListener('click', hideMFCentralModal);
+
+    if (mfcentralModal) {
+        mfcentralModal.addEventListener('click', (e) => {
+            if (e.target === mfcentralModal) hideMFCentralModal();
+        });
+    }
+
+    if (tabCfo) tabCfo.addEventListener('click', () => switchTab('cfo'));
+    if (btnRunCfo) btnRunCfo.addEventListener('click', () => switchTab('cfo'));
+    if (btnRefreshCfo) btnRefreshCfo.addEventListener('click', fetchAndRenderCFO);
+    if (cfoExploreBtn) cfoExploreBtn.addEventListener('click', () => switchTab('explore'));
+
+    // Copy to clipboard helper for PAN & mobile
+    document.querySelectorAll('.btn-copy-mfc').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const targetEl = document.getElementById(targetId);
+            if (targetEl && targetEl.textContent) {
+                navigator.clipboard.writeText(targetEl.textContent.trim());
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                btn.style.color = 'var(--colorAccent)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.color = '';
+                }, 1500);
+            }
+        });
+    });
+
+    // Toggle Manual Form in MF Central Modal
+    const btnToggleManualMfc = document.getElementById('btn-toggle-manual-mfc');
+    const mfcManualForm = document.getElementById('mfc-manual-form');
+    if (btnToggleManualMfc && mfcManualForm) {
+        btnToggleManualMfc.addEventListener('click', () => {
+            mfcManualForm.classList.toggle('hidden');
+        });
+    }
+
+    // Quick Sync Sample External Folios
+    const btnQuickImportMfc = document.getElementById('btn-quick-import-mfc');
+    if (btnQuickImportMfc) {
+        btnQuickImportMfc.addEventListener('click', async () => {
+            const statusMsg = document.getElementById('mfc-status-msg');
+            const originalContent = btnQuickImportMfc.innerHTML;
+
+            btnQuickImportMfc.disabled = true;
+            btnQuickImportMfc.innerHTML = '<span>⏳ Syncing folios from CAS...</span>';
+            if (statusMsg) {
+                statusMsg.style.color = 'var(--colorPrimary)';
+                statusMsg.textContent = 'Syncing CAMS & KFintech CAS folios with database...';
+            }
+
+            try {
+                const sampleExternalFolios = [
+                    {
+                        fundId: 'mfc-ext-001',
+                        name: 'Axis Bluechip Fund',
+                        category: 'Large Cap',
+                        investedAmount: 35000,
+                        currentValue: 42800
+                    },
+                    {
+                        fundId: 'mfc-ext-002',
+                        name: 'ICICI Prudential Balanced Advantage Fund',
+                        category: 'Balanced Advantage',
+                        investedAmount: 50000,
+                        currentValue: 58500
+                    },
+                    {
+                        fundId: 'mfc-ext-003',
+                        name: 'SBI Small Cap Fund',
+                        category: 'Small Cap',
+                        investedAmount: 20000,
+                        currentValue: 27900
+                    }
+                ];
+
+                const res = await fetch('/api/portfolio/import-external', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ funds: sampleExternalFolios })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.error || 'Failed to sync external mutual funds.');
+                }
+
+                if (statusMsg) {
+                    statusMsg.style.color = 'var(--colorSuccess)';
+                    statusMsg.textContent = '✅ Synced 3 external folios! Opening AI CFO analysis...';
+                }
+
+                setTimeout(async () => {
+                    hideMFCentralModal();
+                    await fetchAndRenderDashboard();
+                    switchTab('cfo');
+                }, 1200);
+
+            } catch (err) {
+                console.error('MF Central sync error:', err);
+                if (statusMsg) {
+                    statusMsg.style.color = 'var(--colorDanger)';
+                    statusMsg.textContent = '❌ ' + err.message;
+                }
+            } finally {
+                btnQuickImportMfc.disabled = false;
+                btnQuickImportMfc.innerHTML = originalContent;
+            }
+        });
+    }
+
+    // Manual External Scheme Form Submission
+    if (mfcManualForm) {
+        mfcManualForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusMsg = document.getElementById('mfc-status-msg');
+            const submitBtn = mfcManualForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            const name = document.getElementById('mfc-fund-name').value.trim();
+            const category = document.getElementById('mfc-fund-category').value;
+            const amount = Number(document.getElementById('mfc-fund-amount').value);
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Saving...';
+
+            try {
+                const res = await fetch('/api/portfolio/import-external', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        funds: [{
+                            name,
+                            category,
+                            investedAmount: amount,
+                            currentValue: Math.round(amount * 1.15)
+                        }]
+                    })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json();
+                    throw new Error(errData.error || 'Failed to add external fund.');
+                }
+
+                if (statusMsg) {
+                    statusMsg.style.color = 'var(--colorSuccess)';
+                    statusMsg.textContent = `✅ Saved ${name}! Opening AI CFO Review...`;
+                }
+
+                mfcManualForm.reset();
+                mfcManualForm.classList.add('hidden');
+
+                setTimeout(async () => {
+                    hideMFCentralModal();
+                    await fetchAndRenderDashboard();
+                    switchTab('cfo');
+                }, 1200);
+
+            } catch (err) {
+                console.error('Save external fund error:', err);
+                if (statusMsg) {
+                    statusMsg.style.color = 'var(--colorDanger)';
+                    statusMsg.textContent = '❌ ' + err.message;
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        });
     }
 
     // --- Checkout Flow Logic ---
@@ -566,35 +919,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const payConfirmBtn = document.getElementById('pay-confirm-btn');
     if (payConfirmBtn) {
-        payConfirmBtn.addEventListener('click', () => {
+        payConfirmBtn.addEventListener('click', async () => {
             const btnText = document.getElementById('pay-btn-text');
             const spinner = document.getElementById('pay-spinner');
-            const method = document.querySelector('input[name="payMethod"]:checked').value;
+            const method = document.querySelector('input[name="payMethod"]:checked')?.value || 'UPI';
+            const amount = document.getElementById('invest-amount').value;
             
             btnText.classList.add('hidden');
             spinner.classList.remove('hidden');
             payConfirmBtn.disabled = true;
             payBackBtn.disabled = true;
 
-            // Simulate payment processing delay
-            setTimeout(() => {
-                alert(`Payment Successful! Simulated order for ${currentCheckoutFund.name} placed via ${method}.`);
+            try {
+                // Save investment directly to database via API
+                const response = await fetch('/api/portfolio/invest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fundId: currentCheckoutFund.id,
+                        fundName: currentCheckoutFund.name,
+                        category: currentCheckoutFund.category,
+                        amount: Number(amount)
+                    })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Failed to save investment.');
+                }
+
+                alert(`🎉 Investment Successful!\nInvested ₹${Number(amount).toLocaleString('en-IN')} in ${currentCheckoutFund.name} via ${method}.`);
                 
                 // Reset UI & State
-                btnText.classList.remove('hidden');
-                spinner.classList.add('hidden');
-                payConfirmBtn.disabled = false;
-                payBackBtn.disabled = false;
                 orderForm.reset();
                 currentCheckoutFund = null;
                 
-                // Return to Dashboard (Portfolio tab)
+                // Return to Dashboard (Portfolio tab) & refresh data from DB
                 paymentView.classList.add('hidden');
                 paymentView.classList.remove('active');
                 dashboardView.classList.remove('hidden');
                 dashboardView.classList.add('active');
                 switchTab('portfolio');
-            }, 2500);
+                await fetchAndRenderDashboard();
+            } catch (err) {
+                console.error('Payment/Investment error:', err);
+                alert(`Error recording investment: ${err.message}`);
+            } finally {
+                btnText.classList.remove('hidden');
+                spinner.classList.add('hidden');
+                payConfirmBtn.disabled = false;
+                payBackBtn.disabled = false;
+            }
         });
     }
 

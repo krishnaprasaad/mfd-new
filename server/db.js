@@ -19,7 +19,7 @@ export async function connectDB() {
         console.log('🔌 Connecting to MongoDB...');
         cached.promise = mongoose.connect(uri, {
             bufferCommands: false,
-            serverSelectionTimeoutMS: 2000,
+            serverSelectionTimeoutMS: 10000,
         }).then(mongooseInstance => {
             try {
                 const client = mongooseInstance.connection.getClient();

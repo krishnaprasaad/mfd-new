@@ -18,7 +18,7 @@ export const app = express();
 
 // CORS configuration
 const allowedOrigins = [
-    'http://localhost:5173', 
+    'http://localhost:5173',
     'http://localhost:8888',
     'https://liveinvestments.club'
 ];

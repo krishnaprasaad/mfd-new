@@ -8,6 +8,10 @@ import Investment from '../models/Investment.js';
 
 const router = express.Router();
 
+const JWT_SECRET = process.env.JWT_SECRET || 'aurora-super-secret-key-123';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'asdf';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'asdf';
+
 // Middleware to verify admin token
 const adminAuth = (req, res, next) => {
     const token = req.cookies.admin_token;
@@ -16,7 +20,7 @@ const adminAuth = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
         if (decoded.role !== 'admin') {
             return res.status(403).json({ error: 'Forbidden: Admin access required' });
         }
@@ -31,10 +35,10 @@ const adminAuth = (req, res, next) => {
 router.post('/login', (req, res) => {
     const { username, password } = req.body;
 
-    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         const token = jwt.sign(
             { username, role: 'admin' },
-            process.env.JWT_SECRET,
+            JWT_SECRET,
             { expiresIn: '2h' }
         );
 

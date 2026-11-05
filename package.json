@@ -6,17 +6,19 @@
   "scripts": {
     "dev:frontend": "vite",
     "dev:backend": "nodemon server/index.js",
-    "dev": "npm run dev:backend & npm run dev:frontend",
+    "dev": "node dev.js",
     "build": "vite build",
     "build:frontend": "vite build",
     "preview": "vite preview",
-    "start": "npm run build && node server/start.js"
+    "start": "npm run build && node server/start.js",
+    "mcp": "node mcp-server.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
     "vite": "^7.3.1"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@vercel/functions": "^3.4.3",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",

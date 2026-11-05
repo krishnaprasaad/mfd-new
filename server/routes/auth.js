@@ -15,6 +15,7 @@ const __dirname = path.dirname(__filename);
 
 // Ensure uploads directory exists. Uses /tmp in production (Vercel) since it's the only writable dir
 const isProduction = process.env.NODE_ENV === 'production';
+const JWT_SECRET = process.env.JWT_SECRET || 'aurora-super-secret-key-123';
 const uploadDir = isProduction ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, '../uploads');
 
 if (!fs.existsSync(uploadDir)) {
@@ -49,18 +50,38 @@ router.post('/signup', upload.single('panCopy'), async (req, res) => {
             return res.status(400).json({ error: 'All fields are required.' });
         }
 
-        // Check if user exists
-        const existingUser = await User.findOne({ pan: pan.toUpperCase() });
+        const normalizedEmail = email.trim().toLowerCase();
+        const normalizedPan = pan.trim().toUpperCase();
+
+        // Check if user exists by PAN or Email
+        const existingUser = await User.findOne({
+            $or: [
+                { email: normalizedEmail },
+                { pan: normalizedPan }
+            ]
+        });
+
         if (existingUser) {
-            return res.status(400).json({ error: 'An account with this PAN already exists.' });
+            if (existingUser.email && existingUser.email.toLowerCase() === normalizedEmail) {
+                return res.status(400).json({ error: 'An account with this email address already exists. Please log in.' });
+            }
+            return res.status(400).json({ error: 'An account with this PAN already exists. Please log in.' });
         }
 
-        // Generate password from DOB (format: DDMMYYYY)
-        const dobParts = dob.split('-'); // [YYYY, MM, DD]
-        if (dobParts.length !== 3) {
-            return res.status(400).json({ error: 'Invalid Date of Birth format.' });
+        // Generate password from DOB (format: DDMMYYYY, e.g. 23 Jun 2003 -> 23062003)
+        const dobClean = dob.trim();
+        let generatedPassword = '';
+        if (/^\d{4}[-/]\d{2}[-/]\d{2}$/.test(dobClean)) {
+            const parts = dobClean.split(/[-/]/); // [YYYY, MM, DD]
+            generatedPassword = `${parts[2]}${parts[1]}${parts[0]}`;
+        } else if (/^\d{2}[-/]\d{2}[-/]\d{4}$/.test(dobClean)) {
+            const parts = dobClean.split(/[-/]/); // [DD, MM, YYYY]
+            generatedPassword = `${parts[0]}${parts[1]}${parts[2]}`;
+        } else if (/^\d{8}$/.test(dobClean)) {
+            generatedPassword = dobClean;
+        } else {
+            return res.status(400).json({ error: 'Invalid Date of Birth format. Please select a valid date.' });
         }
-        const generatedPassword = `${dobParts[2]}${dobParts[1]}${dobParts[0]}`;
 
         // Hash password
         const salt = await bcrypt.genSalt(10);
@@ -68,17 +89,26 @@ router.post('/signup', upload.single('panCopy'), async (req, res) => {
 
         // Save user to MongoDB
         const newUser = new User({
-            pan: pan.toUpperCase(),
-            name,
-            email,
-            phone,
-            dob,
+            pan: normalizedPan,
+            name: name.trim(),
+            email: normalizedEmail,
+            phone: phone.trim(),
+            dob: dobClean,
             passwordHash: hashedPassword,
             panCopy,
         });
         await newUser.save();
 
-        res.status(201).json({ message: 'Account application received successfully.' });
+        res.status(201).json({
+            message: 'Account created successfully!',
+            username: normalizedEmail,
+            password: generatedPassword,
+            user: {
+                name: newUser.name,
+                email: newUser.email,
+                pan: newUser.pan
+            }
+        });
 
     } catch (error) {
         console.error('Signup error:', error);
@@ -93,31 +123,35 @@ router.post('/login', async (req, res) => {
         const { username, password } = req.body;
 
         if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password are required.' });
+            return res.status(400).json({ error: 'Username (email or PAN) and password are required.' });
         }
 
-        // Find user by PAN or Email
+        const cleanInput = username.trim();
+        const cleanPassword = password.trim();
+
+        // Find user by PAN or Email (case-insensitive)
         const user = await User.findOne({
             $or: [
-                { pan: username.toUpperCase() },
-                { email: username }
+                { email: cleanInput.toLowerCase() },
+                { pan: cleanInput.toUpperCase() },
+                { email: { $regex: new RegExp(`^${cleanInput.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } }
             ]
         });
 
         if (!user) {
-            return res.status(401).json({ error: 'Invalid credentials.' });
+            return res.status(401).json({ error: 'Invalid credentials. Please check your username (email) and password (DOB: DDMMYYYY).' });
         }
 
         // Compare passwords
-        const isMatch = await bcrypt.compare(password, user.passwordHash);
+        const isMatch = await bcrypt.compare(cleanPassword, user.passwordHash);
         if (!isMatch) {
-            return res.status(401).json({ error: 'Invalid credentials.' });
+            return res.status(401).json({ error: 'Invalid credentials. Password is your Date of Birth in DDMMYYYY format (e.g., 23062003).' });
         }
 
         // Generate JWT
         const token = jwt.sign(
             { userId: user._id.toString() },
-            process.env.JWT_SECRET,
+            JWT_SECRET,
             { expiresIn: '1h' }
         );
 
@@ -132,6 +166,7 @@ router.post('/login', async (req, res) => {
         res.json({
             message: 'Login successful',
             user: {
+                id: user._id.toString(),
                 name: user.name,
                 email: user.email,
                 pan: user.pan
@@ -158,7 +193,7 @@ router.get('/me', async (req, res) => {
             return res.status(401).json({ error: 'Not authenticated' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET);
 
         await connectDB();
         const user = await User.findById(decoded.userId).select('name email pan');
