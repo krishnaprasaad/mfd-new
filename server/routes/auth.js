@@ -9,13 +9,13 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import os from 'os';
+import { getJwtSecret } from '../config/security.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Ensure uploads directory exists. Uses /tmp in production (Vercel) since it's the only writable dir
 const isProduction = process.env.NODE_ENV === 'production';
-const JWT_SECRET = process.env.JWT_SECRET || 'aurora-super-secret-key-123';
 const uploadDir = isProduction ? path.join(os.tmpdir(), 'uploads') : path.join(__dirname, '../uploads');
 
 if (!fs.existsSync(uploadDir)) {
@@ -151,7 +151,7 @@ router.post('/login', async (req, res) => {
         // Generate JWT
         const token = jwt.sign(
             { userId: user._id.toString() },
-            JWT_SECRET,
+            getJwtSecret(),
             { expiresIn: '1h' }
         );
 
@@ -193,7 +193,7 @@ router.get('/me', async (req, res) => {
             return res.status(401).json({ error: 'Not authenticated' });
         }
 
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, getJwtSecret());
 
         await connectDB();
         const user = await User.findById(decoded.userId).select('name email pan');

@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
     const landingView = document.getElementById('landing-view');
     const dashboardView = document.getElementById('dashboard-view');
-    const orderView = document.getElementById('order-view');
-    const paymentView = document.getElementById('payment-view');
     const loginModal = document.getElementById('login-modal');
 
     const navLoginBtn = document.getElementById('nav-login-btn');
@@ -38,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cfoSection = document.getElementById('cfo-section');
     const exploreSection = document.getElementById('explore-funds-section');
     const exploreFundsGrid = document.getElementById('explore-funds-grid');
+    const exploreFundsSearchForm = document.getElementById('explore-funds-search-form');
+    const exploreFundsSearch = document.getElementById('explore-funds-search');
 
     // --- State ---
     let currentUser = null;
@@ -56,16 +56,421 @@ document.addEventListener('DOMContentLoaded', () => {
         return (percent > 0 ? '+' : '') + percent.toFixed(2) + '%';
     };
 
+    const cfoChatHistory = [];
+    let cfoExecutionStartedAt = 0;
+    let cfoExecutionTimer = null;
+    let cfoConversationTitle = '';
+
+    const escapeCfoHtml = value => String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+    const formatCfoInlineMarkdown = value => escapeCfoHtml(value)
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+    const renderCfoMarkdown = (element, markdown) => {
+        element.replaceChildren();
+        const lines = String(markdown).replace(/\r/g, '').split('\n');
+        let index = 0;
+        const appendParagraph = text => {
+            const paragraph = document.createElement('p');
+            paragraph.innerHTML = formatCfoInlineMarkdown(text);
+            element.appendChild(paragraph);
+        };
+        const isTableRule = line => /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line);
+        const cells = line => line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
+
+        while (index < lines.length) {
+            const line = lines[index];
+            if (!line.trim()) {
+                index++;
+                continue;
+            }
+            if (line.trim().startsWith('```')) {
+                index++;
+                const code = [];
+                while (index < lines.length && !lines[index].trim().startsWith('```')) code.push(lines[index++]);
+                index++;
+                const pre = document.createElement('pre');
+                const codeElement = document.createElement('code');
+                codeElement.textContent = code.join('\n');
+                pre.appendChild(codeElement);
+                element.appendChild(pre);
+                continue;
+            }
+            if (index + 1 < lines.length && line.includes('|') && isTableRule(lines[index + 1])) {
+                const table = document.createElement('table');
+                table.className = 'cfo-markdown-table';
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                cells(line).forEach(value => {
+                    const th = document.createElement('th');
+                    th.innerHTML = formatCfoInlineMarkdown(value);
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                index += 2;
+                const tbody = document.createElement('tbody');
+                while (index < lines.length && lines[index].includes('|') && lines[index].trim()) {
+                    const tr = document.createElement('tr');
+                    cells(lines[index++]).forEach(value => {
+                        const td = document.createElement('td');
+                        td.innerHTML = formatCfoInlineMarkdown(value);
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                }
+                table.appendChild(tbody);
+                const wrap = document.createElement('div');
+                wrap.className = 'cfo-markdown-table-wrap';
+                wrap.appendChild(table);
+                element.appendChild(wrap);
+                continue;
+            }
+            const heading = line.match(/^(#{1,4})\s+(.+)$/);
+            if (heading) {
+                const title = document.createElement(`h${Math.min(heading[1].length + 2, 6)}`);
+                title.innerHTML = formatCfoInlineMarkdown(heading[2]);
+                element.appendChild(title);
+                index++;
+                continue;
+            }
+            if (/^\s*[-*]\s+/.test(line) || /^\s*\d+[.)]\s+/.test(line)) {
+                const ordered = /^\s*\d+[.)]\s+/.test(line);
+                const list = document.createElement(ordered ? 'ol' : 'ul');
+                while (index < lines.length && (ordered
+                    ? /^\s*\d+[.)]\s+/.test(lines[index])
+                    : /^\s*[-*]\s+/.test(lines[index]))) {
+                    const item = document.createElement('li');
+                    item.innerHTML = formatCfoInlineMarkdown(lines[index++].replace(/^\s*(?:[-*]|\d+[.)])\s+/, ''));
+                    list.appendChild(item);
+                }
+                element.appendChild(list);
+                continue;
+            }
+            const paragraph = [line.trim()];
+            index++;
+            while (index < lines.length && lines[index].trim() &&
+                !/^(#{1,4})\s+/.test(lines[index]) &&
+                !/^\s*[-*]\s+/.test(lines[index]) &&
+                !/^\s*\d+[.)]\s+/.test(lines[index]) &&
+                !(index + 1 < lines.length && lines[index].includes('|') && isTableRule(lines[index + 1]))) {
+                paragraph.push(lines[index++].trim());
+            }
+            appendParagraph(paragraph.join(' '));
+        }
+    };
+
+    const getCfoConversationStorageKey = () => {
+        const account = currentUser?.email || currentUser?.name || 'account';
+        return `cfo-conversation-title:${String(account).toLowerCase()}`;
+    };
+
+    const updateCfoHistoryEntry = () => {
+        const title = document.getElementById('cfo-history-title');
+        const preview = document.getElementById('cfo-history-preview');
+        const entry = document.getElementById('cfo-history-entry');
+        if (!title || !preview || !entry) return;
+        const firstQuestion = cfoChatHistory.find(item => item.role === 'user')?.content;
+        cfoConversationTitle = localStorage.getItem(getCfoConversationStorageKey()) ||
+            (firstQuestion ? firstQuestion.slice(0, 42) : 'Investment review');
+        title.textContent = cfoConversationTitle;
+        preview.textContent = firstQuestion || 'Your saved CFO conversation';
+        const search = document.getElementById('cfo-history-search')?.value.trim().toLowerCase();
+        const searchableText = `${cfoConversationTitle} ${cfoChatHistory.map(item => item.content).join(' ')}`.toLowerCase();
+        const matches = !search || searchableText.includes(search);
+        entry.classList.toggle('hidden', !matches);
+        document.getElementById('cfo-history-empty')?.classList.toggle('hidden', matches);
+    };
+
+    const appendCfoMessageActions = (message, question, answer) => {
+        if (!message || message.querySelector('.cfo-message-actions')) return;
+        const actions = document.createElement('div');
+        actions.className = 'cfo-message-actions';
+        const copy = document.createElement('button');
+        copy.type = 'button';
+        copy.textContent = 'Copy';
+        copy.setAttribute('aria-label', 'Copy AI response');
+        copy.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(answer);
+                copy.textContent = 'Copied';
+                window.setTimeout(() => { copy.textContent = 'Copy'; }, 1400);
+            } catch (error) {
+                console.error('Unable to copy AI CFO response:', error.name || 'UnknownError');
+                copy.textContent = 'Copy unavailable';
+            }
+        });
+        const regenerate = document.createElement('button');
+        regenerate.type = 'button';
+        regenerate.textContent = 'Regenerate';
+        regenerate.setAttribute('aria-label', 'Regenerate AI response');
+        regenerate.addEventListener('click', () => {
+            const input = document.getElementById('cfo-chat-input');
+            const form = document.getElementById('cfo-chat-form');
+            if (input && form && !input.disabled) {
+                input.value = question;
+                form.requestSubmit();
+            }
+        });
+        actions.append(copy, regenerate);
+        message.appendChild(actions);
+    };
+
+    const appendCfoConversionActions = (message, actionItems = []) => {
+        if (!message || !Array.isArray(actionItems) || !actionItems.length) return;
+        const supportedActions = {
+            compare_funds: {
+                label: 'Compare funds',
+                run: () => {
+                    if (!cfoChatInput || !cfoChatForm || cfoChatInput.disabled) return;
+                    cfoChatInput.value = 'Compare the funds discussed above using verified data available to LiveInvestments. State missing information and do not initiate any transaction.';
+                    cfoChatForm.requestSubmit();
+                }
+            },
+            explore_funds: {
+                label: 'Explore mutual funds',
+                run: () => {
+                    switchTab('explore');
+                    exploreFundsSearch?.focus();
+                }
+            },
+            get_investment_assistance: {
+                label: 'Get investment assistance',
+                run: () => {
+                    const meetingModal = document.getElementById('meeting-modal');
+                    if (!meetingModal) return;
+                    const profile = currentUser || {};
+                    const name = document.getElementById('meeting-name');
+                    const email = document.getElementById('meeting-email');
+                    const phone = document.getElementById('meeting-phone');
+                    if (name && !name.value) name.value = profile.name || '';
+                    if (email && !email.value) email.value = profile.email || '';
+                    if (phone && !phone.value) phone.value = profile.phone || '';
+                    meetingModal.classList.remove('hidden');
+                }
+            },
+            review_portfolio: {
+                label: 'View portfolio metrics',
+                run: async () => {
+                    switchTab('cfo');
+                    await fetchAndRenderCFO();
+                    const details = document.querySelector('#cfo-results .cfo-analysis-disclosure');
+                    if (details) {
+                        details.open = true;
+                        details.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            }
+        };
+        const container = document.createElement('div');
+        container.className = 'cfo-conversion-actions';
+        actionItems.forEach(item => {
+            const supported = supportedActions[item?.id];
+            if (!supported) return;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'cfo-conversion-action';
+            button.textContent = supported.label;
+            button.addEventListener('click', supported.run);
+            container.appendChild(button);
+        });
+        if (container.childElementCount) message.appendChild(container);
+    };
+
     const appendCfoChatMessage = (text, sender) => {
         const messages = document.getElementById('cfo-chat-messages');
         if (!messages) return null;
 
+        const row = document.createElement('div');
+        row.className = `cfo-chat-row ${sender}`;
+
+        const avatar = document.createElement('span');
+        avatar.className = 'cfo-chat-row-avatar';
+        avatar.setAttribute('aria-hidden', 'true');
+        avatar.textContent = sender === 'assistant' ? '✦' : 'YOU';
+
         const message = document.createElement('div');
         message.className = `cfo-chat-message ${sender}`;
-        message.textContent = text;
-        messages.appendChild(message);
+        const content = document.createElement('div');
+        content.className = 'cfo-message-content';
+        if (sender === 'assistant') renderCfoMarkdown(content, text);
+        else content.textContent = text;
+        message.appendChild(content);
+        row.append(avatar, message);
+        messages.appendChild(row);
         messages.scrollTop = messages.scrollHeight;
         return message;
+    };
+
+    const appendCfoWorkflowMessage = () => {
+        const message = appendCfoChatMessage('', 'assistant');
+        if (!message) return null;
+        return { message, reply: message.querySelector('.cfo-message-content') };
+    };
+
+    const updateCfoWorkflow = (workflow, event) => {
+        if (!workflow) return;
+        if (event.type === 'status') {
+            addCfoExecutionStatus(event.message, 'running');
+            return;
+        }
+        if (event.type === 'tool') {
+            updateCfoExecutionTool(event);
+            return;
+        }
+        if (event.type === 'token') {
+            setCfoExecutionLiveStatus('Synthesizing response', 'running');
+            if (!workflow.synthesisEvent) {
+                workflow.synthesisEvent = addCfoExecutionStatus('Generating response', 'running');
+                if (workflow.synthesisEvent) workflow.synthesisEvent.dataset.synthesis = 'true';
+            }
+            if (!workflow.reply.dataset.streaming) {
+                workflow.reply.replaceChildren();
+                workflow.reply.dataset.streaming = 'true';
+                workflow.reply.dataset.markdown = '';
+            }
+            workflow.reply.dataset.markdown += event.text;
+            renderCfoMarkdown(workflow.reply, workflow.reply.dataset.markdown);
+            const messages = document.getElementById('cfo-chat-messages');
+            if (messages) messages.scrollTop = messages.scrollHeight;
+            return;
+        }
+        if (event.type === 'done') {
+            if (!workflow.synthesisEvent) {
+                workflow.synthesisEvent = addCfoExecutionStatus('Response synthesis', 'complete');
+            } else {
+                workflow.synthesisEvent.dataset.state = 'complete';
+                const state = workflow.synthesisEvent.querySelector('summary small');
+                if (state) state.textContent = 'Complete';
+                const description = workflow.synthesisEvent.querySelector('p');
+                if (description) description.textContent = 'The assistant completed its response stream.';
+            }
+            setCfoExecutionLiveStatus('Response complete', 'complete');
+            finishCfoExecutionTimer();
+            appendCfoMessageActions(workflow.message, workflow.question, event.reply || workflow.reply.dataset.markdown || '');
+            appendCfoConversionActions(workflow.message, event.actions);
+        }
+    };
+
+    const setCfoExecutionLiveStatus = (label, state) => {
+        const status = document.getElementById('cfo-agent-live-status');
+        const text = document.getElementById('cfo-agent-live-label');
+        if (status) status.dataset.state = state;
+        if (text) text.textContent = label;
+    };
+
+    const updateCfoExecutionDuration = () => {
+        const duration = document.getElementById('cfo-agent-duration');
+        if (!duration || !cfoExecutionStartedAt) return;
+        const seconds = Math.max(0, (Date.now() - cfoExecutionStartedAt) / 1000);
+        duration.textContent = `${seconds.toFixed(1)}s`;
+    };
+
+    const finishCfoExecutionTimer = () => {
+        if (cfoExecutionTimer) window.clearInterval(cfoExecutionTimer);
+        cfoExecutionTimer = null;
+        updateCfoExecutionDuration();
+    };
+
+    const addCfoExecutionStatus = (label, state) => {
+        const list = document.getElementById('cfo-agent-events');
+        if (!list) return;
+        list.querySelector('.cfo-agent-empty')?.remove();
+        const item = document.createElement('li');
+        item.className = 'cfo-agent-event';
+        item.dataset.state = state;
+        const details = document.createElement('details');
+        details.open = true;
+        const summary = document.createElement('summary');
+        const marker = document.createElement('span');
+        marker.className = 'cfo-agent-event-marker';
+        marker.setAttribute('aria-hidden', 'true');
+        const title = document.createElement('span');
+        title.className = 'cfo-agent-event-title';
+        title.textContent = label;
+        const stateLabel = document.createElement('small');
+        stateLabel.textContent = state === 'error' ? 'Failed' : state === 'complete' ? 'Complete' : 'Active';
+        summary.append(marker, title, stateLabel);
+        const description = document.createElement('p');
+        description.textContent = 'Status update received from the active assistant stream.';
+        details.append(summary, description);
+        item.appendChild(details);
+        list.appendChild(item);
+        list.scrollTop = list.scrollHeight;
+        return item;
+    };
+
+    const updateCfoExecutionTool = event => {
+        const list = document.getElementById('cfo-agent-events');
+        if (!list) return;
+        list.querySelector('.cfo-agent-empty')?.remove();
+        const candidates = [...list.querySelectorAll('.cfo-agent-event[data-tool-label]')];
+        let item = event.state === 'running'
+            ? null
+            : candidates.reverse().find(candidate =>
+                candidate.dataset.toolLabel === event.label && candidate.dataset.state === 'running'
+            );
+        if (!item) {
+            item = document.createElement('li');
+            item.className = 'cfo-agent-event';
+            item.dataset.toolLabel = event.label;
+            item.dataset.startedAt = String(Date.now());
+            const details = document.createElement('details');
+            details.open = true;
+            const summary = document.createElement('summary');
+            const marker = document.createElement('span');
+            marker.className = 'cfo-agent-event-marker';
+            marker.setAttribute('aria-hidden', 'true');
+            const title = document.createElement('span');
+            title.className = 'cfo-agent-event-title';
+            title.textContent = event.label;
+            const state = document.createElement('small');
+            state.className = 'cfo-agent-event-state';
+            summary.append(marker, title, state);
+            const description = document.createElement('p');
+            description.textContent = 'Tool name and state are provided by the LangChain execution stream. Tool inputs and outputs are not exposed to the chat UI.';
+            details.append(summary, description);
+            item.appendChild(details);
+            list.appendChild(item);
+        }
+        item.dataset.state = event.state === 'error' ? 'error' :
+            event.state === 'complete' ? 'complete' : 'running';
+        const stateLabel = item.querySelector('.cfo-agent-event-state');
+        if (stateLabel) {
+            stateLabel.textContent = event.state === 'error' ? 'Failed' :
+                event.state === 'complete' ? 'Complete' : 'Running';
+        }
+        if (event.state !== 'running') {
+            const elapsed = Math.max(0, (Date.now() - Number(item.dataset.startedAt)) / 1000);
+            const timing = document.createElement('span');
+            timing.className = 'cfo-agent-event-duration';
+            timing.textContent = `${elapsed.toFixed(1)}s`;
+            item.querySelector('summary')?.appendChild(timing);
+        }
+        setCfoExecutionLiveStatus(
+            event.state === 'error' ? 'A tool reported an error' :
+                event.state === 'complete' ? 'Tool completed' : event.label,
+            event.state === 'error' ? 'error' : 'running'
+        );
+        list.scrollTop = list.scrollHeight;
+    };
+
+    const startCfoExecution = () => {
+        const list = document.getElementById('cfo-agent-events');
+        list?.replaceChildren();
+        cfoExecutionStartedAt = Date.now();
+        document.getElementById('cfo-agent-duration').textContent = '0.0s';
+        setCfoExecutionLiveStatus('Request received', 'running');
+        if (cfoExecutionTimer) window.clearInterval(cfoExecutionTimer);
+        cfoExecutionTimer = window.setInterval(updateCfoExecutionDuration, 250);
     };
 
     const initializeCfoChat = () => {
@@ -73,15 +478,61 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!messages) return;
 
         cfoChatHistory.length = 0;
+        cfoConversationTitle = '';
         messages.replaceChildren();
+        document.getElementById('cfo-chat-starters')?.classList.remove('hidden');
+        setCfoChatStatus('Ready');
+        document.getElementById('cfo-agent-events')?.replaceChildren();
+        document.getElementById('cfo-agent-events')?.insertAdjacentHTML(
+            'beforeend',
+            '<li class="cfo-agent-empty">Execution events appear here when the assistant receives them.</li>'
+        );
+        document.getElementById('cfo-agent-duration').textContent = '—';
+        setCfoExecutionLiveStatus('Waiting for a question', 'waiting');
         const name = currentUser?.name || 'there';
         appendCfoChatMessage(
-            `Hi ${name}! I'm your AI CFO. Ask me about your invested amount, current portfolio value, returns, or holdings.`,
+            `## Hi ${name}\nI’m your AI CFO. Ask me to analyse your recorded portfolio, explain a fund metric, or research public mutual-fund data.\n\nFor a fund shortlist, tell me your investment horizon and risk comfort.`,
             'assistant'
         );
+        updateCfoHistoryEntry();
     };
 
-    const cfoChatHistory = [];
+    const loadCfoChatHistory = async () => {
+        try {
+            const response = await fetch('/api/cfo/history');
+            if (!response.ok) throw new Error('Unable to load saved chat history.');
+            const data = await response.json();
+            if (!Array.isArray(data.messages) || data.messages.length === 0) {
+                updateCfoHistoryEntry();
+                return;
+            }
+
+            const messages = document.getElementById('cfo-chat-messages');
+            messages?.replaceChildren();
+            cfoChatHistory.splice(0, cfoChatHistory.length, ...data.messages);
+            let previousQuestion = '';
+            data.messages.forEach(item => {
+                const message = appendCfoChatMessage(item.content, item.role);
+                if (item.role === 'user') previousQuestion = item.content;
+                else if (item.role === 'assistant' && message) appendCfoMessageActions(message, previousQuestion, item.content);
+            });
+            document.getElementById('cfo-chat-starters')?.classList.add('hidden');
+            updateCfoHistoryEntry();
+        } catch (error) {
+            console.error('Unable to load saved AI CFO history:', error);
+            setCfoChatStatus('History unavailable', 'error');
+        }
+    };
+
+    const setCfoChatStatus = (text, state = 'ready') => {
+        const status = document.getElementById('cfo-chat-status');
+        const statusText = document.getElementById('cfo-chat-status-text');
+        if (!status || !statusText) return;
+
+        status.classList.toggle('is-busy', state === 'busy');
+        status.classList.toggle('is-error', state === 'error');
+        statusText.textContent = text;
+    };
 
     // --- View Management ---
     const showLoginModal = () => {
@@ -137,6 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Dashboard Rendering ---
     const renderDashboard = (user) => {
         initializeCfoChat();
+        loadCfoChatHistory();
         userNameDisplay.textContent = user.profile.name;
         const portfolio = user.portfolio;
 
@@ -167,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
         investmentsTbody.innerHTML = '';
 
         if (portfolio.investments.length === 0) {
-            investmentsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No investments found. Make a new investment or sync external folios via MF Central!</td></tr>';
+            investmentsTbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No holdings recorded. Add actual values from a current statement to get started.</td></tr>';
             return;
         }
 
@@ -176,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isPositive = absoluteInvReturn >= 0;
             const pillClass = isPositive ? 'positive' : 'negative';
             const arrowSign = isPositive ? '▲' : '▼';
-            const isExt = inv.isExternal || inv.source === 'MF Central';
+            const isExt = inv.isExternal;
 
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -184,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <td><div class="fund-category">${inv.category}</div></td>
         <td>
           <span style="display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 4px; background: ${isExt ? 'rgba(6, 182, 212, 0.12)' : 'rgba(16, 185, 129, 0.12)'}; color: ${isExt ? '#0891b2' : '#059669'};">
-            ${isExt ? 'MF Central' : 'Direct'}
+            ${inv.source || (isExt ? 'Manual entry' : 'User record')}
           </span>
         </td>
         <td>${formatCurrency(inv.investedAmount)}</td>
@@ -200,56 +652,60 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Explore Funds Rendering ---
-    const fetchExploreFunds = async () => {
+    const fetchExploreFunds = async query => {
+        const searchTerm = String(query || '').trim().slice(0, 100);
+        if (!searchTerm) return;
+        const searchParams = new URLSearchParams({ q: searchTerm });
         try {
-            const res = await fetch('/api/portfolio/explore');
+            const res = await fetch(`/api/portfolio/explore?${searchParams.toString()}`);
             const data = await res.json();
-            renderExploreFundsGrid(data);
+            if (!res.ok) throw new Error(data.error || 'Unable to load public fund research.');
+            renderExploreFundsGrid(data.data?.funds || []);
         } catch (error) {
             console.error('Error fetching explore funds:', error);
-            exploreFundsGrid.innerHTML = '<div class="error-msg">Failed to load funds.</div>';
+            exploreFundsGrid.textContent = error.message || 'Verified public fund research is unavailable.';
         }
     };
 
     const renderExploreFundsGrid = (fundsList) => {
         exploreFundsGrid.innerHTML = '';
-
+        if (!fundsList.length) {
+            exploreFundsGrid.textContent = 'No public funds matched this search.';
+            return;
+        }
         fundsList.forEach(fund => {
-            const riskClass = fund.risk.toLowerCase();
-
             const card = document.createElement('div');
             card.classList.add('fund-card');
-            card.innerHTML = `
-                <div class="fund-header">
-                    <div class="fund-title">${fund.name}</div>
-                    <div class="fund-badges">
-                        <span class="badge badge-category">${fund.category}</span>
-                        <span class="badge risk-${riskClass}">${fund.risk} Risk</span>
-                    </div>
-                </div>
-                <div class="fund-description">${fund.description}</div>
-                <div class="fund-stats">
-                    <div class="stat-box">
-                        <div class="stat-label">Min SIP</div>
-                        <div class="stat-value">₹${fund.minSip}</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">1Y Return</div>
-                        <div class="stat-value highlight">${fund.return1Yr}%</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">3Y Return</div>
-                        <div class="stat-value highlight">${fund.return3Yr}%</div>
-                    </div>
-                </div>
-                <button class="btn btn-primary full-width" onclick="proceedToInvest('${fund.id}', '${fund.name}', '${fund.category}', '${fund.risk}', ${fund.minSip})">Invest Now</button>
-            `;
+            const title = document.createElement('h3');
+            title.className = 'fund-title';
+            title.textContent = fund.scheme_name || 'Unnamed mutual fund';
+            const category = document.createElement('p');
+            category.className = 'fund-description';
+            category.textContent = fund.fund_type || 'Category unavailable';
+            const amc = document.createElement('p');
+            amc.className = 'fund-description';
+            amc.textContent = fund.amc_name || 'AMC unavailable';
+            const code = document.createElement('p');
+            code.className = 'fund-description';
+            code.textContent = `AMFI scheme code: ${fund.scheme_code || 'Unavailable'}`;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'btn btn-primary full-width';
+            button.textContent = 'Ask AI CFO to research';
+            button.disabled = !fund.scheme_code;
+            button.addEventListener('click', () => {
+                switchTab('cfo');
+                cfoChatInput.value = `Research ${fund.scheme_name} (AMFI scheme code ${fund.scheme_code})`;
+                cfoChatForm?.requestSubmit();
+            });
+            card.append(title, category, amc, code, button);
             exploreFundsGrid.appendChild(card);
         });
     };
 
     // --- Tab Management ---
     const switchTab = (tabName) => {
+        dashboardView.classList.toggle('cfo-active', tabName === 'cfo');
         tabPortfolio.classList.toggle('active', tabName === 'portfolio');
         if (tabCfo) tabCfo.classList.toggle('active', tabName === 'cfo');
         tabExplore.classList.toggle('active', tabName === 'explore');
@@ -265,9 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
         exploreSection.classList.toggle('active', tabName === 'explore');
         exploreSection.classList.toggle('hidden', tabName !== 'explore');
 
-        if (tabName === 'explore' && exploreFundsGrid.children.length === 0) {
-            fetchExploreFunds();
-        } else if (tabName === 'cfo') {
+        if (tabName === 'cfo') {
             fetchAndRenderCFO();
         }
     };
@@ -277,109 +731,97 @@ document.addEventListener('DOMContentLoaded', () => {
         const cfoLoading = document.getElementById('cfo-loading');
         const cfoEmpty = document.getElementById('cfo-empty-state');
         const cfoResults = document.getElementById('cfo-results');
-
         if (!cfoLoading || !cfoResults || !cfoEmpty) return;
 
         cfoLoading.classList.remove('hidden');
         cfoEmpty.classList.add('hidden');
         cfoResults.classList.add('hidden');
-
         try {
-            const res = await fetch('/api/portfolio/ai-analysis');
-            if (!res.ok) throw new Error('Failed to generate AI analysis');
-            const data = await res.json();
-
+            const response = await fetch('/api/portfolio/ai-analysis');
+            if (!response.ok) throw new Error('Unable to load your portfolio analysis.');
+            const data = await response.json();
             cfoLoading.classList.add('hidden');
-
             if (!data.hasHoldings) {
                 cfoEmpty.classList.remove('hidden');
                 return;
             }
 
+            const summary = data.summary;
+            const valueElement = document.getElementById('cfo-total-corpus');
+            const gainElement = document.getElementById('cfo-total-gain');
+            if (valueElement) valueElement.textContent = formatCurrency(summary.currentValue);
+            if (gainElement) {
+                const gain = summary.absoluteReturn.amount;
+                const percent = summary.absoluteReturn.percentage;
+                gainElement.textContent = `${gain >= 0 ? '+' : ''}${formatCurrency(gain)}${percent === null ? '' : ` (${percent >= 0 ? '+' : ''}${percent}%)`} snapshot change`;
+                gainElement.style.color = gain >= 0 ? 'var(--colorSuccess)' : 'var(--colorDanger)';
+            }
+            const xirrElement = document.getElementById('cfo-xirr');
+            if (xirrElement) {
+                xirrElement.textContent = summary.xirrPercent === null
+                    ? 'Unavailable — dated cash flows required'
+                    : `${summary.xirrPercent}% as of ${new Date(summary.asOf).toLocaleDateString()}`;
+            }
+            const cagrElement = document.getElementById('cfo-cagr');
+            if (cagrElement) {
+                cagrElement.textContent = summary.cagrPercent === null
+                    ? 'Unavailable — one dated purchase per holding required'
+                    : `${summary.cagrPercent}%`;
+            }
+            const gainsElement = document.getElementById('cfo-realized-gain');
+            if (gainsElement) {
+                gainsElement.textContent = summary.realizedUnrealized.available
+                    ? `${formatCurrency(summary.realizedUnrealized.realizedGain)} / ${formatCurrency(summary.realizedUnrealized.unrealizedGain)}`
+                    : `Unavailable — ${summary.realizedUnrealized.reason}`;
+            }
+            const investedElement = document.getElementById('cfo-total-invested');
+            if (investedElement) investedElement.textContent = formatCurrency(summary.totalInvested);
+
+            const allocationContainer = document.getElementById('cfo-allocation-list');
+            if (allocationContainer) {
+                allocationContainer.replaceChildren();
+                summary.allocation.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'cfo-analysis-row';
+                    const label = document.createElement('span');
+                    label.textContent = item.category;
+                    const value = document.createElement('strong');
+                    value.textContent = `${formatCurrency(item.currentValue)} · ${item.percentage}%`;
+                    row.append(label, value);
+                    allocationContainer.appendChild(row);
+                });
+            }
+
+            const holdingsContainer = document.getElementById('cfo-holdings-list');
+            if (holdingsContainer) {
+                holdingsContainer.replaceChildren();
+                data.holdings.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'cfo-analysis-row';
+                    const label = document.createElement('span');
+                    label.textContent = `${item.fundName} · ${item.category}`;
+                    const value = document.createElement('strong');
+                    value.textContent = formatCurrency(item.currentValue);
+                    row.append(label, value);
+                    holdingsContainer.appendChild(row);
+                });
+            }
+
+            const limitationsContainer = document.getElementById('cfo-data-limitations');
+            if (limitationsContainer) {
+                limitationsContainer.replaceChildren();
+                summary.dataLimitations.forEach(text => {
+                    const item = document.createElement('li');
+                    item.textContent = text;
+                    limitationsContainer.appendChild(item);
+                });
+            }
             cfoResults.classList.remove('hidden');
-
-            // Set Top Metrics
-            document.getElementById('cfo-health-score').textContent = data.healthScore;
-            document.getElementById('cfo-health-rating').textContent = data.healthRating;
-            document.getElementById('cfo-total-corpus').textContent = formatCurrency(data.summary.currentValue);
-            
-            const gain = data.summary.overallGain;
-            const gainPercent = data.summary.overallReturnPercent;
-            const sign = gain >= 0 ? '+' : '';
-            const gainEl = document.getElementById('cfo-total-gain');
-            gainEl.textContent = `${sign}${formatCurrency(gain)} (${sign}${gainPercent}%)`;
-            gainEl.style.color = gain >= 0 ? 'var(--colorSuccess)' : 'var(--colorDanger)';
-
-            document.getElementById('cfo-internal-count').textContent = data.summary.schemesCount - data.summary.externalSchemesCount;
-            document.getElementById('cfo-external-count').textContent = data.summary.externalSchemesCount;
-
-            // Render Recommendations
-            const recContainer = document.getElementById('cfo-recommendations-list');
-            recContainer.innerHTML = data.recommendations.map(rec => `
-                <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadowSm);">
-                    <div>
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
-                            <span style="font-size: 1.5rem;">${rec.icon}</span>
-                            <span style="font-size: 0.72rem; font-weight: 700; background: rgba(16, 185, 129, 0.1); color: var(--colorAccent); padding: 0.2rem 0.5rem; border-radius: 4px;">${rec.type}</span>
-                        </div>
-                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.98rem; color: var(--colorPrimary);">${rec.title}</h4>
-                        <p style="margin: 0; font-size: 0.85rem; color: var(--colorTextMuted); line-height: 1.5;">${rec.description}</p>
-                    </div>
-                </div>
-            `).join('');
-
-            // Render Scheme Reviews (Pros and Cons)
-            const reviewsContainer = document.getElementById('cfo-funds-review-list');
-            reviewsContainer.innerHTML = data.fundReviews.map(f => `
-                <div style="background: var(--colorSurface); border: 1px solid var(--colorBorder); border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadowSm);">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.75rem; border-bottom: 1px solid var(--colorBorder); padding-bottom: 0.85rem; margin-bottom: 1rem;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                                <h4 style="margin: 0; font-size: 1.05rem; color: var(--colorPrimary);">${f.fundName}</h4>
-                                <span style="font-size: 0.72rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; background: ${f.isExternal ? 'rgba(6, 182, 212, 0.12)' : 'rgba(16, 185, 129, 0.12)'}; color: ${f.isExternal ? '#0891b2' : '#059669'};">
-                                    ${f.source || 'Direct'}
-                                </span>
-                            </div>
-                            <div style="font-size: 0.82rem; color: var(--colorTextMuted); margin-top: 0.25rem;">
-                                ${f.category} • Portfolio Weight: <strong>${f.portfolioWeight}%</strong>
-                            </div>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 1.1rem; font-weight: 700; color: var(--colorPrimary);">${formatCurrency(f.currentValue)}</div>
-                            <div style="font-size: 0.8rem; color: ${f.returnsPercent >= 0 ? 'var(--colorSuccess)' : 'var(--colorDanger)'}; font-weight: 600;">
-                                ${f.returnsPercent >= 0 ? '+' : ''}${f.returnsPercent}% returns
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
-                        <!-- Pros -->
-                        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 0.9rem;">
-                            <div style="font-weight: 700; font-size: 0.82rem; color: #059669; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
-                                <span>✅ Key Strengths (Pros)</span>
-                            </div>
-                            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: var(--colorText); line-height: 1.5;">
-                                ${f.pros.map(p => `<li>${p}</li>`).join('')}
-                            </ul>
-                        </div>
-
-                        <!-- Cons -->
-                        <div style="background: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px; padding: 0.9rem;">
-                            <div style="font-weight: 700; font-size: 0.82rem; color: #dc2626; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
-                                <span>⚠️ Risk Factors & Caveats (Cons)</span>
-                            </div>
-                            <ul style="margin: 0; padding-left: 1.2rem; font-size: 0.82rem; color: var(--colorText); line-height: 1.5;">
-                                ${f.cons.map(c => `<li>${c}</li>`).join('')}
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-        } catch (err) {
-            console.error('Error loading AI CFO data:', err);
+        } catch (error) {
+            console.error('Error loading AI CFO data:', error);
             cfoLoading.classList.add('hidden');
             cfoEmpty.classList.remove('hidden');
+            cfoEmpty.querySelector('p').textContent = error.message || 'Unable to load your portfolio analysis.';
         }
     };
 
@@ -412,7 +854,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Login error:', error);
-            loginError.textContent = 'A network error occurred. Please try again.';
+            loginError.textContent = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'Could not reach the local server. Run "npm run dev" from the project folder, then try again.'
+                : 'Unable to connect to the server. Please check your connection and try again.';
         } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
@@ -536,43 +980,135 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const cfoChatForm = document.getElementById('cfo-chat-form');
     const cfoChatInput = document.getElementById('cfo-chat-input');
+    const cfoChatStarters = document.getElementById('cfo-chat-starters');
+    if (cfoChatStarters && cfoChatForm && cfoChatInput) {
+        cfoChatStarters.querySelectorAll('[data-chat-prompt]').forEach((starter) => {
+            starter.addEventListener('click', () => {
+                cfoChatInput.value = starter.dataset.chatPrompt;
+                cfoChatForm.requestSubmit();
+            });
+        });
+    }
+
     if (cfoChatForm && cfoChatInput) {
+        cfoChatInput.addEventListener('keydown', event => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                cfoChatForm.requestSubmit();
+            }
+        });
+        cfoChatInput.addEventListener('input', () => {
+            cfoChatInput.style.height = 'auto';
+            cfoChatInput.style.height = `${Math.min(cfoChatInput.scrollHeight, 140)}px`;
+        });
         cfoChatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const question = cfoChatInput.value.trim();
             if (!question || !currentUser || !currentPortfolio) return;
 
+            cfoChatInput.style.height = '';
             appendCfoChatMessage(question, 'user');
-            const thinkingMessage = appendCfoChatMessage('Checking your portfolio and fund data...', 'assistant');
+            const workflow = appendCfoWorkflowMessage();
+            if (workflow) workflow.question = question;
+            cfoChatStarters?.classList.add('hidden');
             const sendButton = cfoChatForm.querySelector('button[type="submit"]');
             cfoChatInput.value = '';
             cfoChatInput.disabled = true;
             sendButton.disabled = true;
+            setCfoChatStatus('Working', 'busy');
+            startCfoExecution();
 
             try {
                 const response = await fetch('/api/cfo/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: question,
-                        history: cfoChatHistory.slice(-8)
-                    })
+                    body: JSON.stringify({ message: question })
                 });
-                const data = await response.json();
                 if (!response.ok) {
-                    throw new Error(data.error || 'The AI CFO could not answer right now.');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'The AI CFO could not answer right now.');
                 }
+                if (!response.body) throw new Error('Streaming responses are not supported by this browser.');
 
-                thinkingMessage.textContent = data.reply;
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let reply = '';
+                let completed = false;
+                let streamError = null;
+                const handleSseBlock = block => {
+                    const dataLine = block.split(/\r?\n/).find(line => line.startsWith('data:'));
+                    if (!dataLine) return;
+                    const event = JSON.parse(dataLine.slice(5).trim());
+                    if (event.type === 'token') {
+                        reply += event.text;
+                        if (workflow) updateCfoWorkflow(workflow, event);
+                        else appendCfoChatMessage(event.text, 'assistant');
+                    } else if (event.type === 'done') {
+                        completed = true;
+                        if (event.reply && event.reply !== reply) {
+                            reply = event.reply;
+                            if (workflow) {
+                                workflow.reply.dataset.markdown = reply;
+                                renderCfoMarkdown(workflow.reply, reply);
+                            }
+                        }
+                        if (workflow) {
+                            updateCfoWorkflow(workflow, event);
+                        }
+                    } else if (event.type === 'error') {
+                        streamError = event.message || 'The AI CFO could not complete this request.';
+                    } else if (workflow) {
+                        updateCfoWorkflow(workflow, event);
+                    }
+                };
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    buffer += decoder.decode(value || new Uint8Array(), { stream: !done });
+                    const blocks = buffer.split(/\r?\n\r?\n/);
+                    buffer = blocks.pop() || '';
+                    blocks.forEach(handleSseBlock);
+                    if (done) break;
+                }
+                if (buffer.trim()) handleSseBlock(buffer);
+                if (streamError) throw new Error(streamError);
+                if (!completed) throw new Error('The AI CFO stream ended before the answer was complete.');
+
                 cfoChatHistory.push(
                     { role: 'user', content: question },
-                    { role: 'assistant', content: data.reply }
+                    { role: 'assistant', content: reply }
                 );
-                cfoChatHistory.splice(0, Math.max(0, cfoChatHistory.length - 8));
+                updateCfoHistoryEntry();
+                setCfoChatStatus('Ready');
             } catch (error) {
                 console.error('AI CFO chat request failed:', error);
-                thinkingMessage.textContent = error.message || 'The AI CFO could not answer right now. Please try again.';
-                thinkingMessage.classList.add('error');
+                finishCfoExecutionTimer();
+                setCfoExecutionLiveStatus('Request failed', 'error');
+                const synthesisEvent = document.querySelector('.cfo-agent-event[data-synthesis="true"]');
+                if (synthesisEvent) {
+                    synthesisEvent.dataset.state = 'error';
+                    const state = synthesisEvent.querySelector('summary small');
+                    if (state) state.textContent = 'Failed';
+                }
+                addCfoExecutionStatus(error.message || 'The request could not be completed.', 'error');
+                if (workflow) {
+                    workflow.message.classList.add('error');
+                    const failure = document.createElement('p');
+                    failure.className = 'cfo-workflow-error';
+                    failure.textContent = error instanceof TypeError
+                        ? 'Could not reach the AI CFO. Check your connection and try again.'
+                        : error.message || 'The AI CFO could not answer right now. Please try again.';
+                    workflow.message.appendChild(failure);
+                } else {
+                    appendCfoChatMessage(
+                        error instanceof TypeError
+                            ? 'Could not reach the AI CFO. Check your connection and try again.'
+                            : error.message || 'The AI CFO could not answer right now. Please try again.',
+                        'assistant'
+                    )?.classList.add('error');
+                }
+                setCfoChatStatus('Unable to answer', 'error');
             } finally {
                 cfoChatInput.disabled = false;
                 sendButton.disabled = false;
@@ -581,8 +1117,94 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const clearCfoHistoryButton = document.getElementById('cfo-chat-clear');
+    if (clearCfoHistoryButton) {
+        clearCfoHistoryButton.addEventListener('click', async () => {
+            try {
+                if (cfoChatHistory.length && !window.confirm('Start a new chat? Your saved conversation will be cleared.')) return;
+                const response = await fetch('/api/cfo/history', { method: 'DELETE' });
+                if (!response.ok) throw new Error('Unable to clear saved chat history.');
+                localStorage.removeItem(getCfoConversationStorageKey());
+                initializeCfoChat();
+                setCfoChatStatus('Ready');
+            } catch (error) {
+                console.error('Unable to clear saved AI CFO history:', error);
+                setCfoChatStatus('Could not clear history', 'error');
+            }
+        });
+    }
+
+    document.getElementById('cfo-history-search')?.addEventListener('input', updateCfoHistoryEntry);
+    document.getElementById('cfo-history-rename')?.addEventListener('click', () => {
+        const title = document.getElementById('cfo-history-title')?.textContent || 'Investment review';
+        const nextTitle = window.prompt('Name this conversation', title);
+        if (nextTitle === null) return;
+        const trimmedTitle = nextTitle.trim().slice(0, 60);
+        if (!trimmedTitle) return;
+        localStorage.setItem(getCfoConversationStorageKey(), trimmedTitle);
+        cfoConversationTitle = trimmedTitle;
+        updateCfoHistoryEntry();
+    });
+    document.getElementById('cfo-history-open')?.addEventListener('click', () => {
+        const messages = document.getElementById('cfo-chat-messages');
+        messages?.scrollTo({ top: messages.scrollHeight, behavior: 'smooth' });
+        document.getElementById('cfo-agent-shell')?.classList.remove('mobile-history-open');
+    });
+    const syncCfoPanelControls = () => {
+        const shell = document.getElementById('cfo-agent-shell');
+        if (!shell) return;
+        const mobile = window.matchMedia('(max-width: 760px)').matches;
+        if (!mobile) shell.classList.remove('mobile-history-open', 'mobile-agent-open');
+        document.querySelectorAll('[data-cfo-panel]').forEach(button => {
+            const collapsedClass = button.dataset.cfoPanel === 'agent' ? 'agent-collapsed' : 'history-collapsed';
+            const expanded = mobile
+                ? shell.classList.contains(`mobile-${button.dataset.cfoPanel}-open`)
+                : !shell.classList.contains(collapsedClass);
+            button.setAttribute('aria-expanded', String(expanded));
+        });
+    };
+    syncCfoPanelControls();
+    window.addEventListener('resize', syncCfoPanelControls);
+    document.querySelectorAll('[data-cfo-panel]').forEach(button => {
+        button.addEventListener('click', () => {
+            const shell = document.querySelector('.cfo-agent-shell');
+            const panel = button.dataset.cfoPanel;
+            if (!shell) return;
+            if (window.matchMedia('(max-width: 760px)').matches) {
+                const panelClass = `mobile-${panel}-open`;
+                const wasOpen = shell.classList.contains(panelClass);
+                shell.classList.remove('mobile-history-open', 'mobile-agent-open');
+                if (!wasOpen) shell.classList.add(panelClass);
+                button.setAttribute('aria-expanded', String(shell.classList.contains(`mobile-${panel}-open`)));
+            } else if (panel === 'agent') {
+                shell.classList.toggle('agent-collapsed');
+                button.setAttribute('aria-expanded', String(!shell.classList.contains('agent-collapsed')));
+            } else {
+                shell.classList.toggle('history-collapsed');
+                button.setAttribute('aria-expanded', String(!shell.classList.contains('history-collapsed')));
+            }
+        });
+    });
+    document.querySelectorAll('[data-cfo-panel-close]').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelector('.cfo-agent-shell')?.classList.remove('mobile-history-open', 'mobile-agent-open');
+            document.querySelectorAll('[data-cfo-panel]').forEach(toggle => toggle.setAttribute('aria-expanded', 'false'));
+        });
+    });
+
     tabPortfolio.addEventListener('click', () => switchTab('portfolio'));
     tabExplore.addEventListener('click', () => switchTab('explore'));
+    exploreFundsSearchForm?.addEventListener('submit', async event => {
+        event.preventDefault();
+        const searchButton = exploreFundsSearchForm.querySelector('button[type="submit"]');
+        if (searchButton) searchButton.disabled = true;
+        exploreFundsGrid.textContent = 'Searching verified public fund data…';
+        try {
+            await fetchExploreFunds(exploreFundsSearch?.value);
+        } finally {
+            if (searchButton) searchButton.disabled = false;
+        }
+    });
 
     // --- Contact Form ---
     const contactForm = document.getElementById('contact-form');
@@ -744,11 +1366,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showMFCentralModal = () => {
         if (!mfcentralModal) return;
+        const asOfDateInput = document.getElementById('mfc-fund-as-of-date');
+        if (asOfDateInput && !asOfDateInput.value) {
+            asOfDateInput.value = new Date().toISOString().slice(0, 10);
+        }
         if (currentUser) {
             const panEl = document.getElementById('mfc-pan-display');
             const mobileEl = document.getElementById('mfc-mobile-display');
-            if (panEl) panEl.textContent = currentUser.pan || 'ABCDE1234F';
-            if (mobileEl) mobileEl.textContent = currentUser.phone || '+91 98765 43210';
+            if (panEl) panEl.textContent = currentUser.pan || '-';
+            if (mobileEl) mobileEl.textContent = currentUser.phone || '-';
         }
         mfcentralModal.classList.remove('hidden');
         const statusMsg = document.getElementById('mfc-status-msg');
@@ -802,80 +1428,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Quick Sync Sample External Folios
-    const btnQuickImportMfc = document.getElementById('btn-quick-import-mfc');
-    if (btnQuickImportMfc) {
-        btnQuickImportMfc.addEventListener('click', async () => {
-            const statusMsg = document.getElementById('mfc-status-msg');
-            const originalContent = btnQuickImportMfc.innerHTML;
-
-            btnQuickImportMfc.disabled = true;
-            btnQuickImportMfc.innerHTML = '<span>⏳ Syncing folios from CAS...</span>';
-            if (statusMsg) {
-                statusMsg.style.color = 'var(--colorPrimary)';
-                statusMsg.textContent = 'Syncing CAMS & KFintech CAS folios with database...';
-            }
-
-            try {
-                const sampleExternalFolios = [
-                    {
-                        fundId: 'mfc-ext-001',
-                        name: 'Axis Bluechip Fund',
-                        category: 'Large Cap',
-                        investedAmount: 35000,
-                        currentValue: 42800
-                    },
-                    {
-                        fundId: 'mfc-ext-002',
-                        name: 'ICICI Prudential Balanced Advantage Fund',
-                        category: 'Balanced Advantage',
-                        investedAmount: 50000,
-                        currentValue: 58500
-                    },
-                    {
-                        fundId: 'mfc-ext-003',
-                        name: 'SBI Small Cap Fund',
-                        category: 'Small Cap',
-                        investedAmount: 20000,
-                        currentValue: 27900
-                    }
-                ];
-
-                const res = await fetch('/api/portfolio/import-external', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ funds: sampleExternalFolios })
-                });
-
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.error || 'Failed to sync external mutual funds.');
-                }
-
-                if (statusMsg) {
-                    statusMsg.style.color = 'var(--colorSuccess)';
-                    statusMsg.textContent = '✅ Synced 3 external folios! Opening AI CFO analysis...';
-                }
-
-                setTimeout(async () => {
-                    hideMFCentralModal();
-                    await fetchAndRenderDashboard();
-                    switchTab('cfo');
-                }, 1200);
-
-            } catch (err) {
-                console.error('MF Central sync error:', err);
-                if (statusMsg) {
-                    statusMsg.style.color = 'var(--colorDanger)';
-                    statusMsg.textContent = '❌ ' + err.message;
-                }
-            } finally {
-                btnQuickImportMfc.disabled = false;
-                btnQuickImportMfc.innerHTML = originalContent;
-            }
-        });
-    }
-
     // Manual External Scheme Form Submission
     if (mfcManualForm) {
         mfcManualForm.addEventListener('submit', async (e) => {
@@ -886,7 +1438,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const name = document.getElementById('mfc-fund-name').value.trim();
             const category = document.getElementById('mfc-fund-category').value;
+            const schemeCode = document.getElementById('mfc-fund-scheme-code').value.trim();
             const amount = Number(document.getElementById('mfc-fund-amount').value);
+            const currentValue = Number(document.getElementById('mfc-fund-current-value').value);
+            const asOfDate = document.getElementById('mfc-fund-as-of-date').value;
 
             submitBtn.disabled = true;
             submitBtn.textContent = 'Saving...';
@@ -896,11 +1451,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        asOfDate,
                         funds: [{
                             name,
                             category,
+                            ...(schemeCode ? { schemeCode } : {}),
                             investedAmount: amount,
-                            currentValue: Math.round(amount * 1.15)
+                            currentValue
                         }]
                     })
                 });
@@ -912,17 +1469,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (statusMsg) {
                     statusMsg.style.color = 'var(--colorSuccess)';
-                    statusMsg.textContent = `✅ Saved ${name}! Opening AI CFO Review...`;
+                    statusMsg.textContent = `Saved the actual statement snapshot for ${name}. Historical transactions were not imported.`;
                 }
 
                 mfcManualForm.reset();
                 mfcManualForm.classList.add('hidden');
 
-                setTimeout(async () => {
-                    hideMFCentralModal();
-                    await fetchAndRenderDashboard();
-                    switchTab('cfo');
-                }, 1200);
+                await fetchAndRenderDashboard();
+                switchTab('cfo');
 
             } catch (err) {
                 console.error('Save external fund error:', err);
@@ -933,123 +1487,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = originalText;
-            }
-        });
-    }
-
-    // --- Checkout Flow Logic ---
-    let currentCheckoutFund = null;
-
-    window.proceedToInvest = (id, name, category, risk, minSip) => {
-        currentCheckoutFund = { id, name, category, risk, minSip };
-        
-        // Populate order view
-        document.getElementById('order-fund-name').textContent = name;
-        document.getElementById('order-fund-category').textContent = `${category} • ${risk} Risk`;
-        
-        const amountInput = document.getElementById('invest-amount');
-        amountInput.min = minSip;
-        amountInput.placeholder = `Min ₹${minSip}`;
-        document.getElementById('min-amount-hint').textContent = `Minimum investment: ₹${minSip}`;
-        
-        // Hide dashboard, show order view
-        dashboardView.classList.add('hidden');
-        dashboardView.classList.remove('active');
-        orderView.classList.remove('hidden');
-        orderView.classList.add('active');
-        window.scrollTo(0, 0);
-    };
-
-    const  orderBackBtn = document.getElementById('order-back-btn');
-    if (orderBackBtn) {
-        orderBackBtn.addEventListener('click', () => {
-            orderView.classList.add('hidden');
-            orderView.classList.remove('active');
-            dashboardView.classList.remove('hidden');
-            dashboardView.classList.add('active');
-        });
-    }
-
-    const orderForm = document.getElementById('order-form');
-    if (orderForm) {
-        orderForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const amount = document.getElementById('invest-amount').value;
-            
-            // Populate payment view
-            document.getElementById('payment-amount-display').textContent = `₹${parseInt(amount).toLocaleString('en-IN')}`;
-            
-            // Transition to payment view
-            orderView.classList.add('hidden');
-            orderView.classList.remove('active');
-            paymentView.classList.remove('hidden');
-            paymentView.classList.add('active');
-            window.scrollTo(0, 0);
-        });
-    }
-
-    const payBackBtn = document.getElementById('pay-back-btn');
-    if (payBackBtn) {
-        payBackBtn.addEventListener('click', () => {
-            paymentView.classList.add('hidden');
-            paymentView.classList.remove('active');
-            orderView.classList.remove('hidden');
-            orderView.classList.add('active');
-        });
-    }
-
-    const payConfirmBtn = document.getElementById('pay-confirm-btn');
-    if (payConfirmBtn) {
-        payConfirmBtn.addEventListener('click', async () => {
-            const btnText = document.getElementById('pay-btn-text');
-            const spinner = document.getElementById('pay-spinner');
-            const method = document.querySelector('input[name="payMethod"]:checked')?.value || 'UPI';
-            const amount = document.getElementById('invest-amount').value;
-            
-            btnText.classList.add('hidden');
-            spinner.classList.remove('hidden');
-            payConfirmBtn.disabled = true;
-            payBackBtn.disabled = true;
-
-            try {
-                // Save investment directly to database via API
-                const response = await fetch('/api/portfolio/invest', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        fundId: currentCheckoutFund.id,
-                        fundName: currentCheckoutFund.name,
-                        category: currentCheckoutFund.category,
-                        amount: Number(amount)
-                    })
-                });
-
-                if (!response.ok) {
-                    const errData = await response.json();
-                    throw new Error(errData.error || 'Failed to save investment.');
-                }
-
-                alert(`🎉 Investment Successful!\nInvested ₹${Number(amount).toLocaleString('en-IN')} in ${currentCheckoutFund.name} via ${method}.`);
-                
-                // Reset UI & State
-                orderForm.reset();
-                currentCheckoutFund = null;
-                
-                // Return to Dashboard (Portfolio tab) & refresh data from DB
-                paymentView.classList.add('hidden');
-                paymentView.classList.remove('active');
-                dashboardView.classList.remove('hidden');
-                dashboardView.classList.add('active');
-                switchTab('portfolio');
-                await fetchAndRenderDashboard();
-            } catch (err) {
-                console.error('Payment/Investment error:', err);
-                alert(`Error recording investment: ${err.message}`);
-            } finally {
-                btnText.classList.remove('hidden');
-                spinner.classList.add('hidden');
-                payConfirmBtn.disabled = false;
-                payBackBtn.disabled = false;
             }
         });
     }

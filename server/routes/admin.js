@@ -5,12 +5,9 @@ import Contact from '../models/Contact.js';
 import Meeting from '../models/Meeting.js';
 import User from '../models/User.js';
 import Investment from '../models/Investment.js';
+import { getJwtSecret } from '../config/security.js';
 
 const router = express.Router();
-
-const JWT_SECRET = process.env.JWT_SECRET || 'aurora-super-secret-key-123';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'asdf';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'asdf';
 
 // Middleware to verify admin token
 const adminAuth = (req, res, next) => {
@@ -20,7 +17,7 @@ const adminAuth = (req, res, next) => {
     }
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, getJwtSecret());
         if (decoded.role !== 'admin') {
             return res.status(403).json({ error: 'Forbidden: Admin access required' });
         }
@@ -33,12 +30,17 @@ const adminAuth = (req, res, next) => {
 
 // LOGIN
 router.post('/login', (req, res) => {
+    const adminUsername = process.env.ADMIN_USERNAME;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    if (!adminUsername || !adminPassword) {
+        return res.status(503).json({ error: 'Admin login is not configured on this server.' });
+    }
     const { username, password } = req.body;
 
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+    if (username === adminUsername && password === adminPassword) {
         const token = jwt.sign(
             { username, role: 'admin' },
-            JWT_SECRET,
+            getJwtSecret(),
             { expiresIn: '2h' }
         );
 

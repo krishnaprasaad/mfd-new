@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 const investmentSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     fundId: { type: String, required: true },
+    schemeCode: { type: String, trim: true },
     fundName: { type: String, required: true },
     category: { type: String, required: true },
     investedAmount: { type: Number, required: true },

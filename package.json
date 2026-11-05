@@ -9,15 +9,18 @@
     "dev": "node dev.js",
     "build": "vite build",
     "build:frontend": "vite build",
+    "test": "node --test server/services/cfoAssistant.test.js server/services/cfoAgent.test.js server/services/cfoMarketing.test.js server/services/portfolioAnalytics.test.js server/services/cfoTools.test.js server/routes/cfo.test.js",
     "preview": "vite preview",
     "start": "npm run build && node server/start.js",
     "mcp": "node mcp-server.js"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
+    "supertest": "^7.3.1",
     "vite": "^7.3.1"
   },
   "dependencies": {
+    "@langchain/openai": "^1.8.0",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@vercel/functions": "^3.4.3",
     "bcryptjs": "^3.0.3",
@@ -26,9 +29,10 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "langchain": "^1.6.1",
     "mongoose": "^9.2.3",
     "multer": "^2.1.1",
-    "openai": "^7.51.0",
-    "serverless-http": "^4.0.0"
+    "serverless-http": "^4.0.0",
+    "zod": "^4.6.7"
   }
 }

@@ -219,7 +219,7 @@
         <article class="ai-cfo-step">
           <span class="ai-cfo-step-number">02</span>
           <h3>Add your investments</h3>
-          <p>Add holdings to your portfolio or import eligible external folios through MF Central.</p>
+          <p>Review your recorded holdings and portfolio data quality.</p>
         </article>
         <article class="ai-cfo-step">
           <span class="ai-cfo-step-number">03</span>
@@ -419,7 +419,7 @@
     <!-- Dashboard Tabs -->
     <div class="dashboard-tabs">
       <button id="tab-portfolio" class="tab-btn active">My Portfolio</button>
-      <button id="tab-cfo" class="tab-btn">✨ AI CFO Review</button>
+      <button id="tab-cfo" class="tab-btn">✨ AI CFO</button>
       <button id="tab-explore" class="tab-btn">Explore Funds</button>
     </div>
 
@@ -441,20 +441,20 @@
         </div>
       </div>
 
-      <!-- MF Central Import & AI CFO Action Card -->
+      <!-- External holding statement entry -->
       <div class="sync-banner glass-card" style="margin: 1.5rem 0; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-left: 4px solid var(--colorAccent); border-radius: 12px;">
         <div>
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-            <span style="font-weight: 700; font-size: 1.05rem;">Import External Mutual Funds via MF Central</span>
-            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--colorAccent); font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">CAMS & KFintech</span>
+            <span style="font-weight: 700; font-size: 1.05rem;">Add holdings from a statement</span>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--colorAccent); font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Manual statement entry</span>
           </div>
           <p style="margin: 0; color: var(--colorTextMuted); font-size: 0.9rem;">
-            Consolidate all your external mutual funds. Our AI CFO will diagnose your holdings for overlap, pros & cons, and recommendations.
+            Add the actual invested and current values from a statement. Automatic CAS synchronization is not available.
           </p>
         </div>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
           <button id="btn-open-mfcentral-modal" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem;">
-            🔗 Import via MF Central
+            Add statement values
           </button>
           <button id="btn-run-cfo-analysis" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; border: 1px solid var(--colorAccent); color: var(--colorAccent);">
             ✨ AI CFO Analysis
@@ -466,8 +466,8 @@
         <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <h3 style="margin: 0;">Your Investment Holdings</h3>
           <div style="display: flex; gap: 0.5rem;">
-            <button id="btn-sync-mfc-header" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">🔗 Sync MF Central</button>
-            <button id="add-investment-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">+ New Investment</button>
+            <button id="btn-sync-mfc-header" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Add statement values</button>
+            <button id="add-investment-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">Discover public funds</button>
           </div>
         </div>
         <div class="table-container">
@@ -492,238 +492,183 @@
 
     <!-- AI CFO Review Section -->
     <div id="cfo-section" class="tab-content hidden">
-      <!-- CFO Header Card -->
-      <div class="glass-card" style="padding: 1.75rem; border-radius: 1.25rem; margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.98)); color: #fff;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-          <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #10b981, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);">
-              🤖
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <h3 style="margin: 0; color: #fff; font-size: 1.4rem;">AI Chief Financial Officer (CFO)</h3>
-                <span style="background: rgba(16, 185, 129, 0.2); color: #10b981; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.4);">LIVE DIAGNOSTICS</span>
-              </div>
-              <p style="margin: 0.25rem 0 0 0; color: #94a3b8; font-size: 0.9rem;">
-                Comprehensive analytical review of direct and MF Central imported mutual fund folios.
-              </p>
-            </div>
-          </div>
-          <button id="btn-refresh-cfo" class="btn btn-primary" style="background: #10b981; border: none; padding: 0.6rem 1.2rem; font-size: 0.85rem;">
-            🔄 Refresh Analysis
-          </button>
+      <div class="cfo-hero">
+        <div class="cfo-hero-copy">
+          <span class="cfo-hero-eyebrow"><span aria-hidden="true">✳</span> YOUR AI CFO</span>
+          <h1>A clearer view<br class="cfo-title-break"> of your <em>money.</em></h1>
+          <p>Thoughtful answers for your investments.</p>
         </div>
+        <button id="btn-refresh-cfo" class="cfo-refresh-btn" type="button" aria-label="Refresh portfolio analysis" title="Refresh portfolio analysis">
+          <span aria-hidden="true">↻</span>
+        </button>
       </div>
 
-      <section class="cfo-chat-card glass-card" aria-labelledby="cfo-chat-title">
-        <div class="cfo-chat-heading">
-          <div>
-            <h3 id="cfo-chat-title">Chat with your AI CFO</h3>
-            <p>Get quick answers about your portfolio using your dashboard data.</p>
+      <section class="cfo-chat-card cfo-agent-shell" id="cfo-agent-shell" aria-labelledby="cfo-chat-title">
+        <aside class="cfo-history-panel" id="cfo-history-panel" aria-label="Conversation history">
+          <div class="cfo-sidebar-heading">
+            <span>WORKSPACE</span>
+            <button type="button" class="cfo-icon-button cfo-sidebar-close" data-cfo-panel-close aria-label="Close conversation history">×</button>
           </div>
-          <span class="cfo-chat-status">Ready to help</span>
+          <button type="button" id="cfo-chat-clear" class="cfo-new-chat">
+            <span aria-hidden="true">＋</span><span>New conversation</span>
+          </button>
+          <label class="cfo-history-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="cfo-history-search" type="search" placeholder="Search this conversation" aria-label="Search conversation">
+          </label>
+          <div class="cfo-history-section-label">CURRENT THREAD</div>
+          <div class="cfo-history-list">
+            <article id="cfo-history-entry" class="cfo-history-entry is-active">
+              <button type="button" id="cfo-history-open" class="cfo-history-open" aria-current="page">
+                <span class="cfo-history-entry-icon" aria-hidden="true">◌</span>
+                <span class="cfo-history-entry-copy">
+                  <strong id="cfo-history-title">Investment review</strong>
+                  <small id="cfo-history-preview">Your saved CFO conversation</small>
+                </span>
+              </button>
+              <button type="button" id="cfo-history-rename" class="cfo-icon-button cfo-history-rename" aria-label="Rename current conversation on this device" title="Rename on this device">···</button>
+            </article>
+            <p id="cfo-history-empty" class="cfo-history-empty hidden">No matching conversation</p>
+          </div>
+          <div class="cfo-sidebar-note"><span aria-hidden="true">◈</span> One saved thread · New chat clears history</div>
+        </aside>
+
+        <div class="cfo-chat-main">
+          <header class="cfo-chat-topbar">
+            <button type="button" class="cfo-icon-button cfo-panel-toggle" data-cfo-panel="history" aria-label="Open conversation history" aria-expanded="false">☰</button>
+            <div class="cfo-chat-assistant">
+              <div class="cfo-chat-avatar" aria-hidden="true">✳</div>
+              <div class="cfo-chat-heading">
+                <h3 id="cfo-chat-title">AI CFO</h3>
+                <p>Portfolio intelligence</p>
+              </div>
+            </div>
+            <div class="cfo-chat-topbar-actions">
+              <div id="cfo-chat-status" class="cfo-chat-status" role="status">
+                <span class="cfo-chat-status-dot"></span>
+                <span id="cfo-chat-status-text">Ready</span>
+              </div>
+              <button type="button" class="cfo-icon-button cfo-panel-toggle" data-cfo-panel="agent" aria-label="Open agent activity" aria-expanded="false">◉</button>
+            </div>
+          </header>
+
+          <div id="cfo-chat-messages" class="cfo-chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+          <div id="cfo-chat-starters" class="cfo-chat-starters">
+            <p class="cfo-starters-label">Explore your finances</p>
+            <div class="cfo-starter-grid">
+              <button type="button" class="cfo-chat-starter" data-chat-prompt="Analyse my portfolio performance">Portfolio performance<span>Returns and allocation</span></button>
+              <button type="button" class="cfo-chat-starter" data-chat-prompt="Identify the main risks in my portfolio">Portfolio risks<span>Concentration and exposure</span></button>
+              <button type="button" class="cfo-chat-starter" data-chat-prompt="Calculate my portfolio XIRR">Calculate my XIRR<span>Dated investment cash flows</span></button>
+              <button type="button" class="cfo-chat-starter" data-chat-prompt="Find overlapping mutual funds in my portfolio">Fund overlap<span>Compare disclosed holdings</span></button>
+            </div>
+          </div>
+
+          <form id="cfo-chat-form" class="cfo-chat-form">
+            <label class="sr-only" for="cfo-chat-input">Ask your AI CFO a question</label>
+            <textarea id="cfo-chat-input" rows="1" maxlength="500" placeholder="Ask about your portfolio, funds, or financial goals…" autocomplete="off" required></textarea>
+            <button class="cfo-chat-send" type="submit" aria-label="Send message">
+              <span aria-hidden="true">↑</span>
+            </button>
+          </form>
+          <div class="cfo-chat-footer">
+            <span>Financial insights grounded in your recorded data</span>
+            <span>Informational only · Not investment advice</span>
+          </div>
         </div>
-        <div id="cfo-chat-messages" class="cfo-chat-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
-        <form id="cfo-chat-form" class="cfo-chat-form">
-          <label class="sr-only" for="cfo-chat-input">Ask your AI CFO a question</label>
-          <input id="cfo-chat-input" type="text" maxlength="500" placeholder="Ask about your investments, returns, or holdings..." autocomplete="off" required>
-          <button class="btn btn-primary" type="submit">Send</button>
-        </form>
-        <p class="cfo-chat-disclaimer">Quick portfolio answers only. Review the AI CFO analysis below for detailed recommendations.</p>
+
+        <aside class="cfo-agent-panel" id="cfo-agent-panel" aria-label="Agent execution activity">
+          <div class="cfo-agent-panel-heading">
+            <div>
+              <span class="cfo-sidebar-heading">AGENT ACTIVITY</span>
+              <h3>Execution trace</h3>
+            </div>
+            <button type="button" class="cfo-icon-button cfo-sidebar-close" data-cfo-panel-close aria-label="Close agent activity">×</button>
+          </div>
+          <div class="cfo-agent-live-status" id="cfo-agent-live-status" data-state="waiting">
+            <span class="cfo-agent-state-dot"></span>
+            <span id="cfo-agent-live-label">Waiting for a question</span>
+          </div>
+          <div class="cfo-agent-trace-meta">
+            <span>LIVE TRACE</span>
+            <span id="cfo-agent-duration">—</span>
+          </div>
+          <ol id="cfo-agent-events" class="cfo-agent-events" aria-live="polite">
+            <li class="cfo-agent-empty">Execution events appear here when the assistant receives them.</li>
+          </ol>
+          <div class="cfo-agent-panel-footer">
+            <span class="cfo-agent-source-dot"></span>
+            Events streamed from the active assistant run
+          </div>
+        </aside>
+        <button type="button" class="cfo-agent-scrim" data-cfo-panel-close aria-label="Close side panel"></button>
       </section>
 
       <!-- CFO Diagnostics Loading / Empty / Content -->
       <div id="cfo-loading" class="hidden" style="text-align: center; padding: 3rem;">
         <div class="spinner" style="margin: 0 auto 1rem auto; width: 40px; height: 40px; border: 3px solid rgba(16, 185, 129, 0.2); border-top-color: #10b981; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-        <p style="color: var(--colorTextMuted);">Analyzing portfolio holdings, stock overlap, and risk-adjusted metrics...</p>
+        <p style="color: var(--colorTextMuted);">Analyzing your portfolio...</p>
       </div>
 
-      <div id="cfo-empty-state" class="hidden" style="text-align: center; padding: 3rem; background: var(--colorSurface); border-radius: 1rem; border: 1px dashed var(--colorBorder);">
-        <div style="font-size: 3rem; margin-bottom: 0.5rem;">📊</div>
-        <h3 style="margin-bottom: 0.5rem;">No Investment Folios Detected</h3>
-        <p style="color: var(--colorTextMuted); max-width: 450px; margin: 0 auto 1.5rem auto;">
-          Invest in mutual funds or import your external holdings via MF Central to let our AI CFO diagnose your portfolio.
-        </p>
-        <div style="display: flex; justify-content: center; gap: 0.75rem;">
-          <button class="btn btn-primary" id="cfo-explore-btn">Explore Funds</button>
-          <button class="btn btn-secondary" id="cfo-empty-mfc-btn">Import via MF Central</button>
+      <div id="cfo-empty-state" class="cfo-empty-state hidden">
+        <div>
+          <h3>No investments to review</h3>
+          <p>Add actual values from a current statement to get portfolio insights.</p>
+        </div>
+        <div class="cfo-empty-actions">
+          <button class="btn btn-primary" id="cfo-explore-btn">Explore funds</button>
+          <button class="btn btn-secondary" id="cfo-empty-mfc-btn">Import holdings</button>
         </div>
       </div>
 
       <div id="cfo-results" class="hidden">
-        <!-- Top Metrics & Health Score Grid -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; margin-bottom: 1.5rem;">
-          <!-- Health Score Card -->
-          <div class="glass-card" style="padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; border-left: 4px solid var(--colorAccent); border-radius: 12px;">
-            <div style="width: 72px; height: 72px; border-radius: 50%; background: rgba(16, 185, 129, 0.1); border: 3px solid var(--colorAccent); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
-              <span id="cfo-health-score" style="font-size: 1.6rem; font-weight: 800; color: var(--colorAccent); line-height: 1;">--</span>
-              <span style="font-size: 0.65rem; color: var(--colorTextMuted); text-transform: uppercase;">Score</span>
-            </div>
-            <div>
-              <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Portfolio Health</div>
-              <div id="cfo-health-rating" style="font-size: 1.2rem; font-weight: 700; color: var(--colorPrimary);">-</div>
-              <div style="font-size: 0.75rem; color: var(--colorTextMuted);">Evaluated across asset mix & risk</div>
-            </div>
+        <details class="cfo-analysis-disclosure">
+          <summary>
+            <span class="cfo-analysis-summary-copy">
+              <strong>Portfolio snapshot</strong>
+              <span>Recorded values · no estimated NAVs</span>
+            </span>
+            <span class="cfo-analysis-summary-action">View details <span aria-hidden="true">⌄</span></span>
+          </summary>
+          <div class="cfo-analysis-grid">
+            <section class="glass-card cfo-analysis-card">
+              <h3>Recorded portfolio value</h3>
+              <strong id="cfo-total-corpus">₹0</strong>
+              <p id="cfo-total-gain">Snapshot change unavailable</p>
+              <div class="cfo-analysis-row"><span>Invested amount</span><strong id="cfo-total-invested">₹0</strong></div>
+              <div class="cfo-analysis-row"><span>XIRR</span><strong id="cfo-xirr">Unavailable</strong></div>
+              <div class="cfo-analysis-row"><span>CAGR</span><strong id="cfo-cagr">Unavailable</strong></div>
+              <div class="cfo-analysis-row"><span>Realized / unrealized</span><strong id="cfo-realized-gain">Unavailable</strong></div>
+            </section>
+            <section class="glass-card cfo-analysis-card">
+              <h3>Allocation by recorded category</h3>
+              <div id="cfo-allocation-list"></div>
+            </section>
+            <section class="glass-card cfo-analysis-card">
+              <h3>Recorded holdings</h3>
+              <div id="cfo-holdings-list"></div>
+            </section>
+            <section class="glass-card cfo-analysis-card">
+              <h3>Data limitations</h3>
+              <ul id="cfo-data-limitations"></ul>
+            </section>
           </div>
-
-          <!-- Total Valuation Card -->
-          <div class="glass-card" style="padding: 1.5rem; border-radius: 12px;">
-            <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Total Analyzed Corpus</div>
-            <div id="cfo-total-corpus" style="font-size: 1.6rem; font-weight: 800; color: var(--colorPrimary); margin: 0.25rem 0;">₹0</div>
-            <div style="font-size: 0.8rem; color: var(--colorSuccess);" id="cfo-total-gain">+₹0 (0.00%)</div>
-          </div>
-
-          <!-- Folios Breakdown Card -->
-          <div class="glass-card" style="padding: 1.5rem; border-radius: 12px;">
-            <div style="font-size: 0.8rem; color: var(--colorTextMuted); text-transform: uppercase; font-weight: 600;">Folio Composition</div>
-            <div style="display: flex; gap: 1.5rem; margin-top: 0.5rem;">
-              <div>
-                <div id="cfo-internal-count" style="font-size: 1.5rem; font-weight: 700; color: var(--colorPrimary);">0</div>
-                <div style="font-size: 0.75rem; color: var(--colorTextMuted);">Direct Funds</div>
-              </div>
-              <div>
-                <div id="cfo-external-count" style="font-size: 1.5rem; font-weight: 700; color: var(--colorAccent);">0</div>
-                <div style="font-size: 0.75rem; color: var(--colorTextMuted);">MF Central Synced</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Personal Recommendations from CFO -->
-        <div class="glass-card" style="padding: 1.75rem; margin-bottom: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 12px;">
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;">
-            <span style="font-size: 1.25rem;">💡</span>
-            <h3 style="margin: 0; font-size: 1.2rem;">AI CFO's Personal Recommendations</h3>
-          </div>
-          <div id="cfo-recommendations-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- Fund by Fund Pros and Cons -->
-        <div class="glass-card" style="padding: 1.75rem; border-radius: 12px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="font-size: 1.25rem;">🔍</span>
-              <h3 style="margin: 0; font-size: 1.2rem;">Scheme-by-Scheme Review (Pros & Cons)</h3>
-            </div>
-            <span style="font-size: 0.8rem; color: var(--colorTextMuted);">Includes both internal holdings and external MF Central folios</span>
-          </div>
-          <div id="cfo-funds-review-list" style="display: flex; flex-direction: column; gap: 1.25rem;">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
+        </details>
       </div>
     </div> <!-- End cfo-section -->
 
     <!-- Explore Funds Section -->
     <div id="explore-funds-section" class="tab-content hidden">
       <div class="section-title">
-        <h3>Discover New Investment Opportunities</h3>
-        <p>Browse our expertly curated selection of high-performing mutual funds.</p>
+        <h3>Public fund research</h3>
+        <p>Search verified scheme data. Results are research, not a personalized recommendation; this page does not execute investment orders.</p>
       </div>
+      <form id="explore-funds-search-form" class="fund-search-form">
+        <label class="sr-only" for="explore-funds-search">Search mutual-fund schemes</label>
+        <input id="explore-funds-search" type="search" maxlength="100" placeholder="Search a scheme, category, or fund house" autocomplete="off" required>
+        <button class="btn btn-primary" type="submit">Search funds</button>
+      </form>
       <div class="funds-grid" id="explore-funds-grid">
-        <!-- Dynamically populated via JS -->
-      </div>
-    </div>
-  </main>
-
-  <!-- Order Placement View -->
-  <main id="order-view" class="view hidden">
-    <div class="dashboard-header">
-      <h2>Place Order</h2>
-      <p>Confirm details to proceed with your investment.</p>
-    </div>
-
-    <div class="checkout-container">
-      <!-- Order Form -->
-      <div class="checkout-card glass-card">
-        <div class="fund-summary" id="order-fund-summary">
-          <h3 id="order-fund-name">Fund Name</h3>
-          <p id="order-fund-category" style="color: var(--colorTextMuted); font-size: 0.9rem;">Category • Risk</p>
-        </div>
-
-        <form id="order-form" style="margin-top: 2rem;">
-          <div class="form-group">
-            <label>Investment Type</label>
-            <div class="custom-radio-group">
-              <label class="custom-radio">
-                <input type="radio" name="investType" value="SIP" checked>
-                <span>Monthly SIP</span>
-              </label>
-              <label class="custom-radio">
-                <input type="radio" name="investType" value="LUMPSUM">
-                <span>One-time (Lumpsum)</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="invest-amount">Investment Amount (₹)</label>
-            <input type="number" id="invest-amount" min="500" step="500" placeholder="e.g., 5000" required>
-            <small style="color: var(--colorTextMuted); display: block; margin-top: 0.5rem;"
-              id="min-amount-hint">Minimum investment: ₹1000</small>
-          </div>
-
-          <button type="submit" class="btn btn-primary full-width" style="margin-top: 1rem;">Proceed to Payment</button>
-          <button type="button" class="btn btn-secondary full-width" id="order-back-btn"
-            style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to
-            Funds</button>
-        </form>
-      </div>
-    </div>
-  </main>
-
-  <!-- Payment View -->
-  <main id="payment-view" class="view hidden">
-    <div class="dashboard-header">
-      <h2>Complete Payment</h2>
-      <p>Select a secure payment method.</p>
-    </div>
-
-    <div class="checkout-container">
-      <!-- Payment Options -->
-      <div class="checkout-card glass-card">
-        <div class="payment-summary">
-          <div style="font-size: 1.1rem; color: var(--colorTextMuted);">Total Payable</div>
-          <div style="font-size: 2.5rem; font-weight: 700; color: var(--colorAccent);" id="payment-amount-display">₹0
-          </div>
-        </div>
-
-        <div class="payment-methods" style="margin-top: 2rem;">
-          <label class="payment-method-box">
-            <input type="radio" name="payMethod" value="UPI" checked>
-            <div class="method-details">
-              <strong>UPI</strong>
-              <small>Google Pay, PhonePe, Paytm</small>
-            </div>
-          </label>
-
-          <label class="payment-method-box">
-            <input type="radio" name="payMethod" value="NETBANKING">
-            <div class="method-details">
-              <strong>Net Banking</strong>
-              <small>All major Indian banks</small>
-            </div>
-          </label>
-
-          <label class="payment-method-box">
-            <input type="radio" name="payMethod" value="MANDATE" id="mandate-option">
-            <div class="method-details">
-              <strong>Setup Auto-Pay (Bank Mandate)</strong>
-              <small>Recommended for SIPs</small>
-            </div>
-          </label>
-        </div>
-
-        <button type="button" class="btn btn-primary full-width" id="pay-confirm-btn"
-          style="margin-top: 2rem; position: relative;">
-          <span id="pay-btn-text">Pay Now</span>
-          <div id="pay-spinner" class="spinner hidden"></div>
-        </button>
-        <button type="button" class="btn btn-secondary full-width" id="pay-back-btn"
-          style="margin-top: 1rem; background: transparent; border: 1px solid var(--borderColor);">Back to
-          Order</button>
+        <p class="fund-search-empty">Choose a scheme name, category, or fund house to view available public research.</p>
       </div>
     </div>
   </main>
@@ -778,7 +723,7 @@
       </form>
 
       <div class="modal-footer" style="margin-top: 1.5rem; text-align: center; font-size: 0.875rem;">
-        <a href="/signup" style="color: var(--primary); text-decoration: none;">Don't have an account? Sign up</a>
+        <a href="#" id="show-signup" style="color: var(--primary); text-decoration: none;">Don't have an account? Sign up</a>
         <a href="#" id="show-login" class="hidden" style="color: var(--primary); text-decoration: none;">Already have an
           account? Log in</a>
       </div>
@@ -1016,10 +961,10 @@
       <div class="modal-header" style="text-align: left; margin-bottom: 1.25rem;">
         <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
           <span style="font-size: 1.5rem;">🏦</span>
-          <h2 style="font-size: 1.35rem; margin: 0;">Import via MF Central</h2>
+          <h2 style="font-size: 1.35rem; margin: 0;">Add an actual holding snapshot</h2>
         </div>
         <p style="color: var(--colorTextMuted); font-size: 0.88rem; margin-top: 0.25rem;">
-          Consolidate your external mutual fund folios from CAMS & KFintech into your Live Investments portfolio.
+          Use values from a current statement. Automatic MF Central/CAS import is not connected.
         </p>
       </div>
 
@@ -1030,7 +975,7 @@
           <span style="font-size: 0.7rem; background: var(--colorSurface); color: var(--colorAccent); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700;">VERIFIED PROFILE</span>
         </div>
         <p style="font-size: 0.82rem; color: var(--colorTextMuted); margin-bottom: 0.9rem;">
-          When logging in or generating your CAS on MF Central, enter your registered PAN and mobile:
+          You can open MF Central to obtain a statement. These details stay in your account and are not sent to MF Central by this app.
         </p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
@@ -1055,30 +1000,27 @@
       <!-- Redirection Button -->
       <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem;">
         <a href="https://app.mfcentral.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary full-width" style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.8rem; font-size: 0.95rem;">
-          <span>Go to MF Central Portal (CAMS & KFintech)</span>
+          <span>Open official MF Central portal</span>
           <span>↗</span>
         </a>
         <p style="text-align: center; font-size: 0.78rem; color: var(--colorTextMuted); margin: 0;">
-          Opens official portal at https://app.mfcentral.com in a new tab.
+          Download your statement there, then enter its actual invested and current values below.
         </p>
       </div>
 
-      <!-- Quick Sync or Add Custom -->
+      <!-- Manual statement entry -->
       <div style="border-top: 1px solid var(--colorBorder); padding-top: 1.1rem;">
-        <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.5rem; color: var(--colorPrimary);">Sync Folios to Live Investments:</div>
+        <div style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.5rem; color: var(--colorPrimary);">Enter statement values:</div>
         <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-          <button type="button" id="btn-quick-import-mfc" class="btn btn-secondary" style="flex: 1.2; min-width: 200px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid var(--colorAccent); color: var(--colorAccent); padding: 0.6rem;">
-            <span>⚡ Quick-Sync CAS Folios</span>
-          </button>
           <button type="button" id="btn-toggle-manual-mfc" class="btn btn-secondary" style="flex: 1; min-width: 150px; padding: 0.6rem;">
-            <span>➕ Add External Scheme</span>
+            <span>➕ Add holding snapshot</span>
           </button>
         </div>
       </div>
 
       <!-- Collapsible Manual External Entry -->
       <form id="mfc-manual-form" class="hidden" style="margin-top: 1rem; background: var(--colorBg); padding: 1rem; border-radius: 8px; border: 1px solid var(--colorBorder);">
-        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">Add External Mutual Fund Scheme</h4>
+        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">Statement snapshot</h4>
         <div class="form-group" style="margin-bottom: 0.65rem;">
           <label style="font-size: 0.78rem;">Fund Name</label>
           <input type="text" id="mfc-fund-name" placeholder="e.g., Axis Bluechip Fund" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
@@ -1097,9 +1039,21 @@
             </select>
           </div>
           <div class="form-group" style="margin: 0;">
-            <label style="font-size: 0.78rem;">Invested Amount (₹)</label>
-            <input type="number" id="mfc-fund-amount" placeholder="e.g., 25000" min="500" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+            <label style="font-size: 0.78rem;">Invested amount (₹)</label>
+            <input type="number" id="mfc-fund-amount" placeholder="From statement" min="0.01" step="0.01" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
           </div>
+          <div class="form-group" style="margin: 0;">
+            <label style="font-size: 0.78rem;">Current value (₹)</label>
+            <input type="number" id="mfc-fund-current-value" placeholder="From statement" min="0.01" step="0.01" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label style="font-size: 0.78rem;">AMFI scheme code (optional, from statement)</label>
+          <input type="text" id="mfc-fund-scheme-code" inputmode="numeric" pattern="[0-9]{1,20}" placeholder="Needed for verified holdings and benchmark analysis" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
+        </div>
+        <div class="form-group" style="margin-bottom: 0.75rem;">
+          <label style="font-size: 0.78rem;">Statement date</label>
+          <input type="date" id="mfc-fund-as-of-date" required style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--colorBorder); font-size: 0.88rem;">
         </div>
         <button type="submit" class="btn btn-primary full-width" style="padding: 0.55rem; font-size: 0.88rem;">Save External Fund</button>
       </form>
