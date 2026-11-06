@@ -1,4 +1,5 @@
 // Removed mock database import
+import { containsOtpSecret } from './src/cfoInputSafety.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
@@ -227,6 +228,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const appendCfoConversionActions = (message, actionItems = []) => {
         if (!message || !Array.isArray(actionItems) || !actionItems.length) return;
         const supportedActions = {
+            import_external_portfolio: {
+                label: 'Import statement values',
+                run: () => showMFCentralModal()
+            },
             compare_funds: {
                 label: 'Compare funds',
                 run: () => {
@@ -1007,6 +1012,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!question || !currentUser || !currentPortfolio) return;
 
             cfoChatInput.style.height = '';
+            if (containsOtpSecret(question)) {
+                cfoChatInput.value = '';
+                appendCfoChatMessage(
+                    'For your security, never share an OTP here. Enter it only on the official MF Central website or app.',
+                    'assistant'
+                );
+                return;
+            }
             appendCfoChatMessage(question, 'user');
             const workflow = appendCfoWorkflowMessage();
             if (workflow) workflow.question = question;
@@ -1369,12 +1382,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (asOfDateInput && !asOfDateInput.value) {
             asOfDateInput.value = new Date().toISOString().slice(0, 10);
         }
-        if (currentUser) {
-            const panEl = document.getElementById('mfc-pan-display');
-            const mobileEl = document.getElementById('mfc-mobile-display');
-            if (panEl) panEl.textContent = currentUser.pan || '-';
-            if (mobileEl) mobileEl.textContent = currentUser.phone || '-';
-        }
         mfcentralModal.classList.remove('hidden');
         const statusMsg = document.getElementById('mfc-status-msg');
         if (statusMsg) statusMsg.textContent = '';
@@ -1398,24 +1405,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tabCfo) tabCfo.addEventListener('click', () => switchTab('cfo'));
     if (btnRefreshCfo) btnRefreshCfo.addEventListener('click', fetchAndRenderCFO);
     if (cfoExploreBtn) cfoExploreBtn.addEventListener('click', () => switchTab('explore'));
-
-    // Copy to clipboard helper for PAN & mobile
-    document.querySelectorAll('.btn-copy-mfc').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            const targetEl = document.getElementById(targetId);
-            if (targetEl && targetEl.textContent) {
-                navigator.clipboard.writeText(targetEl.textContent.trim());
-                const originalText = btn.textContent;
-                btn.textContent = 'Copied!';
-                btn.style.color = 'var(--colorAccent)';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.color = '';
-                }, 1500);
-            }
-        });
-    });
 
     // Toggle Manual Form in MF Central Modal
     const btnToggleManualMfc = document.getElementById('btn-toggle-manual-mfc');

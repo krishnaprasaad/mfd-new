@@ -15,6 +15,7 @@ import {
     streamCfoAnswer
 } from '../services/cfoAgent.js';
 import { openMintoMcp } from '../services/mintoMcp.js';
+import { containsOtpSecret } from '../../src/cfoInputSafety.js';
 
 const router = express.Router();
 const MAX_MESSAGE_LENGTH = 500;
@@ -62,6 +63,11 @@ router.post('/chat', authMiddleware, async (req, res) => {
     const message = typeof req.body?.message === 'string' ? req.body.message.trim() : '';
     if (!message || message.length > MAX_MESSAGE_LENGTH) {
         return res.status(400).json({ error: 'Enter a message of up to 500 characters.' });
+    }
+    if (containsOtpSecret(message)) {
+        return res.status(400).json({
+            error: 'For your security, never share an OTP here. Enter it only on the official MF Central website or app.'
+        });
     }
 
     res.status(200);

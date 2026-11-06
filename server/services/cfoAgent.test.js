@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { FakeListChatModel } from '@langchain/core/utils/testing';
 import { createAgent } from 'langchain';
+import { containsOtpSecret } from '../../src/cfoInputSafety.js';
 import {
     buildCfoSystemPrompt,
     getCfoFailureMessage,
@@ -55,7 +56,9 @@ test(`financial question routing matches the offline ${routingCases.length}-ques
 
 test('analyst prompt defines concise responses, tool use, unavailable data, and follow-up resolution', () => {
     const prompt = buildCfoSystemPrompt({ userName: 'Test Investor', hasPublicResearch: false });
-    assert.match(prompt, /2–6 concise sentences/);
+    assert.match(prompt, /ordinary replies to 1–3 short sentences/);
+    assert.match(prompt, /ask just one short follow-up question/);
+    assert.match(prompt, /do not provide a general guide, multiple frameworks, sample portfolios, long checklists/);
     assert.match(prompt, /call the most relevant deterministic portfolio tool/);
     assert.match(prompt, /I cannot calculate this accurately because the required transaction or valuation data is unavailable/);
     assert.match(prompt, /resolve "it", "that fund", "the second one"/);
@@ -65,10 +68,20 @@ test('analyst prompt defines concise responses, tool use, unavailable data, and 
     assert.match(prompt, /may receive AMC commission where applicable/);
     assert.match(prompt, /a switch cannot be assumed free/);
     assert.match(prompt, /Never append a generic greeting or open-ended sign-off/);
+    assert.match(prompt, /Never ask for, accept, repeat, store, or transmit an OTP/);
+    assert.match(prompt, /Never automate MF Central login/);
     assert.match(prompt, /no connected stock portfolio/);
     assert.match(prompt, /structured saved-goals record/);
     assert.match(prompt, /only if the user stated it in this conversation/);
     assert.match(prompt, /distinguish the source's observation date from the time it was retrieved/);
+});
+
+test('OTP detector identifies codes shared with OTP context without flagging ordinary finance amounts', () => {
+    assert.equal(containsOtpSecret('My MF Central OTP is 123456'), true);
+    assert.equal(containsOtpSecret('verification code: 123 456'), true);
+    assert.equal(containsOtpSecret('The code is 123456; this is my OTP'), true);
+    assert.equal(containsOtpSecret('I want to invest ₹10,000 monthly'), false);
+    assert.equal(containsOtpSecret('How do I get my MF Central statement?'), false);
 });
 
 test('switch and SIP stop questions preflight authenticated portfolio tools', () => {

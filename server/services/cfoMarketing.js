@@ -1,4 +1,5 @@
 const intentPatterns = [
+    ['external_portfolio_import', /\b(?:mf[\s-]?central|cas statement|consolidated account statement|import (?:my )?(?:external )?(?:investments?|holdings|portfolio)|external (?:investments?|holdings)|(?:investments?|holdings) from (?:mf[\s-]?central|outside))\b/i],
     ['transaction_enquiry', /\b(free|fee|fees|charges?|exit load|tax(?:ation)?|stamp duty|commission|cost of (?:switch|invest)|is (?:a )?switch(?:ing)? (?:free|charged))\b/i],
     ['fund_switching', /\b(switch(?:ing)?|move (?:my )?investment|transfer (?:my )?fund|redeem .* (?:buy|purchase))\b/i],
     ['fund_comparison', /\b(compare|comparison|versus|vs\.?)\b.*\b(funds?|schemes?|mutual funds?)\b|\b(funds?|schemes?)\b.*\b(compare|comparison|versus|vs\.?)\b/i],
@@ -70,6 +71,9 @@ export const getCfoContextualActions = (
             : [];
     }
 
+    if (intent === 'external_portfolio_import') {
+        return [action('import_external_portfolio', 'Import statement values')];
+    }
     if (intent === 'portfolio_analysis') {
         if (/\b(overlap|overlapping|same holdings)\b/i.test(question)) {
             return hasAi && hasPublicResearch

@@ -21,6 +21,15 @@ test('switch request offers comparison only when research tools are actually ava
     }).actions, [{ id: 'get_investment_assistance', label: 'Get investment assistance' }]);
 });
 
+test('MF Central statement requests open the user-directed import workflow without research or login', () => {
+    assert.equal(classifyCfoIntent('Help me import my MF Central holdings'), 'external_portfolio_import');
+    assert.deepEqual(buildCfoConversionContext('Help me import my MF Central holdings'), {
+        intent: 'external_portfolio_import',
+        actions: [{ id: 'import_external_portfolio', label: 'Import statement values' }]
+    });
+    assert.equal(requiresPublicResearch('Help me import my MF Central holdings'), false);
+});
+
 test('recommendation requests never surface a CTA before goal, horizon, and risk are supplied', () => {
     assert.equal(classifyCfoIntent('What is the best mutual fund?'), 'new_investment');
     assert.deepEqual(getCfoContextualActions('new_investment', {

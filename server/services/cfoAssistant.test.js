@@ -113,6 +113,17 @@ test('fallback requires objective, horizon, and risk before fund discovery', () 
     assert.match(answer, /not personalized investment advice/i);
 });
 
+test('fallback guides MF Central imports without requesting credentials or OTPs', () => {
+    const importReply = buildCfoReply({ message: 'Help me import my MF Central holdings' });
+    assert.match(importReply, /can’t log in to MF Central or fetch your holdings automatically/i);
+    assert.match(importReply, /official portal yourself/i);
+    assert.match(importReply, /never share your OTP or password/i);
+
+    const otpReply = buildCfoReply({ message: 'Should I send you my verification code?' });
+    assert.match(otpReply, /Never share an OTP with AI CFO/i);
+    assert.match(otpReply, /official MF Central website or app/i);
+});
+
 test('accepts risk and horizon provided together', () => {
     const reply = buildCfoReply({
         message: 'Suggest mutual funds. Medium risk, 8 years.'

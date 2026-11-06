@@ -54,7 +54,7 @@ The local `npm run mcp` server exposes public fund research only. It does not ex
 
 ## Answer quality and validation
 
-- The LangChain prompt prioritizes concise, direct answers and expands only when the user asks for a detailed report. Ordinary responses use a 1,536-token output budget; explicit detailed requests receive 4,096 tokens.
+- The LangChain prompt prioritizes concise, direct answers and expands only when the user asks for a detailed report. Ordinary responses use a 768-token output budget; explicit detailed requests receive 4,096 tokens.
 - The stream buffers intermediate model events and emits the agent's final answer in chunks, preventing intermediate model responses from being concatenated into the user-visible answer.
 - Public MCP connections are opened only for questions that need fund-specific facts, comparisons, recommendations/discovery, benchmark data, sector exposure, or fund overlap; ordinary portfolio and educational questions do not incur that network round trip. Each connection discovers the server catalog and validates the required mutual-fund research tools before use.
 - Portfolio-value projections combine the authenticated recorded current value with the user's explicit monthly contribution and assumptions. Zero monthly contribution is supported; incomplete assumptions remain clarification questions, while supplied multi-turn assumptions are routed to deterministic calculations.
@@ -69,6 +69,7 @@ The local `npm run mcp` server exposes public fund research only. It does not ex
 - Available actions route to existing functionality: portfolio metrics, AI fund comparison prompts, public fund research, or the existing meeting-request modal. Public research opens a user-directed scheme/category search rather than preselecting an equity category. Follow-up prompts stay in the authenticated CFO conversation.
 - Fund discovery actions wait for a user-provided goal, time horizon and risk comfort. Declining an offer does not produce another CTA. Platform messaging does not alter financial-tool results or promote schemes solely because they are available.
 - This application does not place, redeem, or switch orders: `POST /api/portfolio/invest` returns `409`. No “Start SIP” or “Initiate switch” button is shown, and accepting a comparison or assistance offer cannot submit an investment order. A human-assistance action opens the existing meeting form; the user reviews and submits that request.
+- MF Central import is user-directed: AI CFO can open the statement-entry modal, but users authenticate only on MF Central’s official portal and manually enter actual statement values. The app does not collect OTPs/passwords, automate login, or retrieve holdings from MF Central. OTP-bearing chat messages are blocked before model invocation and history storage. An automated connection requires an official, authorized integration.
 - The AI must not imply that a switch is free. Switching generally involves redemption and a fresh purchase; exit loads, taxes, stamp duty, scheme expenses and distributor commission depend on verified scheme/holding details. LiveInvestments is an AMFI-registered mutual-fund distributor (ARN-300748), not a SEBI-registered investment adviser; where applicable it may receive AMC commission. No commission rate or zero-fee claim is made without a verified disclosure.
 
 ## Local development

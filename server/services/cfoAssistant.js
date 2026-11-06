@@ -84,6 +84,14 @@ export const buildCfoReply = ({
         return `Hi ${userName}! I can review your recorded portfolio, explain mutual-fund concepts, or research public fund data when the language-model provider is configured. For a fund shortlist, tell me your goal, investment horizon and risk comfort (low, medium or high).`;
     }
 
+    if (/\b(?:otp|one[-\s]?time password|verification code)\b/i.test(text)) {
+        return 'Never share an OTP with AI CFO. Enter it only on the official MF Central website or app; after downloading your statement, you can import its actual values here.';
+    }
+
+    if (/\b(?:mf[\s-]?central|cas statement|consolidated account statement|import (?:my )?(?:external )?(?:investments?|holdings|portfolio)|external (?:investments?|holdings))\b/i.test(text)) {
+        return 'I can’t log in to MF Central or fetch your holdings automatically. Sign in on the official portal yourself, then import the actual statement values here; never share your OTP or password.';
+    }
+
     if (/\b(xirr|internal rate of return|cagr|annualized return|sip performance|sip returns|compare.*last year|compare.*previous year|benchmark comparison|fund overlap)\b/i.test(text)) {
         return 'I cannot calculate this accurately because the required transaction or valuation data is unavailable. The built-in fallback cannot access your dated ledger or verified historical fund data.';
     }
