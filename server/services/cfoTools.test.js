@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createPortfolioTools, getPortfolioData } from './cfoTools.js';
+import {
+    getMcpSourceMetadata,
+    REQUIRED_FUND_RESEARCH_TOOLS,
+    validateFundResearchCatalog
+} from './mintoMcp.js';
 
 const makeQuery = (result, onFilter) => ({
     lean: async () => {
@@ -142,4 +147,41 @@ test('projection tool accepts zero contributions and compounds the current portf
     assert.equal(result.initialInvestment, 100000);
     assert.equal(result.totalContributions, 0);
     assert.equal(result.projectedValue, 259374.25);
+});
+
+test('MCP catalog validation confirms all fund-research tools used by the agent', () => {
+    const catalog = {
+        tools: [
+            ...REQUIRED_FUND_RESEARCH_TOOLS.map(name => ({ name })),
+            { name: 'search_nps_schemes' }
+        ]
+    };
+
+    assert.equal(validateFundResearchCatalog(catalog).size, REQUIRED_FUND_RESEARCH_TOOLS.length + 1);
+    assert.throws(
+        () => validateFundResearchCatalog({ tools: [{ name: 'search_funds' }] }),
+        /missing required tools/
+    );
+    assert.throws(() => validateFundResearchCatalog({}), /invalid tool catalog/);
+});
+
+test('MCP market-data metadata keeps observation dates separate from retrieval time', () => {
+    const retrievedAt = new Date('2026-11-06T00:00:00.000Z');
+    assert.deepEqual(getMcpSourceMetadata('get_latest_nav', {
+        date: '2026-05-08',
+        nav: 13.6659
+    }, retrievedAt), {
+        sourceObservationDate: '2026-05-08',
+        freshness: 'stale'
+    });
+    assert.deepEqual(getMcpSourceMetadata('get_trailing_returns', {
+        return_1y: 0.57
+    }, retrievedAt), {
+        sourceObservationDate: null,
+        freshness: 'undated'
+    });
+    assert.equal(getMcpSourceMetadata('get_latest_nav', {
+        date: '2026-11-08'
+    }, retrievedAt).freshness, 'future_dated');
+    assert.deepEqual(getMcpSourceMetadata('search_funds', {}, retrievedAt), {});
 });

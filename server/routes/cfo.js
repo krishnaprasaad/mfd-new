@@ -5,7 +5,7 @@ import User from '../models/User.js';
 import Investment from '../models/Investment.js';
 import CfoConversation from '../models/CfoConversation.js';
 import { buildCfoReply } from '../services/cfoAssistant.js';
-import { buildCfoConversionContext } from '../services/cfoMarketing.js';
+import { buildCfoConversionContext, requiresPublicResearch } from '../services/cfoMarketing.js';
 import {
     createCfoAgent,
     getCfoFailureMessage,
@@ -111,14 +111,16 @@ router.post('/chat', authMiddleware, async (req, res) => {
         sendEvent(res, { type: 'status', message: 'Understanding your question' });
 
         if (configuredProvider) {
-            try {
-                mcpClient = await openMintoMcp();
-            } catch (error) {
-                console.error('Public fund MCP unavailable:', error.name || 'UnknownError');
-                sendEvent(res, {
-                    type: 'status',
-                    message: 'Public fund research is unavailable; portfolio analysis tools remain available'
-                });
+            if (requiresPublicResearch(message, storedHistory)) {
+                try {
+                    mcpClient = await openMintoMcp();
+                } catch (error) {
+                    console.error('Public fund MCP unavailable:', error.name || 'UnknownError');
+                    sendEvent(res, {
+                        type: 'status',
+                        message: 'Public fund research is unavailable; portfolio analysis tools remain available'
+                    });
+                }
             }
 
             conversion = buildCfoConversionContext(message, storedHistory, {

@@ -49,6 +49,14 @@ export const classifyCfoIntent = (question, history = []) => {
     return 'general_finance';
 };
 
+export const requiresPublicResearch = (question, history = []) => {
+    const intent = classifyCfoIntent(question, history);
+    if (['fund_switching', 'fund_comparison', 'new_investment'].includes(intent)) return true;
+
+    return /\b(?:nav|expense ratio|total expense ratio|ter|benchmark|risk-adjusted|risk metric|fund overlap|overlapping funds?|sector exposure|fund details|scheme details)\b/i.test(question) ||
+        /\b(?:latest|current|live)\b.{0,40}\b(?:fund|scheme|nav|market data)\b/i.test(question);
+};
+
 export const getCfoContextualActions = (
     intent,
     { question = '', history = [], hasAi = false, hasPublicResearch = false } = {}

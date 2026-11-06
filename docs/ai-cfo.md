@@ -47,12 +47,16 @@ The local `npm run mcp` server exposes public fund research only. It does not ex
 - Year-over-year comparison requires a complete same-date statement snapshot for all current holdings. This comparison is a value change, not a time-weighted investment return.
 - Sector exposure, fund overlap and benchmark comparison require AMFI scheme codes on the holdings and public MCP disclosures. Top-holdings overlap/exposure is explicitly a lower bound when the source provides only top holdings.
 - Public fund/NAV/benchmark facts come from the configured MCP source. Client holdings and transaction data are queried separately by the authenticated user ID.
+- Treat the source's market-data observation date separately from retrieval time; if a returned NAV or metric is stale or undated, disclose that and do not call it current.
+- Latest NAV observations older than seven calendar days are flagged stale by the MCP adapter; undated market metrics are explicitly marked undated.
+- The application has no connected stock account, income/expense/liability model, or structured financial-goal record. Goals and preferences mentioned in the current conversation may be used for an illustrative scenario, but are not treated as verified saved profile data.
 - RAG/vector retrieval is not enabled: the repository has no approved, versioned financial-document corpus or configured embedding/vector index. Exact client numerical queries use MongoDB and deterministic tools; public market facts use structured MCP calls.
 
 ## Answer quality and validation
 
 - The LangChain prompt prioritizes concise, direct answers and expands only when the user asks for a detailed report. Ordinary responses use a 1,536-token output budget; explicit detailed requests receive 4,096 tokens.
-- The stream removes one known generic investment greeting if the model adds it before or after an otherwise complete answer; normal answer text is streamed, with only the final 96 characters buffered so that a trailing sentence can be detected before display.
+- The stream buffers intermediate model events and emits the agent's final answer in chunks, preventing intermediate model responses from being concatenated into the user-visible answer.
+- Public MCP connections are opened only for questions that need fund-specific facts, comparisons, recommendations/discovery, benchmark data, sector exposure, or fund overlap; ordinary portfolio and educational questions do not incur that network round trip. Each connection discovers the server catalog and validates the required mutual-fund research tools before use.
 - Portfolio-value projections combine the authenticated recorded current value with the user's explicit monthly contribution and assumptions. Zero monthly contribution is supported; incomplete assumptions remain clarification questions, while supplied multi-turn assumptions are routed to deterministic calculations.
 - Common numerical portfolio intents are routed through deterministic tools before the model writes its response. Tool results must parse as structured JSON; empty assistant output is rejected.
 - Fund-specific XIRR and SIP follow-ups resolve against recent conversation and the authenticated holding list. If the fund cannot be resolved, the assistant asks which fund rather than substituting a portfolio-wide result.

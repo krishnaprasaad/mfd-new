@@ -3,7 +3,8 @@ import test from 'node:test';
 import {
     buildCfoConversionContext,
     classifyCfoIntent,
-    getCfoContextualActions
+    getCfoContextualActions,
+    requiresPublicResearch
 } from './cfoMarketing.js';
 
 test('switch request offers comparison only when research tools are actually available', () => {
@@ -120,4 +121,17 @@ test('human assistance acceptance opens only the existing assistance workflow', 
         question: 'Yes',
         history
     }), [{ id: 'get_investment_assistance', label: 'Request investment assistance' }]);
+});
+
+test('public MCP research is opened only for fund-specific research questions', () => {
+    assert.equal(requiresPublicResearch('Hello'), false);
+    assert.equal(requiresPublicResearch('How much is my portfolio worth?'), false);
+    assert.equal(requiresPublicResearch('What is the latest NAV for this fund?'), true);
+    assert.equal(requiresPublicResearch('Compare these mutual funds'), true);
+    assert.equal(requiresPublicResearch('Find overlapping funds in my portfolio'), true);
+    assert.equal(requiresPublicResearch('Show my sector exposure'), true);
+    assert.equal(requiresPublicResearch('What is a SIP?'), false);
+    assert.equal(requiresPublicResearch('Yes, compare them', [
+        { role: 'assistant', content: 'Would you like to compare these funds using verified public data?' }
+    ]), true);
 });

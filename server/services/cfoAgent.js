@@ -52,7 +52,6 @@ const toolLabels = {
 const cfoAnswerSchema = z.string().trim().min(1, 'The language model returned an empty response.');
 const CFO_GENERIC_SIGNOFF = /\s*Hello!\s*How can I assist you with your investments today[.!?]?\s*$/i;
 const CFO_GENERIC_GREETING = /^Hello!\s*How can I assist you with your investments today[.!?]?\s*/i;
-const STREAM_TAIL_BUFFER_LENGTH = 96;
 
 const isDetailedRequest = question =>
     /\b(detailed|comprehensive|full report|deep dive|in[- ]depth|thorough|all findings)\b/i.test(question);
@@ -169,8 +168,11 @@ RESPONSE STYLE
 
 FINANCIAL ACCURACY
 - For every numerical client-portfolio question, call the most relevant deterministic portfolio tool before answering. Never calculate or estimate portfolio metrics in prose.
+- Available personal records in this app are mutual-fund holding snapshots, dated fund transactions and statement valuations. There is no connected stock portfolio, income/expense/liability data, or structured saved-goals record; never imply access to them.
+- Use a goal or risk preference only if the user stated it in this conversation. For missing planning inputs, ask the user instead of assuming or claiming a saved financial profile.
 - Treat tool results as the only source for client numbers. Preserve the difference between unavailable and zero. If a required result is unavailable, say exactly: "I cannot calculate this accurately because the required transaction or valuation data is unavailable." Then briefly name the missing input from the tool.
 - Include the tool's as-of date when one is returned. Do not describe recorded snapshots as live NAV values.
+- For public MCP data, distinguish the source's observation date from the time it was retrieved. Do not call an observation current or latest when its source date is stale or missing.
 - Never invent NAVs, returns, benchmarks, fees, holdings, source dates, or risk figures. State missing data plainly.
 - For projections, use only supplied assumptions and label the result illustrative, not expected or guaranteed.
 - For "what will my portfolio be worth" projections, compound the signed-in user's recorded current portfolio value and any explicitly supplied monthly contribution. A zero contribution is valid; do not ask for it again when the user has said none.
@@ -422,10 +424,8 @@ export const streamCfoAnswer = async ({
     }
     messages.push(new HumanMessage(question));
 
-    let reply = '';
-    let pendingText = '';
-    let receivedStreamContent = false;
-    let streamedEmittedLength = 0;
+    let streamedReply = '';
+    let finalReply = '';
     const stream = agent.streamEvents(
         { messages },
         { version: 'v2', ...(signal ? { signal } : {}) }
@@ -452,43 +452,22 @@ export const streamCfoAnswer = async ({
             });
         } else if (event.event === 'on_chat_model_stream') {
             const text = contentToText(event.data?.chunk?.content);
-            if (text) {
-                receivedStreamContent = true;
-                reply += text;
-                pendingText += text;
-                if (pendingText.length > STREAM_TAIL_BUFFER_LENGTH) {
-                    if (streamedEmittedLength === 0) {
-                        const greeting = CFO_GENERIC_GREETING.exec(pendingText);
-                        if (greeting && pendingText.slice(greeting[0].length).trim()) {
-                            pendingText = pendingText.slice(greeting[0].length);
-                        }
-                    }
-                    if (pendingText.length > STREAM_TAIL_BUFFER_LENGTH) {
-                        const emitLength = pendingText.length - STREAM_TAIL_BUFFER_LENGTH;
-                        onEvent({ type: 'token', text: pendingText.slice(0, emitLength) });
-                        pendingText = pendingText.slice(emitLength);
-                        streamedEmittedLength += emitLength;
-                    }
-                }
-            }
+            if (text) streamedReply += text;
         } else if (event.event === 'on_chain_end') {
             const finalMessages = event.data?.output?.messages;
-            if (!reply && Array.isArray(finalMessages)) {
+            if (Array.isArray(finalMessages)) {
                 const finalMessage = [...finalMessages].reverse().find(item =>
                     (item instanceof AIMessage || item?.type === 'ai') &&
                     typeof item.content !== 'undefined'
                 );
-                reply = contentToText(finalMessage?.content);
+                if (finalMessage) finalReply = contentToText(finalMessage.content);
             }
         }
     }
 
-    const normalizedReply = normalizeCfoResponse(reply);
-    if (receivedStreamContent && pendingText) {
-        const pendingReply = normalizedReply.slice(streamedEmittedLength);
-        if (pendingReply) onEvent({ type: 'token', text: pendingReply });
+    const normalizedReply = normalizeCfoResponse(finalReply || streamedReply);
+    for (let index = 0; index < normalizedReply.length; index += 48) {
+        onEvent({ type: 'token', text: normalizedReply.slice(index, index + 48) });
     }
-
-    if (!receivedStreamContent && normalizedReply) onEvent({ type: 'token', text: normalizedReply });
     return cfoAnswerSchema.parse(normalizedReply);
 };

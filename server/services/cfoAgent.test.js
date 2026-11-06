@@ -65,6 +65,10 @@ test('analyst prompt defines concise responses, tool use, unavailable data, and 
     assert.match(prompt, /may receive AMC commission where applicable/);
     assert.match(prompt, /a switch cannot be assumed free/);
     assert.match(prompt, /Never append a generic greeting or open-ended sign-off/);
+    assert.match(prompt, /no connected stock portfolio/);
+    assert.match(prompt, /structured saved-goals record/);
+    assert.match(prompt, /only if the user stated it in this conversation/);
+    assert.match(prompt, /distinguish the source's observation date from the time it was retrieved/);
 });
 
 test('switch and SIP stop questions preflight authenticated portfolio tools', () => {
@@ -198,6 +202,28 @@ test('Groq defaults to its currently recommended replacement model', () => {
     }
 });
 
+test('Groq API key selects the configured Groq model when provider is not explicitly set', () => {
+    const keys = ['AI_PROVIDER', 'AI_MODEL', 'AI_API_KEY', 'GROQ_API_KEY', 'AI_BASE_URL'];
+    const previous = new Map(keys.map(key => [key, process.env[key]]));
+    try {
+        delete process.env.AI_PROVIDER;
+        process.env.AI_MODEL = 'openai/gpt-oss-120b';
+        process.env.GROQ_API_KEY = 'test-key';
+        delete process.env.AI_API_KEY;
+        delete process.env.AI_BASE_URL;
+
+        assert.deepEqual(getConfiguredProvider(), {
+            name: 'groq',
+            model: 'openai/gpt-oss-120b'
+        });
+    } finally {
+        for (const [key, value] of previous) {
+            if (value === undefined) delete process.env[key];
+            else process.env[key] = value;
+        }
+    }
+});
+
 test('LangChain agent streams answer tokens through the CFO event adapter', async () => {
     const agent = createAgent({
         model: new FakeListChatModel({ responses: ['Portfolio is ready.'] }),
@@ -241,6 +267,38 @@ test('removes repeated generic investment greetings before and after the streame
     assert.equal(reply, 'Your recorded portfolio data is available for review. '.repeat(3).trimEnd());
     assert.equal(events.filter(event => event.type === 'token').map(event => event.text).join(''), reply);
     assert.doesNotMatch(reply, /Hello! How can I assist you with your investments today/i);
+});
+
+test('uses the final agent answer instead of concatenating intermediate model text', async () => {
+    const interim = 'I’m doing great, thank you! How can I help you with your portfolio?';
+    const answer = 'Your recorded portfolio snapshot shows a gain of ₹24,200.';
+    const agent = {
+        async *streamEvents() {
+            yield {
+                event: 'on_chat_model_stream',
+                data: { chunk: { content: interim } }
+            };
+            yield {
+                event: 'on_chat_model_stream',
+                data: { chunk: { content: answer } }
+            };
+            yield {
+                event: 'on_chain_end',
+                data: { output: { messages: [{ type: 'ai', content: answer }] } }
+            };
+        }
+    };
+    const events = [];
+    const reply = await streamCfoAnswer({
+        agent,
+        history: [],
+        question: 'How much is my profit?',
+        onEvent: event => events.push(event)
+    });
+
+    assert.equal(reply, answer);
+    assert.equal(events.filter(event => event.type === 'token').map(event => event.text).join(''), answer);
+    assert.doesNotMatch(reply, /I’m doing great/);
 });
 
 test('portfolio projection preflight includes current value and accepts zero monthly contributions', async () => {
