@@ -1358,9 +1358,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const mfcentralModal = document.getElementById('mfcentral-modal');
     const mfcentralCloseBtn = document.getElementById('mfcentral-modal-close');
     const btnOpenMfc1 = document.getElementById('btn-open-mfcentral-modal');
-    const btnOpenMfc2 = document.getElementById('btn-sync-mfc-header');
+    const btnOpenMfcFeature = document.getElementById('btn-import-investments-feature');
     const btnOpenMfc3 = document.getElementById('cfo-empty-mfc-btn');
-    const btnRunCfo = document.getElementById('btn-run-cfo-analysis');
     const btnRefreshCfo = document.getElementById('btn-refresh-cfo');
     const cfoExploreBtn = document.getElementById('cfo-explore-btn');
 
@@ -1386,7 +1385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     if (btnOpenMfc1) btnOpenMfc1.addEventListener('click', showMFCentralModal);
-    if (btnOpenMfc2) btnOpenMfc2.addEventListener('click', showMFCentralModal);
+    if (btnOpenMfcFeature) btnOpenMfcFeature.addEventListener('click', showMFCentralModal);
     if (btnOpenMfc3) btnOpenMfc3.addEventListener('click', showMFCentralModal);
     if (mfcentralCloseBtn) mfcentralCloseBtn.addEventListener('click', hideMFCentralModal);
 
@@ -1395,9 +1394,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === mfcentralModal) hideMFCentralModal();
         });
     }
-
     if (tabCfo) tabCfo.addEventListener('click', () => switchTab('cfo'));
-    if (btnRunCfo) btnRunCfo.addEventListener('click', () => switchTab('cfo'));
+    if (tabCfo) tabCfo.addEventListener('click', () => switchTab('cfo'));
     if (btnRefreshCfo) btnRefreshCfo.addEventListener('click', fetchAndRenderCFO);
     if (cfoExploreBtn) cfoExploreBtn.addEventListener('click', () => switchTab('explore'));
 

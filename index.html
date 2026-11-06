@@ -496,6 +496,9 @@
       <button id="tab-portfolio" class="tab-btn active">My Portfolio</button>
       <button id="tab-cfo" class="tab-btn">✨ AI CFO</button>
       <button id="tab-explore" class="tab-btn">Explore Funds</button>
+      <button id="btn-import-investments-feature" class="tab-btn tab-btn-import" type="button" aria-label="Import external investments">
+        <span aria-hidden="true">＋</span> Import external investments
+      </button>
     </div>
 
     <!-- Portfolio Section -->
@@ -517,31 +520,22 @@
       </div>
 
       <!-- External holding statement entry -->
-      <div class="sync-banner glass-card" style="margin: 1.5rem 0; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-left: 4px solid var(--colorAccent); border-radius: 12px;">
+      <div class="external-investments-feature">
         <div>
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
-            <span style="font-weight: 700; font-size: 1.05rem;">Add holdings from a statement</span>
-            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--colorAccent); font-size: 0.75rem; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">Manual statement entry</span>
-          </div>
-          <p style="margin: 0; color: var(--colorTextMuted); font-size: 0.9rem;">
-            Add the actual invested and current values from a statement. Automatic CAS synchronization is not available.
-          </p>
+          <span class="external-investments-eyebrow">A MORE COMPLETE PORTFOLIO</span>
+          <h3>Give your AI CFO the full picture.</h3>
+          <p>Add your external mutual fund holdings from a recent statement so your AI CFO can include them in portfolio reviews and answers.</p>
+          <span class="external-investments-note">Manual statement entry · Automatic CAS import is not available</span>
         </div>
-        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-          <button id="btn-open-mfcentral-modal" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem;">
-            Add statement values
-          </button>
-          <button id="btn-run-cfo-analysis" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.6rem 1.2rem; border: 1px solid var(--colorAccent); color: var(--colorAccent);">
-            ✨ AI CFO Analysis
-          </button>
-        </div>
+        <button id="btn-open-mfcentral-modal" class="btn btn-primary external-investments-cta">
+            Import external investments <span aria-hidden="true">→</span>
+        </button>
       </div>
 
       <div class="investments-section">
         <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <h3 style="margin: 0;">Your Investment Holdings</h3>
           <div style="display: flex; gap: 0.5rem;">
-            <button id="btn-sync-mfc-header" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Add statement values</button>
             <button id="add-investment-btn" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">Discover public funds</button>
           </div>
         </div>
@@ -687,11 +681,11 @@
       <div id="cfo-empty-state" class="cfo-empty-state hidden">
         <div>
           <h3>No investments to review</h3>
-          <p>Add actual values from a current statement to get portfolio insights.</p>
+          <p>Import your external mutual fund holdings from a statement so your AI CFO can include them in portfolio reviews and answers.</p>
         </div>
         <div class="cfo-empty-actions">
           <button class="btn btn-primary" id="cfo-explore-btn">Explore funds</button>
-          <button class="btn btn-secondary" id="cfo-empty-mfc-btn">Import holdings</button>
+          <button class="btn btn-secondary" id="cfo-empty-mfc-btn">Import external investments</button>
         </div>
       </div>
 
@@ -1036,7 +1030,7 @@
       <div class="modal-header" style="text-align: left; margin-bottom: 1.25rem;">
         <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
           <span style="font-size: 1.5rem;">🏦</span>
-          <h2 style="font-size: 1.35rem; margin: 0;">Add an actual holding snapshot</h2>
+          <h2 style="font-size: 1.35rem; margin: 0;">Import external investments</h2>
         </div>
         <p style="color: var(--colorTextMuted); font-size: 0.88rem; margin-top: 0.25rem;">
           Use values from a current statement. Automatic MF Central/CAS import is not connected.
